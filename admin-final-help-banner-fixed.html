@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Gift Hamper Studio - Admin Panel</title>
+<style>
+:root{--bg:#f7f5f2;--card:#fff;--ink:#24211e;--muted:#766f68;--line:#e9e3dc;--accent:#8b5e3c;--accent2:#d9a86c;--danger:#b42318}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--ink)}
+.login{min-height:100vh;display:grid;place-items:center;padding:20px}.login-card{width:min(440px,100%);background:#fff;padding:28px;border-radius:22px;box-shadow:0 14px 50px #0001}
+input,select,textarea,button{font:inherit}input,select,textarea{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;background:#fff}textarea{min-height:100px;resize:vertical}
+button{border:0;border-radius:10px;padding:11px 15px;cursor:pointer;font-weight:700}.primary{background:var(--accent);color:#fff}.secondary{background:#f0ebe5;color:var(--ink)}.danger{background:#fee4e2;color:var(--danger)}
+.app{display:none}.top{height:66px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 18px;position:sticky;top:0;z-index:10}.brand{font-weight:800}.layout{display:grid;grid-template-columns:250px 1fr;min-height:calc(100vh - 66px)}
+.sidebar{background:#fff;border-right:1px solid var(--line);padding:12px}.navbtn{display:block;width:100%;text-align:left;background:transparent;margin:4px 0}.navbtn.active,.navbtn:hover{background:#f3ece5;color:var(--accent)}
+main{padding:22px;max-width:1500px;width:100%;margin:auto}.view{display:none}.view.active{display:block}.grid{display:grid;gap:16px}.stats{grid-template-columns:repeat(5,minmax(130px,1fr))}.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px}.stat b{font-size:26px;display:block;margin-top:7px}.two{grid-template-columns:1fr 1fr}.three{grid-template-columns:repeat(3,1fr)}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row>*{flex:1;min-width:150px}.actions{display:flex;gap:8px;flex-wrap:wrap}.actions>*{flex:0 0 auto}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden}th,td{padding:11px;border-bottom:1px solid var(--line);text-align:left;font-size:14px;vertical-align:top}th{background:#f8f4f0}.muted{color:var(--muted);font-size:13px}.tag{display:inline-block;padding:4px 8px;border-radius:999px;background:#f3ece5;font-size:12px}.hidden{display:none}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{display:flex;overflow:auto;gap:4px;white-space:nowrap}.navbtn{width:auto}.stats{grid-template-columns:repeat(2,1fr)}.two,.three{grid-template-columns:1fr}main{padding:14px}}
+</style>
+</head>
+<body>
+
+<section class="login" id="loginBox">
+  <div class="login-card">
+    <h1>🎁 The Gift Hamper Studio</h1>
+    <p class="muted">Admin Panel</p>
+    <p class="muted">Login after adding your Firebase configuration and authorized admin access.</p>
+    <input id="adminEmail" type="email" placeholder="Admin email">
+    <input id="adminPassword" type="password" placeholder="Password" style="margin-top:10px">
+    <button class="primary" style="width:100%;margin-top:12px" id="loginBtn">Login</button>
+    <p id="loginMsg" class="muted"></p>
+  </div>
+</section>
+
+<div class="app" id="app">
+<header class="top">
+  <div class="brand">🎁 The Gift Hamper Studio — Admin</div>
+  <div class="row" style="max-width:300px"><span id="adminName" class="muted">Admin</span><button class="secondary" id="logoutBtn">Logout</button></div>
+</header>
+<div class="layout">
+<aside class="sidebar">
+<button class="navbtn active" data-view="dashboard">📊 Dashboard</button>
+<button class="navbtn" data-view="products">🎁 Products</button>
+<button class="navbtn" data-view="orders">📦 Orders</button>
+<button class="navbtn" data-view="payments">💳 Payment Manager</button>
+<button class="navbtn" data-view="delivery">🚚 Delivery & Tracking</button>
+<button class="navbtn" data-view="returns">↩️ Return & Refund</button>
+<button class="navbtn" data-view="coupons">🎟️ Coupons / Vouchers</button>
+<button class="navbtn" data-view="banners">🖼️ Banner Manager</button>
+<button class="navbtn" data-view="settings">⚙️ Site Settings</button>
+</aside>
+
+<main>
+<section class="view active" id="dashboard">
+<h2>Dashboard</h2>
+<div class="grid stats">
+<div class="card stat">Today Orders<b id="todayOrders">0</b></div>
+<div class="card stat">Total Orders<b id="totalOrders">0</b></div>
+<div class="card stat">Processing<b id="processingOrders">0</b></div>
+<div class="card stat">Delivered<b id="deliveredOrders">0</b></div>
+<div class="card stat">Revenue<b id="totalRevenue">₹0</b></div>
+</div>
+<div class="card" style="margin-top:16px"><h3>Recent Orders</h3><div id="recentOrders" class="muted">No orders loaded.</div></div>
+</section>
+
+<section class="view" id="products">
+<h2>Product Manager</h2>
+<div class="card">
+<div class="grid three">
+<input id="pName" placeholder="Product Name">
+<input id="pMainCategory" placeholder="Main Category (Birthday, Anniversary...)">
+<input id="pSubCategory" placeholder="Sub Category">
+<input id="pMaterial" placeholder="Material / Contents">
+<input id="pQuantity" type="number" placeholder="Quantity">
+<input id="pSize" placeholder="Size / Variant">
+<input id="pSKU" placeholder="SKU">
+<input id="pOriginalPrice" type="number" placeholder="Original Price">
+<input id="pSellingPrice" type="number" placeholder="Selling Price">
+<input id="pDiscount" type="number" placeholder="Discount %">
+<select id="pOffer"><option value="false">Offer Inactive</option><option value="true">Offer Active</option></select>
+<input id="pStock" type="number" placeholder="Stock Available">
+</div>
+<div class="grid two" style="margin-top:10px">
+<input id="pImage" placeholder="Main Product Image URL">
+<input id="pImages" placeholder="More Image URLs (comma separated)">
+</div>
+<textarea id="pDescription" placeholder="Product Description" style="margin-top:10px"></textarea>
+<div class="row" style="margin-top:10px"><label><input type="checkbox" id="pFeatured" style="width:auto"> Featured Product</label><label><input type="checkbox" id="pBestSeller" style="width:auto"> Best Seller</label><button class="primary" id="saveProduct">Save Product</button><button class="secondary" id="clearProduct">Clear</button></div>
+</div>
+<div class="card" style="margin-top:16px"><div class="row"><h3 style="flex:1">All Products</h3><input id="productSearch" placeholder="Search product / SKU"></div><div id="productTable"></div></div>
+</section>
+
+<section class="view" id="orders">
+<h2>Customer Orders</h2>
+<div class="card"><div class="row"><input id="orderSearch" placeholder="Search Order ID / Customer / Mobile"><select id="orderStatusFilter"><option value="">All Status</option><option>Order Placed</option><option>Confirmed</option><option>Processing</option><option>Preparing Gift</option><option>Packed</option><option>Shipped</option><option>Out for Delivery</option><option>Delivered</option><option>Cancelled</option></select><button class="secondary" id="reloadOrders">Reload</button></div></div>
+<div class="card" style="margin-top:16px"><div id="orderTable"></div></div>
+</section>
+
+<section class="view" id="payments">
+<h2>Payment Manager</h2>
+<div class="card"><div class="row"><input id="paymentSearch" placeholder="Order ID / Mobile Number"><button class="secondary" id="reloadPayments">Reload</button></div></div>
+<div class="card" style="margin-top:16px"><div id="paymentTable"></div></div>
+</section>
+
+<section class="view" id="delivery">
+<h2>Delivery & Tracking Manager</h2>
+<div class="card">
+<div class="grid three">
+<input id="dOrderId" placeholder="Order ID">
+<input id="dPartner" placeholder="Delivery Partner">
+<input id="dTrackingId" placeholder="Tracking / AWB Number">
+<input id="dTrackingUrl" placeholder="Tracking URL">
+<input id="dExpectedDate" type="date">
+<input id="dMessage" placeholder="Customer update message">
+</div>
+<div class="actions" style="margin-top:10px"><button class="primary" id="saveDelivery">Save Delivery Update</button><button class="secondary" id="findDelivery">Find Order</button></div>
+</div>
+</section>
+
+<section class="view" id="returns">
+<h2>Return & Refund Manager</h2>
+<div class="card">
+<div class="grid three"><input id="rOrderId" placeholder="Order ID"><select id="rStatus"><option>Return Requested</option><option>Return Approved</option><option>Return Rejected</option><option>Return Received</option><option>Refund Processing</option><option>Refunded</option><option>Refund Rejected</option></select><input id="rAmount" type="number" placeholder="Refund Amount"></div>
+<textarea id="rReason" placeholder="Return / Refund Reason" style="margin-top:10px"></textarea>
+<textarea id="rAdminNote" placeholder="Admin Note" style="margin-top:10px"></textarea>
+<button class="primary" id="saveReturn" style="margin-top:10px">Save Return / Refund Update</button>
+</div>
+</section>
+
+<section class="view" id="coupons">
+<h2>Coupon / Voucher Manager</h2>
+<div class="card"><div class="grid three"><input id="cCode" placeholder="Coupon Code e.g. GIFT99"><select id="cType"><option value="percentage">Percentage</option><option value="fixed">Fixed Amount</option></select><input id="cValue" type="number" placeholder="Discount Value"><input id="cMinOrder" type="number" placeholder="Minimum Order"><input id="cMaxDiscount" type="number" placeholder="Maximum Discount"><select id="cActive"><option value="true">Active</option><option value="false">Inactive</option></select><input id="cStart" type="date"><input id="cEnd" type="date"></div><button class="primary" id="saveCoupon" style="margin-top:10px">Save Coupon</button></div>
+<div class="card" style="margin-top:16px"><div id="couponTable"></div></div>
+</section>
+
+<section class="view" id="banners">
+<h2>Banner Manager</h2>
+<div class="card"><p class="muted">Up to 8 banner slots. Image URL based.</p>
+<div class="grid three"><input id="bSlot" type="number" min="1" max="8" placeholder="Slot 1-8"><input id="bTitle" placeholder="Banner Title"><input id="bSubtitle" placeholder="Subtitle"><input id="bImage" placeholder="Banner Image URL"><input id="bButtonText" placeholder="Button Text"><input id="bLink" placeholder="Button / Offer URL"><select id="bActive"><option value="true">Active</option><option value="false">Inactive</option></select></div>
+<button class="primary" id="saveBanner" style="margin-top:10px">Save Banner</button></div>
+</section>
+
+<section class="view" id="settings">
+<h2>Site Settings</h2>
+<div class="card"><div class="grid three">
+<input id="sStoreName" placeholder="Store Name"><input id="sTagline" placeholder="Site Tagline"><input id="sContact" placeholder="Contact Number">
+<input id="sWhatsapp" placeholder="WhatsApp Number"><input id="sWhatsappMessage" placeholder="Default WhatsApp Message"><input id="sEmail" placeholder="Email ID">
+<input id="sWebsite" placeholder="Website URL"><input id="sCurrency" placeholder="Currency Symbol e.g. ₹"><input id="sDeliveryCharge" type="number" placeholder="Delivery Charge">
+<input id="sFreeDeliveryMin" type="number" placeholder="Free Delivery Minimum Amount"><select id="sFreeDelivery"><option value="true">Free Delivery Available</option><option value="false">No Free Delivery</option></select><select id="sCOD"><option value="true">COD Available</option><option value="false">COD Disabled</option></select>
+<input id="sInstagram" placeholder="Instagram URL"><input id="sFacebook" placeholder="Facebook URL"><input id="sYoutube" placeholder="YouTube URL"><input id="sTelegram" placeholder="Telegram URL"><input id="sTwitter" placeholder="Twitter/X URL"><input id="sAddress" placeholder="Full Shop Address">
+</div>
+<label for="sDescription" style="display:block;margin-top:12px;font-weight:800">📝 The Gift Hamper Studio Description</label><textarea id="sDescription" placeholder="Write the website About / Footer description here..." style="margin-top:8px"></textarea><p class="muted">Save Site Settings ke baad ye description website footer me automatically update hoga.</p>
+<div class="grid three" style="margin-top:10px"><select id="sFooterAboutEnabled"><option value="true">About/Description: Enabled</option><option value="false">About/Description: Disabled</option></select><select id="sFooterLinksEnabled"><option value="true">Useful Links: Enabled</option><option value="false">Useful Links: Disabled</option></select><select id="sFooterContactEnabled"><option value="true">Contact Us: Enabled</option><option value="false">Contact Us: Disabled</option></select><select id="sFooterQREnabled"><option value="true">Scan & Visit QR: Enabled</option><option value="false">Scan & Visit QR: Disabled</option></select></div>
+<div class="grid three" style="margin-top:10px"><select id="sInstagramEnabled"><option value="true">Instagram: Enabled</option><option value="false">Instagram: Disabled</option></select><select id="sFacebookEnabled"><option value="true">Facebook: Enabled</option><option value="false">Facebook: Disabled</option></select><select id="sYoutubeEnabled"><option value="true">YouTube: Enabled</option><option value="false">YouTube: Disabled</option></select><select id="sWhatsappEnabled"><option value="true">WhatsApp: Enabled</option><option value="false">WhatsApp: Disabled</option></select><select id="sTelegramEnabled"><option value="true">Telegram: Enabled</option><option value="false">Telegram: Disabled</option></select><select id="sTwitterEnabled"><option value="true">Twitter/X: Enabled</option><option value="false">Twitter/X: Disabled</option></select></div>
+<div class="grid three" style="margin-top:10px"><select id="sLinkHomeEnabled"><option value="true">Home Link: Enabled</option><option value="false">Home Link: Disabled</option></select><select id="sLinkShopEnabled"><option value="true">Shop Link: Enabled</option><option value="false">Shop Link: Disabled</option></select><select id="sLinkSpecialEnabled"><option value="true">Special Categories Link: Enabled</option><option value="false">Special Categories Link: Disabled</option></select><select id="sLinkTrackEnabled"><option value="true">Track Order Link: Enabled</option><option value="false">Track Order Link: Disabled</option></select><select id="sLinkOrdersEnabled"><option value="true">My Orders Link: Enabled</option><option value="false">My Orders Link: Disabled</option></select><select id="sLinkContactEnabled"><option value="true">Contact Link: Enabled</option><option value="false">Contact Link: Disabled</option></select><select id="sLinkReturnEnabled"><option value="true">Return Policy Link: Enabled</option><option value="false">Return Policy Link: Disabled</option></select><select id="sLinkShippingEnabled"><option value="true">Shipping Policy Link: Enabled</option><option value="false">Shipping Policy Link: Disabled</option></select></div>
+<textarea id="sAnnouncement" placeholder="Announcement / Top Bar Text" style="margin-top:10px"></textarea>
+<textarea id="sReturnPolicy" placeholder="Return Policy" style="margin-top:10px"></textarea>
+<div class="row" style="margin-top:10px"><button class="primary" id="saveSettings">Save Site Settings</button><button class="secondary" id="loadSettings">Reload Settings</button></div>
+</div>
+</section>
+</main></div></div>
+
+<script type="module">
+/* ============================================================
+   FIREBASE CONFIGURATION
+   Paste your The Gift Hamper Studio Firebase Web App config here.
+   ============================================================ */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, getDoc, doc, setDoc, updateDoc, deleteDoc, serverTimestamp, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCfILW5a7H4B8cQfVnJwh_Dcvn04FxAwJs",
+  authDomain: "the-gift-hamper-studio.firebaseapp.com",
+  projectId: "the-gift-hamper-studio",
+  storageBucket: "the-gift-hamper-studio.firebasestorage.app",
+  messagingSenderId: "1002125530065",
+  appId: "1:1002125530065:web:dea65445fd5631c7c0c6f0"
+};
+
+const ADMIN_EMAIL = "meenavicky3960@gmail.com";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const $ = id => document.getElementById(id);
+const val = id => $(id).value.trim();
+const num = id => Number($(id).value || 0);
+
+function money(n){return "₹"+Number(n||0).toLocaleString("en-IN")}
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function orderData(id){return {id,...$(id).dataset}}
+
+document.querySelectorAll(".navbtn").forEach(b=>b.onclick=()=>{
+ document.querySelectorAll(".navbtn").forEach(x=>x.classList.remove("active"));b.classList.add("active");
+ document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));$(b.dataset.view).classList.add("active");
+});
+
+$("loginBtn").onclick=async()=>{
+ try{await signInWithEmailAndPassword(auth,val("adminEmail"),val("adminPassword"));$("loginMsg").textContent=""}
+ catch(e){$("loginMsg").textContent=e.message}
+};
+$("logoutBtn").onclick=()=>signOut(auth);
+
+onAuthStateChanged(auth,user=>{
+ if(user && (!ADMIN_EMAIL.includes("PASTE_")) && user.email?.toLowerCase()===ADMIN_EMAIL.toLowerCase()){
+   $("loginBox").style.display="none";$("app").style.display="block";$("adminName").textContent=user.email;
+   loadAll();
+ }else if(user){
+   $("loginMsg").textContent="This account is not authorized as admin.";signOut(auth);
+ }else{$("loginBox").style.display="grid";$("app").style.display="none"}
+});
+
+let products=[],orders=[];
+
+async function loadProducts(){
+ const snap=await getDocs(collection(db,"products"));products=snap.docs.map(d=>({id:d.id,...d.data()}));
+ renderProducts();
+}
+function renderProducts(){
+ const q=val("productSearch").toLowerCase();const list=products.filter(p=>!q||`${p.name} ${p.sku} ${p.mainCategory}`.toLowerCase().includes(q));
+ $("productTable").innerHTML=`<table><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Actions</th></tr>${list.map(p=>`<tr><td><b>${esc(p.name)}</b><br><span class="muted">${esc(p.sku||"")}</span></td><td>${esc(p.mainCategory||"")}</td><td>${money(p.sellingPrice)}</td><td>${p.stock??0}</td><td><div class="actions"><button class="secondary" onclick="window.editProduct('${p.id}')">Edit</button><button class="danger" onclick="window.deleteProduct('${p.id}')">Delete</button></div></td></tr>`).join("")}</table>`;
+}
+$("productSearch").oninput=renderProducts;
+$("clearProduct").onclick=()=>document.querySelectorAll("#products input,#products textarea").forEach(x=>{if(x.type==="checkbox")x.checked=false;else x.value=""});
+$("saveProduct").onclick=async()=>{
+ const data={name:val("pName"),mainCategory:val("pMainCategory"),subCategory:val("pSubCategory"),material:val("pMaterial"),quantity:num("pQuantity"),size:val("pSize"),sku:val("pSKU"),originalPrice:num("pOriginalPrice"),sellingPrice:num("pSellingPrice"),discount:num("pDiscount"),offerActive:$("pOffer").value==="true",stock:num("pStock"),image:val("pImage"),images:val("pImages").split(",").map(x=>x.trim()).filter(Boolean),description:val("pDescription"),featured:$("pFeatured").checked,bestSeller:$("pBestSeller").checked,updatedAt:serverTimestamp()};
+ if(!data.name){alert("Product name is required");return}
+ const editId=$("saveProduct").dataset.editId;
+ if(editId){await updateDoc(doc(db,"products",editId),data);delete $("saveProduct").dataset.editId;$("saveProduct").textContent="Save Product"}else await addDoc(collection(db,"products"),{...data,createdAt:serverTimestamp()});
+ await loadProducts();alert("Product saved");
+};
+window.editProduct=id=>{const p=products.find(x=>x.id===id);if(!p)return;
+ const map={pName:"name",pMainCategory:"mainCategory",pSubCategory:"subCategory",pMaterial:"material",pQuantity:"quantity",pSize:"size",pSKU:"sku",pOriginalPrice:"originalPrice",pSellingPrice:"sellingPrice",pDiscount:"discount",pStock:"stock",pImage:"image",pDescription:"description"};Object.entries(map).forEach(([a,b])=>$(a).value=p[b]??"");$("pImages").value=(p.images||[]).join(", ");$("pOffer").value=String(!!p.offerActive);$("pFeatured").checked=!!p.featured;$("pBestSeller").checked=!!p.bestSeller;$("saveProduct").dataset.editId=id;$("saveProduct").textContent="Update Product";document.querySelector('[data-view="products"]').click()};
+window.deleteProduct=async id=>{if(confirm("Delete this product?")){await deleteDoc(doc(db,"products",id));loadProducts()}};
+
+async function loadOrders(){
+ const snap=await getDocs(collection(db,"orders"));orders=snap.docs.map(d=>({id:d.id,...d.data()}));
+ renderOrders();renderPayments();renderDashboard();
+}
+function renderDashboard(){
+ const today=new Date().toISOString().slice(0,10);const dateOf=o=>o.createdAt?.toDate?o.createdAt.toDate().toISOString().slice(0,10):"";
+ $("todayOrders").textContent=orders.filter(o=>dateOf(o)===today).length;$("totalOrders").textContent=orders.length;$("processingOrders").textContent=orders.filter(o=>["Processing","Preparing Gift","Packed"].includes(o.status)).length;$("deliveredOrders").textContent=orders.filter(o=>o.status==="Delivered").length;$("totalRevenue").textContent=money(orders.filter(o=>["Paid","Success"].includes(o.paymentStatus)).reduce((s,o)=>s+Number(o.total||0),0));
+ $("recentOrders").innerHTML=orders.slice(0,5).map(o=>`<p><b>${esc(o.orderId||o.id)}</b> — ${esc(o.customerName||"Customer")} — <span class="tag">${esc(o.status||"Order Placed")}</span></p>`).join("")||"No orders yet.";
+}
+function filteredOrders(){const q=val("orderSearch").toLowerCase(),s=$("orderStatusFilter").value;return orders.filter(o=>(!q||`${o.orderId||o.id} ${o.customerName||""} ${o.mobile||""}`.toLowerCase().includes(q))&&(!s||o.status===s))}
+function renderOrders(){
+ const list=filteredOrders();$("orderTable").innerHTML=`<table><tr><th>Order</th><th>Customer / Address</th><th>Payment</th><th>Status</th><th>Control</th></tr>${list.map(o=>`<tr><td><b>${esc(o.orderId||o.id)}</b><br>${money(o.total)}</td><td>${esc(o.customerName||"")}<br>${esc(o.mobile||"")}<br><span class="muted">${esc(o.address||"")}</span></td><td>${esc(o.paymentMethod||"")}<br><span class="tag">${esc(o.paymentStatus||"Pending")}</span></td><td><select onchange="window.updateOrder('${o.id}','status',this.value)">${["Order Placed","Confirmed","Processing","Preparing Gift","Packed","Shipped","Out for Delivery","Delivered","Cancelled"].map(x=>`<option ${o.status===x?"selected":""}>${x}</option>`).join("")}</select></td><td><button class="secondary" onclick="window.openDelivery('${esc(o.orderId||o.id)}')">Tracking</button></td></tr>`).join("")}</table>`;
+}
+$("orderSearch").oninput=renderOrders;$("orderStatusFilter").onchange=renderOrders;$("reloadOrders").onclick=loadOrders;
+window.updateOrder=async(id,key,value)=>{await updateDoc(doc(db,"orders",id),{[key]:value,updatedAt:serverTimestamp()});loadOrders()};
+window.openDelivery=id=>{document.querySelector('[data-view="delivery"]').click();$("dOrderId").value=id};
+
+function renderPayments(){
+ const q=val("paymentSearch").toLowerCase();const list=orders.filter(o=>!q||`${o.orderId||o.id} ${o.mobile||""}`.toLowerCase().includes(q));
+ $("paymentTable").innerHTML=`<table><tr><th>Order</th><th>Customer</th><th>Method</th><th>Total</th><th>Payment Status</th><th>Action</th></tr>${list.map(o=>`<tr><td>${esc(o.orderId||o.id)}</td><td>${esc(o.customerName||"")}<br>${esc(o.mobile||"")}</td><td>${esc(o.paymentMethod||"COD")}</td><td>${money(o.total)}</td><td><select onchange="window.updateOrder('${o.id}','paymentStatus',this.value)">${["Pending","Processing","Paid","Success","Failed","Rejected","Refund Processing","Refunded"].map(x=>`<option ${o.paymentStatus===x?"selected":""}>${x}</option>`).join("")}</select></td><td><button class="danger" onclick="window.updateOrder('${o.id}','paymentStatus','Rejected')">Reject</button></td></tr>`).join("")}</table>`;
+}
+$("paymentSearch").oninput=renderPayments;$("reloadPayments").onclick=loadOrders;
+
+$("findDelivery").onclick=()=>{const id=val("dOrderId");const o=orders.find(x=>(x.orderId||x.id)===id);alert(o?`Found: ${o.customerName||"Customer"}`:"Order not found")};
+$("saveDelivery").onclick=async()=>{const id=val("dOrderId");const o=orders.find(x=>(x.orderId||x.id)===id);if(!o){alert("Find a valid Order ID first");return}await updateDoc(doc(db,"orders",o.id),{deliveryPartner:val("dPartner"),trackingId:val("dTrackingId"),trackingUrl:val("dTrackingUrl"),expectedDeliveryDate:val("dExpectedDate"),customerMessage:val("dMessage"),updatedAt:serverTimestamp()});alert("Delivery update saved");loadOrders()};
+
+$("saveReturn").onclick=async()=>{const id=val("rOrderId"),o=orders.find(x=>(x.orderId||x.id)===id);if(!o){alert("Order not found");return}await updateDoc(doc(db,"orders",o.id),{returnStatus:$("rStatus").value,refundAmount:num("rAmount"),returnReason:val("rReason"),adminNote:val("rAdminNote"),updatedAt:serverTimestamp()});alert("Return/refund updated");loadOrders()};
+
+async function loadCoupons(){const s=await getDocs(collection(db,"coupons"));const list=s.docs.map(d=>({id:d.id,...d.data()}));$("couponTable").innerHTML=`<table><tr><th>Code</th><th>Discount</th><th>Active</th></tr>${list.map(c=>`<tr><td><b>${esc(c.code)}</b></td><td>${esc(c.type)}: ${esc(c.value)}</td><td>${String(c.active)}</td></tr>`).join("")}</table>`}
+$("saveCoupon").onclick=async()=>{const code=val("cCode").toUpperCase();if(!code){alert("Coupon code required");return}await setDoc(doc(db,"coupons",code),{code,type:$("cType").value,value:num("cValue"),minOrder:num("cMinOrder"),maxDiscount:num("cMaxDiscount"),active:$("cActive").value==="true",startDate:val("cStart"),endDate:val("cEnd"),updatedAt:serverTimestamp()});alert("Coupon saved");loadCoupons()};
+
+$("saveBanner").onclick=async()=>{const slot=Number($("bSlot").value);if(slot<1||slot>8){alert("Banner slot must be 1 to 8");return}await setDoc(doc(db,"banners",String(slot)),{slot,title:val("bTitle"),subtitle:val("bSubtitle"),image:val("bImage"),buttonText:val("bButtonText"),link:val("bLink"),active:$("bActive").value==="true",updatedAt:serverTimestamp()});alert("Banner saved")};
+
+const settingIds=["sStoreName","sTagline","sDescription","sContact","sWhatsapp","sWhatsappMessage","sEmail","sWebsite","sCurrency","sDeliveryCharge","sFreeDeliveryMin","sFreeDelivery","sCOD","sInstagram","sFacebook","sYoutube","sTelegram","sTwitter","sAddress","sAnnouncement","sReturnPolicy","sFooterAboutEnabled","sFooterLinksEnabled","sFooterContactEnabled","sFooterQREnabled","sInstagramEnabled","sFacebookEnabled","sYoutubeEnabled","sWhatsappEnabled","sTelegramEnabled","sTwitterEnabled","sLinkHomeEnabled","sLinkShopEnabled","sLinkSpecialEnabled","sLinkTrackEnabled","sLinkOrdersEnabled","sLinkContactEnabled","sLinkReturnEnabled","sLinkShippingEnabled"];
+$("saveSettings").onclick=async()=>{const data={};settingIds.forEach(id=>data[id]=($(id).type==="number"?num(id):$(id).value));await setDoc(doc(db,"settings","site"),{...data,updatedAt:serverTimestamp()});alert("Site settings saved")};
+$("loadSettings").onclick=loadSettings;
+async function loadSettings(){const d=await getDoc(doc(db,"settings","site"));if(d.exists())Object.entries(d.data()).forEach(([k,v])=>{if($(k))$(k).value=v??""})}
+
+async function loadAll(){await Promise.all([loadProducts(),loadOrders(),loadCoupons(),loadSettings()])}
+</script>
+<script>document.addEventListener('DOMContentLoaded',()=>{let b=document.getElementById('saveSettings');if(b){let old=b.onclick;b.onclick=async function(e){localStorage.setItem('tgWhatsapp',(document.getElementById('sWhatsapp')||{}).value||'');return old?old.call(this,e):undefined}}})</script>
+<!-- FINAL ADMIN PATCH -->
+<script type="module">
+import{getFirestore,collection,getDocs,doc,updateDoc,setDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import{initializeApp,getApps}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+const cfg={apiKey:"AIzaSyCfILW5a7H4B8cQfVnJwh_Dcvn04FxAwJs",authDomain:"the-gift-hamper-studio.firebaseapp.com",projectId:"the-gift-hamper-studio",storageBucket:"the-gift-hamper-studio.firebasestorage.app",messagingSenderId:"1002125530065",appId:"1:1002125530065:web:dea65445fd5631c7c0c6f0"};const DB=getFirestore(getApps()[0]||initializeApp(cfg));
+const $=id=>document.getElementById(id), val=id=>($(id)?.value||'').trim();
+function addShippedCard(){const dash=document.getElementById('dashboard');if(!dash||document.getElementById('shippedOrders'))return;const c=document.createElement('div');c.className='card';c.innerHTML='<h3>🚚 Shipped Orders</h3><div class="stat" id="shippedOrders">0</div>';dash.querySelector('.grid')?.appendChild(c)}
+function todayCount(list){const now=new Date();return list.filter(o=>{const raw=o.orderDate||o.createdAt?.toDate?.();const d=raw instanceof Date?raw:new Date(raw);return !isNaN(d)&&d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth()&&d.getDate()===now.getDate()}).length}
+async function refreshDash(){try{const s=await getDocs(collection(DB,'orders'));const os=s.docs.map(d=>d.data());const t=$('todayOrders'),sh=$('shippedOrders');if(t)t.textContent=todayCount(os);if(sh)sh.textContent=os.filter(o=>(o.orderStatus||o.status)==='Shipped').length}catch(e){}}
+function patchBanner(){const p=$('bSlot');if(p){p.max='20';p.placeholder='Slot 1-20'}const note=document.querySelector('#banners .card p');if(note)note.textContent='Up to 20 banner slots. Save, edit by same slot, or disable without deleting.';const btn=$('saveBanner');if(btn)btn.onclick=async()=>{const slot=Number(val('bSlot'));if(slot<1||slot>20)return alert('Banner slot must be 1 to 20');await setDoc(doc(DB,'banners',String(slot)),{slot,title:val('bTitle'),subtitle:val('bSubtitle'),image:val('bImage'),buttonText:val('bButtonText'),link:val('bLink'),active:$('bActive').value==='true',updatedAt:serverTimestamp()});alert('Banner saved')}}
+function patchDelivery(){const box=document.querySelector('#delivery .grid');if(box&&!$('dParcelStatus')){box.insertAdjacentHTML('beforeend','<select id="dParcelStatus"><option>Order Placed</option><option>Confirmed</option><option>Processing</option><option>Packed</option><option>Shipped</option><option>Out for Delivery</option><option>Delivered</option></select><input id="dPendingAmount" type="number" placeholder="Pending Amount">')}const save=$('saveDelivery');if(save)save.onclick=async()=>{const id=val('dOrderId');const s=await getDocs(collection(DB,'orders'));const d=s.docs.find(x=>(x.data().orderId||x.id)===id);if(!d)return alert('Order not found');await updateDoc(doc(DB,'orders',d.id),{deliveryPartner:val('dPartner'),trackingId:val('dTrackingId'),trackingUrl:val('dTrackingUrl'),expectedDeliveryDate:val('dExpectedDate'),customerMessage:val('dMessage'),parcelStatus:val('dParcelStatus'),pendingAmount:Number(val('dPendingAmount')||0),orderStatus:val('dParcelStatus'),status:val('dParcelStatus'),updatedAt:serverTimestamp()});alert('Delivery & tracking updated');refreshDash()}}
+function patchReturns(){const b=$('saveReturn');if(b)b.onclick=async()=>{const id=val('rOrderId');const s=await getDocs(collection(DB,'orders'));const d=s.docs.find(x=>(x.data().orderId||x.id)===id);if(!d)return alert('Order not found');await updateDoc(doc(DB,'orders',d.id),{returnStatus:$('rStatus').value,refundAmount:Number(val('rAmount')||0),refundPaymentStatus:$('rStatus').value.includes('Refund')?$('rStatus').value:'Pending',returnReason:val('rReason'),adminNote:val('rAdminNote'),updatedAt:serverTimestamp()});alert('Return/refund updated')}}
+document.addEventListener('DOMContentLoaded',()=>{addShippedCard();patchBanner();patchDelivery();patchReturns();setTimeout(refreshDash,1500);setInterval(refreshDash,30000)});
+</script>
+</body></html>
