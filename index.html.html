@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Gift Hamper Studio</title>
+<meta name="description" content="The Gift Hamper Studio - curated gifts for every occasion.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--primary:#7c3aed;--secondary:#ec4899;--dark:#171225;--muted:#6b6575;--bg:#faf8fc;--card:#fff;--border:#eee8f4}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--dark)}
+button,input,select{font:inherit}button{cursor:pointer;border:0}
+a{text-decoration:none;color:inherit}
+.topbar{background:#171225;color:#fff;text-align:center;padding:8px 12px;font-size:13px}
+header{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--border)}
+.nav{max-width:1200px;margin:auto;padding:14px 18px;display:flex;align-items:center;gap:18px}
+.logo{font-weight:900;font-size:21px;line-height:1.05;color:var(--primary);white-space:nowrap}
+.logo span{display:block;font-size:11px;letter-spacing:2px;color:#8b8495;margin-top:3px}
+.search{flex:1;display:flex;max-width:520px;background:#f6f3f8;border-radius:14px;padding:4px}
+.search input{width:100%;border:0;background:transparent;outline:0;padding:11px 13px}
+.search button{background:var(--primary);color:#fff;border-radius:10px;padding:0 15px}
+.nav-actions{display:flex;gap:8px}
+.iconbtn{background:#f6f3f8;border-radius:12px;padding:10px 12px;position:relative}
+.badge{position:absolute;right:-4px;top:-5px;background:#ef4444;color:#fff;font-size:10px;border-radius:99px;padding:2px 6px}
+.categories{max-width:1200px;margin:auto;padding:10px 18px;display:flex;gap:8px;overflow:auto;white-space:nowrap}
+.chip{background:#f7f2fb;border:1px solid #eee7f5;padding:8px 13px;border-radius:999px;font-size:13px}
+.chip:hover{background:#eee5fb}
+main{max-width:1200px;margin:auto;padding:18px}
+.hero{display:grid;grid-template-columns:1.35fr .65fr;gap:16px;margin-bottom:26px}
+.hero-main{min-height:330px;border-radius:24px;padding:38px;display:flex;align-items:center;background:linear-gradient(135deg,#ede5ff,#ffe8f3);overflow:hidden}
+.hero h1{font-size:clamp(34px,5vw,62px);line-height:.98;margin:10px 0 14px}
+.hero p{color:#625b6c;max-width:520px;line-height:1.6}
+.cta{margin-top:20px;background:var(--primary);color:#fff;padding:13px 19px;border-radius:12px;font-weight:700}
+.hero-side{display:grid;gap:16px}
+.promo{border-radius:22px;padding:25px;background:#fff;border:1px solid var(--border)}
+.promo:first-child{background:#fff0f7}
+.promo h3{font-size:22px;margin:7px 0}
+.section{margin:30px 0}
+.section-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:13px}
+.section-head h2{font-size:24px}.section-head small{color:var(--muted)}
+.hscroll{display:flex;gap:14px;overflow-x:auto;padding-bottom:7px;scrollbar-width:thin}
+.cat-card{min-width:155px;background:#fff;border:1px solid var(--border);border-radius:18px;padding:18px;text-align:center}
+.cat-icon{height:82px;border-radius:15px;background:linear-gradient(135deg,#f1e9ff,#ffeaf4);display:grid;place-items:center;font-size:40px;margin-bottom:12px}
+.cat-card b{font-size:14px}
+.products{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
+.product{background:#fff;border:1px solid var(--border);border-radius:18px;overflow:hidden;min-width:230px}
+.product-img{height:215px;background:#f5f2f7;position:relative;display:grid;place-items:center;overflow:hidden}
+.product-img img{width:100%;height:100%;object-fit:cover}
+.placeholder{font-size:52px}
+.tag{position:absolute;left:10px;top:10px;background:#171225;color:#fff;padding:5px 8px;border-radius:8px;font-size:11px}
+.wish{position:absolute;right:10px;top:10px;background:#fff;border-radius:50%;width:35px;height:35px;font-size:18px}
+.product-info{padding:14px}
+.product-info h3{font-size:15px;margin-bottom:7px}
+.meta{font-size:12px;color:var(--muted);min-height:17px}
+.price{margin-top:10px;display:flex;align-items:center;gap:8px}
+.price strong{font-size:18px}.old{text-decoration:line-through;color:#999;font-size:13px}
+.discount{font-size:11px;color:#15803d;background:#dcfce7;padding:4px 6px;border-radius:6px}
+.buy{width:100%;margin-top:11px;background:#f0e9ff;color:#5b21b6;padding:10px;border-radius:10px;font-weight:700}
+.buy:hover{background:var(--primary);color:#fff}
+.empty{text-align:center;color:var(--muted);padding:35px;width:100%}
+footer{margin-top:40px;background:#171225;color:#eee;padding:35px 18px}
+.footer-inner{max-width:1200px;margin:auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px}
+.footer-inner p{color:#bbb3c3;line-height:1.7;margin-top:8px}
+.drawer{position:fixed;inset:0;background:#0006;z-index:50;display:none}
+.drawer.open{display:block}
+.panel{position:absolute;right:0;top:0;height:100%;width:min(430px,100%);background:#fff;padding:20px;overflow:auto}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.close{background:#f3f0f5;border-radius:10px;padding:8px 11px}
+.cart-row{display:flex;gap:10px;border-bottom:1px solid var(--border);padding:13px 0}
+.cart-row img{width:65px;height:65px;object-fit:cover;border-radius:10px;background:#f4f1f6}
+.cart-row .grow{flex:1}.qty{display:flex;gap:7px;align-items:center;margin-top:7px}
+.qty button{background:#eee8f3;width:25px;height:25px;border-radius:7px}
+.checkout{width:100%;background:var(--primary);color:#fff;padding:13px;border-radius:11px;margin-top:14px}
+.modal{position:fixed;inset:0;background:#0007;z-index:60;display:none;place-items:center;padding:18px}
+.modal.open{display:grid}
+.modal-box{width:min(520px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:20px;padding:22px}
+.form{display:grid;gap:10px}.form input,.form select,.form textarea{width:100%;border:1px solid #ddd4e5;border-radius:10px;padding:11px;outline:0}.form textarea{min-height:80px}
+.tabs{display:flex;gap:8px;margin:12px 0}.tab{padding:8px 12px;border-radius:9px;background:#f2edf6}.tab.active{background:var(--primary);color:#fff}
+.order{border:1px solid var(--border);border-radius:14px;padding:13px;margin:10px 0}.status{display:inline-block;margin-top:7px;background:#ede9fe;color:#5b21b6;padding:5px 8px;border-radius:8px;font-size:12px}
+@media(max-width:900px){.products{grid-template-columns:repeat(3,1fr)}.hero{grid-template-columns:1fr}.hero-side{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){.nav{flex-wrap:wrap}.logo{flex:1}.search{order:3;max-width:none;flex-basis:100%}.products{grid-template-columns:repeat(2,1fr)}.product-img{height:180px}.hero-main{padding:27px;min-height:290px}.footer-inner{grid-template-columns:1fr}.nav-actions{gap:4px}.iconbtn{padding:9px}}
+</style>
+</head>
+<body>
+<div class="topbar" id="announcement">🎁 Welcome to The Gift Hamper Studio — Beautiful gifts for every moment</div>
+<header>
+  <div class="nav">
+    <a class="logo" href="#">THE GIFT HAMPER<span>STUDIO</span></a>
+    <div class="search"><input id="searchInput" placeholder="Search gifts, hampers, occasions..."><button onclick="renderProducts()">Search</button></div>
+    <div class="nav-actions">
+      <button class="iconbtn" onclick="openWishlist()">♡<span class="badge" id="wishCount">0</span></button>
+      <button class="iconbtn" onclick="openOrders()">📦</button>
+      <button class="iconbtn" onclick="openCart()">🛒<span class="badge" id="cartCount">0</span></button>
+      <button class="iconbtn" onclick="openLogin()">👤</button>
+    </div>
+  </div>
+  <div class="categories" id="chips"></div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-main">
+      <div>
+        <div class="chip" style="display:inline-block">Curated with love ✨</div>
+        <h1>Make every<br>moment giftable.</h1>
+        <p>Thoughtfully curated hampers and gifts for birthdays, anniversaries, weddings, couples, festivals and all the little surprises.</p>
+        <button class="cta" onclick="document.getElementById('productsSection').scrollIntoView({behavior:'smooth'})">Shop Gifts →</button>
+      </div>
+    </div>
+    <div class="hero-side">
+      <div class="promo"><small>💝 For someone special</small><h3>Personalized Gifts</h3><p>Make it uniquely theirs.</p></div>
+      <div class="promo"><small>🚚 Easy gifting</small><h3>Gift Hampers</h3><p>Ready-to-gift collections for every occasion.</p></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><small>SHOP BY OCCASION</small><h2>Popular Categories</h2></div><small>Swipe →</small></div>
+    <div class="hscroll" id="catList"></div>
+  </section>
+
+  <section class="section" id="productsSection">
+    <div class="section-head"><div><small>HANDPICKED FOR YOU</small><h2>Featured Gifts</h2></div><small id="productCount"></small></div>
+    <div class="products" id="productGrid"></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><small>GIFTING MADE EASY</small><h2>Why shop with us?</h2></div></div>
+    <div class="hscroll">
+      <div class="cat-card"><div class="cat-icon">🎀</div><b>Beautifully Packed</b><p class="meta">Gift-ready presentation</p></div>
+      <div class="cat-card"><div class="cat-icon">💌</div><b>Personal Message</b><p class="meta">Add a special note</p></div>
+      <div class="cat-card"><div class="cat-icon">🚚</div><b>Reliable Delivery</b><p class="meta">Track your order</p></div>
+      <div class="cat-card"><div class="cat-icon">💜</div><b>Made with Love</b><p class="meta">Curated gifting</p></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div><div class="logo" style="color:#fff">THE GIFT HAMPER STUDIO<span style="color:#aaa">MAKE MOMENTS MEMORABLE</span></div><p>Your destination for thoughtful gifts, curated hampers and memorable surprises.</p></div>
+    <div><b>Quick Links</b><p>Categories<br>Orders<br>Wishlist<br>Contact Us</p></div>
+    <div><b>Need Help?</b><p>WhatsApp: Contact us<br>Email: hello@thegifthamperstudio.com</p></div>
+  </div>
+</footer>
+
+<div class="drawer" id="drawer" onclick="if(event.target===this)closeDrawer()">
+  <div class="panel">
+    <div class="panel-head"><h2 id="panelTitle">Cart</h2><button class="close" onclick="closeDrawer()">✕</button></div>
+    <div id="panelContent"></div>
+  </div>
+</div>
+
+<div class="modal" id="loginModal">
+  <div class="modal-box">
+    <div class="panel-head"><h2>Welcome 👋</h2><button class="close" onclick="closeLogin()">✕</button></div>
+    <div class="tabs"><button class="tab active" id="emailTab" onclick="showLogin('email')">Email</button><button class="tab" id="phoneTab" onclick="showLogin('phone')">Phone OTP</button></div>
+    <div class="form" id="emailForm">
+      <input id="email" type="email" placeholder="Email address">
+      <input id="password" type="password" placeholder="Password">
+      <button class="cta" onclick="emailLogin()">Login / Sign up</button>
+      <button class="buy" onclick="googleLogin()">Continue with Google</button>
+    </div>
+    <div class="form" id="phoneForm" style="display:none">
+      <input id="phone" placeholder="+91XXXXXXXXXX">
+      <div id="recaptcha-container"></div>
+      <button class="cta" onclick="sendOTP()">Send OTP</button>
+      <input id="otp" placeholder="Enter OTP">
+      <button class="buy" onclick="verifyOTP()">Verify OTP</button>
+    </div>
+    <p id="loginMsg" class="meta" style="margin-top:10px"></p>
+  </div>
+</div>
+
+<div class="modal" id="checkoutModal">
+  <div class="modal-box">
+    <div class="panel-head"><h2>Checkout</h2><button class="close" onclick="closeCheckout()">✕</button></div>
+    <div id="checkoutSummary"></div>
+    <div class="form">
+      <input id="customerName" placeholder="Full name">
+      <input id="customerMobile" placeholder="Mobile number">
+      <input id="customerEmail" placeholder="Email">
+      <textarea id="address" placeholder="Full delivery address"></textarea>
+      <input id="city" placeholder="City">
+      <input id="pincode" placeholder="PIN code">
+      <select id="paymentMethod">
+        <option value="COD">Cash on Delivery</option>
+        <option value="UPI">UPI</option>
+        <option value="Google Pay">Google Pay</option>
+        <option value="PhonePe">PhonePe</option>
+        <option value="Paytm">Paytm</option>
+        <option value="Card">Debit / Credit Card</option>
+        <option value="Net Banking">Net Banking</option>
+        <option value="Bank Transfer">Bank Transfer</option>
+      </select>
+      <input id="coupon" placeholder="Coupon / Voucher code (e.g. GIFT99)">
+      <button class="buy" onclick="applyCoupon()">Apply Coupon</button>
+      <div id="couponMsg" class="meta"></div>
+      <button class="checkout" onclick="placeOrder()">Place Order</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,GoogleAuthProvider,signInWithPopup,RecaptchaVerifier,signInWithPhoneNumber,signOut} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import {getFirestore,collection,addDoc,getDocs,doc,getDoc,setDoc,query,where,orderBy,limit} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+const firebaseConfig={
+  apiKey:"PASTE_API_KEY",
+  authDomain:"the-gift-hamper-studio.firebaseapp.com",
+  projectId:"the-gift-hamper-studio",
+  storageBucket:"the-gift-hamper-studio.firebasestorage.app",
+  messagingSenderId:"PASTE_MESSAGING_SENDER_ID",
+  appId:"PASTE_APP_ID"
+};
+
+let app,auth,db;
+const firebaseReady=!Object.values(firebaseConfig).some(v=>String(v).includes("PASTE_"));
+if(firebaseReady){
+  app=initializeApp(firebaseConfig); auth=getAuth(app); db=getFirestore(app);
+  onAuthStateChanged(auth,user=>{window.currentUser=user;});
+}
+
+const categories=[
+ ["🎂","Happy Birthday"],["💍","Anniversary"],["🎁","Surprise Gift"],["💒","Wedding"],
+ ["💑","Couple Gift"],["❤️","Lovers Gift"],["👩","Gift for Her"],["👨","Gift for Him"],
+ ["✨","Custom Hampers"],["🎉","Festival Specials"],["🧸","Baby & Kids"],["🏢","Corporate Gifts"]
+];
+let products=[
+ {id:"demo1",name:"Chocolate & Self-Care Hamper",mainCategory:"Gift for Her",material:"Chocolates, candle, self-care items",quantity:6,size:"Standard",sku:"GHS-001",originalPrice:1499,sellingPrice:999,discount:33,offerActive:true,stock:20,description:"A sweet and relaxing gift hamper.",image:"https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=800&q=80",featured:true,bestSeller:true},
+ {id:"demo2",name:"Couple Celebration Hamper",mainCategory:"Couple Gift",material:"Mug, chocolates, greeting card",quantity:4,size:"Standard",sku:"GHS-002",originalPrice:1799,sellingPrice:1299,discount:28,offerActive:true,stock:15,description:"A fun hamper for two.",image:"https://images.unsplash.com/photo-1512909006721-3d6018887383?auto=format&fit=crop&w=800&q=80",featured:true,bestSeller:true},
+ {id:"demo3",name:"Birthday Surprise Box",mainCategory:"Happy Birthday",material:"Chocolates, décor, card",quantity:7,size:"Large",sku:"GHS-003",originalPrice:1299,sellingPrice:899,discount:31,offerActive:true,stock:30,description:"A cheerful birthday surprise.",image:"https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?auto=format&fit=crop&w=800&q=80",featured:true},
+ {id:"demo4",name:"Elegant Anniversary Hamper",mainCategory:"Anniversary",material:"Premium keepsakes and chocolates",quantity:5,size:"Premium",sku:"GHS-004",originalPrice:2299,sellingPrice:1699,discount:26,offerActive:true,stock:10,description:"A romantic anniversary gift.",image:"https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=80",featured:true}
+];
+let cart=JSON.parse(localStorage.getItem("ghs_cart")||"[]");
+let wishlist=JSON.parse(localStorage.getItem("ghs_wishlist")||"[]");
+let activeCoupon=null;
+
+function money(n){return "₹"+Number(n||0).toLocaleString("en-IN")}
+function saveLocal(){localStorage.setItem("ghs_cart",JSON.stringify(cart));localStorage.setItem("ghs_wishlist",JSON.stringify(wishlist));updateBadges()}
+function updateBadges(){document.getElementById("cartCount").textContent=cart.reduce((a,x)=>a+x.qty,0);document.getElementById("wishCount").textContent=wishlist.length}
+function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+
+function renderCategories(){
+ document.getElementById("catList").innerHTML=categories.map(c=>`<button class="cat-card" onclick="filterCategory('${c[1].replaceAll("'","\\'")}')"><div class="cat-icon">${c[0]}</div><b>${c[1]}</b></button>`).join("");
+ document.getElementById("chips").innerHTML=categories.map(c=>`<button class="chip" onclick="filterCategory('${c[1].replaceAll("'","\\'")}')">${c[0]} ${c[1]}</button>`).join("");
+}
+window.filterCategory=(cat)=>{document.getElementById("searchInput").value=cat;renderProducts()}
+
+function productCard(p){
+ const liked=wishlist.includes(p.id);
+ return `<article class="product">
+ <div class="product-img">${p.image?`<img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" onerror="this.style.display='none'">`:`<div class="placeholder">🎁</div>`}
+ ${p.offerActive?`<span class="tag">${p.discount||0}% OFF</span>`:""}<button class="wish" onclick="toggleWish('${p.id}')">${liked?"♥":"♡"}</button></div>
+ <div class="product-info"><h3>${escapeHtml(p.name)}</h3><div class="meta">${escapeHtml(p.mainCategory||"Gift")} · ${escapeHtml(p.size||"Standard")}</div>
+ <div class="price"><strong>${money(p.sellingPrice)}</strong>${p.originalPrice?`<span class="old">${money(p.originalPrice)}</span>`:""}${p.discount?`<span class="discount">${p.discount}%</span>`:""}</div>
+ <button class="buy" onclick="addToCart('${p.id}')">Add to Cart</button></div></article>`;
+}
+function renderProducts(){
+ const q=document.getElementById("searchInput").value.trim().toLowerCase();
+ let list=products.filter(p=>!q||`${p.name} ${p.mainCategory} ${p.subCategory||""} ${p.material||""}`.toLowerCase().includes(q));
+ document.getElementById("productCount").textContent=`${list.length} gifts`;
+ document.getElementById("productGrid").innerHTML=list.length?list.map(productCard).join(""):`<div class="empty">No gifts found. Try another search.</div>`;
+}
+window.toggleWish=(id)=>{wishlist=wishlist.includes(id)?wishlist.filter(x=>x!==id):[...wishlist,id];saveLocal();renderProducts()}
+window.addToCart=(id)=>{
+ const p=products.find(x=>x.id===id);if(!p)return;
+ const row=cart.find(x=>x.id===id); if(row)row.qty++;else cart.push({id,qty:1});
+ saveLocal();openCart();
+}
+window.openCart=()=>{
+ document.getElementById("panelTitle").textContent="Your Cart";
+ const rows=cart.map(x=>{const p=products.find(y=>y.id===x.id);return p?`<div class="cart-row"><div class="grow"><b>${escapeHtml(p.name)}</b><div class="meta">${money(p.sellingPrice)} each</div><div class="qty"><button onclick="changeQty('${p.id}',-1)">−</button><b>${x.qty}</b><button onclick="changeQty('${p.id}',1)">+</button><button onclick="removeCart('${p.id}')" style="margin-left:7px">🗑</button></div></div><b>${money(p.sellingPrice*x.qty)}</b></div>`:""}).join("");
+ const total=cart.reduce((s,x)=>{const p=products.find(y=>y.id===x.id);return s+(p?p.sellingPrice*x.qty:0)},0);
+ document.getElementById("panelContent").innerHTML=rows||`<div class="empty">Your cart is empty 🎁</div>`;
+ if(cart.length)document.getElementById("panelContent").innerHTML+=`<div style="padding-top:18px"><div style="display:flex;justify-content:space-between"><b>Subtotal</b><b>${money(total)}</b></div><button class="checkout" onclick="openCheckout()">Proceed to Checkout</button></div>`;
+ document.getElementById("drawer").classList.add("open");
+}
+window.changeQty=(id,n)=>{const x=cart.find(a=>a.id===id);if(!x)return;x.qty+=n;if(x.qty<=0)cart=cart.filter(a=>a.id!==id);saveLocal();openCart()}
+window.removeCart=(id)=>{cart=cart.filter(x=>x.id!==id);saveLocal();openCart()}
+window.openWishlist=()=>{document.getElementById("panelTitle").textContent="Saved Gifts";const list=products.filter(p=>wishlist.includes(p.id));document.getElementById("panelContent").innerHTML=list.length?list.map(productCard).join(""):`<div class="empty">No saved gifts yet ♡</div>`;document.getElementById("drawer").classList.add("open")}
+window.closeDrawer=()=>document.getElementById("drawer").classList.remove("open");
+
+window.openLogin=()=>document.getElementById("loginModal").classList.add("open");
+window.closeLogin=()=>document.getElementById("loginModal").classList.remove("open");
+window.showLogin=(type)=>{document.getElementById("emailForm").style.display=type==="email"?"grid":"none";document.getElementById("phoneForm").style.display=type==="phone"?"grid":"none";document.getElementById("emailTab").classList.toggle("active",type==="email");document.getElementById("phoneTab").classList.toggle("active",type==="phone")}
+
+window.emailLogin=async()=>{
+ if(!firebaseReady)return msg("Add your Firebase config first.");
+ const e=document.getElementById("email").value.trim(),p=document.getElementById("password").value;
+ try{try{await signInWithEmailAndPassword(auth,e,p)}catch{await createUserWithEmailAndPassword(auth,e,p)}msg("Login successful.");closeLogin()}catch(err){msg(err.message)}
+}
+window.googleLogin=async()=>{
+ if(!firebaseReady)return msg("Add your Firebase config first.");
+ try{await signInWithPopup(auth,new GoogleAuthProvider());msg("Login successful.");closeLogin()}catch(e){msg(e.message)}
+}
+let confirmationResult=null;
+window.sendOTP=async()=>{
+ if(!firebaseReady)return msg("Add your Firebase config first.");
+ try{if(!window.recaptchaVerifier)window.recaptchaVerifier=new RecaptchaVerifier(auth,"recaptcha-container",{});confirmationResult=await signInWithPhoneNumber(auth,document.getElementById("phone").value,window.recaptchaVerifier);msg("OTP sent.")}catch(e){msg(e.message)}
+}
+window.verifyOTP=async()=>{try{if(!confirmationResult)return msg("Send OTP first.");await confirmationResult.confirm(document.getElementById("otp").value);msg("Phone verified.");closeLogin()}catch(e){msg(e.message)}}
+function msg(t){document.getElementById("loginMsg").textContent=t}
+
+window.openCheckout=()=>{
+ closeDrawer();
+ if(!cart.length)return;
+ document.getElementById("checkoutSummary").innerHTML=`<div class="order"><b>${cart.reduce((a,x)=>a+x.qty,0)} item(s)</b><div class="meta">Subtotal: ${money(cart.reduce((s,x)=>{const p=products.find(y=>y.id===x.id);return s+(p?p.sellingPrice*x.qty:0)},0))}</div></div>`;
+ if(window.currentUser){document.getElementById("customerEmail").value=window.currentUser.email||"";document.getElementById("customerName").value=window.currentUser.displayName||""}
+ document.getElementById("checkoutModal").classList.add("open");
+}
+window.closeCheckout=()=>document.getElementById("checkoutModal").classList.remove("open");
+window.applyCoupon=async()=>{
+ const code=document.getElementById("coupon").value.trim().toUpperCase();
+ if(!code)return;
+ if(firebaseReady){try{const snap=await getDocs(query(collection(db,"coupons"),where("code","==",code),limit(1)));if(!snap.empty){const c=snap.docs[0].data();if(c.active!==false){activeCoupon=c;document.getElementById("couponMsg").textContent="Coupon applied.";return}}}catch(e){}}
+ if(code==="GIFT99"){activeCoupon={code,discountType:"fixed",discountValue:99};document.getElementById("couponMsg").textContent="₹99 coupon applied."}
+ else document.getElementById("couponMsg").textContent="Coupon not found.";
+}
+window.placeOrder=async()=>{
+ if(!cart.length)return;
+ const name=document.getElementById("customerName").value.trim(),mobile=document.getElementById("customerMobile").value.trim(),email=document.getElementById("customerEmail").value.trim(),address=document.getElementById("address").value.trim();
+ if(!name||!mobile||!address)return alert("Please fill name, mobile and address.");
+ const subtotal=cart.reduce((s,x)=>{const p=products.find(y=>y.id===x.id);return s+(p?p.sellingPrice*x.qty:0)},0);
+ let discount=0;if(activeCoupon){discount=activeCoupon.discountType==="percentage"?subtotal*Number(activeCoupon.discountValue||0)/100:Number(activeCoupon.discountValue||0);if(activeCoupon.maxDiscount)discount=Math.min(discount,Number(activeCoupon.maxDiscount))}
+ const total=Math.max(0,subtotal-discount);
+ const order={orderId:"GHS-"+Date.now(),customerName:name,customerMobile:mobile,customerEmail:email,address,city:document.getElementById("city").value,pincode:document.getElementById("pincode").value,products:cart.map(x=>{const p=products.find(y=>y.id===x.id);return {productId:x.id,name:p?.name,quantity:x.qty,price:p?.sellingPrice}}),subtotal,discount,total,paymentMethod:document.getElementById("paymentMethod").value,paymentStatus:"Pending",orderStatus:"Order Placed",orderDate:new Date().toISOString(),expectedDeliveryDate:"",trackingId:"",trackingUrl:"",adminNote:""};
+ try{if(firebaseReady)await addDoc(collection(db,"orders"),{...order,userId:window.currentUser?.uid||null});localStorage.setItem("last_order",JSON.stringify(order));cart=[];activeCoupon=null;saveLocal();closeCheckout();alert("Order placed successfully! Order ID: "+order.orderId);openOrders()}catch(e){alert("Order save failed: "+e.message)}
+}
+window.openOrders=async()=>{
+ document.getElementById("panelTitle").textContent="My Orders";let orders=[];
+ const local=localStorage.getItem("last_order");if(local)orders.push(JSON.parse(local));
+ if(firebaseReady&&window.currentUser){try{const snap=await getDocs(query(collection(db,"orders"),where("userId","==",window.currentUser.uid),limit(20)));snap.forEach(d=>orders.push(d.data()))}catch(e){}}
+ const seen=new Set();orders=orders.filter(o=>o.orderId&&!seen.has(o.orderId)&&(seen.add(o.orderId)));
+ document.getElementById("panelContent").innerHTML=orders.length?orders.map(o=>`<div class="order"><b>${escapeHtml(o.orderId)}</b><div class="meta">${new Date(o.orderDate).toLocaleString("en-IN")}</div><div style="margin-top:7px">${money(o.total)}</div><span class="status">${escapeHtml(o.orderStatus||"Order Placed")}</span>${o.expectedDeliveryDate?`<div class="meta" style="margin-top:8px">Delivery: ${escapeHtml(o.expectedDeliveryDate)}</div>`:""}${o.trackingId?`<div class="meta">Tracking: ${escapeHtml(o.trackingId)}</div>`:""}</div>`).join(""):`<div class="empty">No orders yet 📦</div>`;
+ document.getElementById("drawer").classList.add("open");
+}
+
+async function loadSiteSettings(){
+ if(!firebaseReady)return;
+ try{const s=await getDoc(doc(db,"settings","site"));if(s.exists()){const x=s.data();if(x.announcement)document.getElementById("announcement").textContent=x.announcement;document.title=x.storeName||document.title}}catch(e){}
+}
+async function loadProducts(){
+ if(!firebaseReady)return;
+ try{const snap=await getDocs(collection(db,"products"));if(!snap.empty){products=snap.docs.map(d=>({id:d.id,...d.data()}));renderProducts()}}catch(e){console.warn(e)}
+}
+renderCategories();renderProducts();updateBadges();loadSiteSettings();loadProducts();
+</script>
+</body>
+</html>
