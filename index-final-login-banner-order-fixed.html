@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Gift Hamper Studio</title>
+<meta name="description" content="The Gift Hamper Studio - curated gifts for every occasion.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--primary:#7c3aed;--secondary:#ec4899;--dark:#171225;--muted:#6b6575;--bg:#faf8fc;--card:#fff;--border:#eee8f4}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--dark)}
+button,input,select{font:inherit}button{cursor:pointer;border:0}
+a{text-decoration:none;color:inherit}
+.topbar{background:#171225;color:#fff;text-align:center;padding:8px 12px;font-size:13px}
+header{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--border)}
+.nav{max-width:1200px;margin:auto;padding:14px 18px;display:flex;align-items:center;gap:18px}
+.logo{font-weight:900;font-size:21px;line-height:1.05;color:var(--primary);white-space:nowrap}
+.logo span{display:block;font-size:11px;letter-spacing:2px;color:#8b8495;margin-top:3px}
+.search{flex:1;display:flex;max-width:520px;background:#f6f3f8;border-radius:14px;padding:4px}
+.search input{width:100%;border:0;background:transparent;outline:0;padding:11px 13px}
+.search button{background:var(--primary);color:#fff;border-radius:10px;padding:0 15px}
+.nav-actions{display:flex;gap:8px}
+.iconbtn{background:#f6f3f8;border-radius:12px;padding:10px 12px;position:relative}
+.badge{position:absolute;right:-4px;top:-5px;background:#ef4444;color:#fff;font-size:10px;border-radius:99px;padding:2px 6px}
+.categories{max-width:1200px;margin:auto;padding:10px 18px;display:flex;gap:8px;overflow:auto;white-space:nowrap}
+.chip{background:#f7f2fb;border:1px solid #eee7f5;padding:8px 13px;border-radius:999px;font-size:13px}
+.chip:hover{background:#eee5fb}
+main{max-width:1200px;margin:auto;padding:18px}
+.hero{display:grid;grid-template-columns:1.35fr .65fr;gap:16px;margin-bottom:26px}
+.hero-main{min-height:330px;border-radius:24px;padding:38px;display:flex;align-items:center;background:linear-gradient(135deg,#ede5ff,#ffe8f3);overflow:hidden}
+.hero h1{font-size:clamp(34px,5vw,62px);line-height:.98;margin:10px 0 14px}
+.hero p{color:#625b6c;max-width:520px;line-height:1.6}
+.cta{margin-top:20px;background:var(--primary);color:#fff;padding:13px 19px;border-radius:12px;font-weight:700}
+.hero-side{display:grid;gap:16px}
+.promo{border-radius:22px;padding:25px;background:#fff;border:1px solid var(--border)}
+.promo:first-child{background:#fff0f7}
+.promo h3{font-size:22px;margin:7px 0}
+.section{margin:30px 0}
+.section-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:13px}
+.section-head h2{font-size:24px}.section-head small{color:var(--muted)}
+.hscroll{display:flex;gap:14px;overflow-x:auto;padding-bottom:7px;scrollbar-width:thin}
+.cat-card{min-width:155px;background:#fff;border:1px solid var(--border);border-radius:18px;padding:18px;text-align:center}
+.cat-icon{height:82px;border-radius:15px;background:linear-gradient(135deg,#f1e9ff,#ffeaf4);display:grid;place-items:center;font-size:40px;margin-bottom:12px}
+.cat-card b{font-size:14px}
+.products{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
+.product{background:#fff;border:1px solid var(--border);border-radius:18px;overflow:hidden;min-width:230px}
+.product-img{height:215px;background:#f5f2f7;position:relative;display:grid;place-items:center;overflow:hidden}
+.product-img img{width:100%;height:100%;object-fit:cover}
+.placeholder{font-size:52px}
+.tag{position:absolute;left:10px;top:10px;background:#171225;color:#fff;padding:5px 8px;border-radius:8px;font-size:11px}
+.wish{position:absolute;right:10px;top:10px;background:#fff;border-radius:50%;width:35px;height:35px;font-size:18px}
+.product-info{padding:14px}
+.product-info h3{font-size:15px;margin-bottom:7px}
+.meta{font-size:12px;color:var(--muted);min-height:17px}
+.price{margin-top:10px;display:flex;align-items:center;gap:8px}
+.price strong{font-size:18px}.old{text-decoration:line-through;color:#999;font-size:13px}
+.discount{font-size:11px;color:#15803d;background:#dcfce7;padding:4px 6px;border-radius:6px}
+.buy{width:100%;margin-top:11px;background:#f0e9ff;color:#5b21b6;padding:10px;border-radius:10px;font-weight:700}
+.buy:hover{background:var(--primary);color:#fff}
+.empty{text-align:center;color:var(--muted);padding:35px;width:100%}
+footer{margin-top:40px;background:#171225;color:#eee;padding:35px 18px}
+.footer-inner{max-width:1200px;margin:auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px}
+.footer-inner p{color:#bbb3c3;line-height:1.7;margin-top:8px}
+.drawer{position:fixed;inset:0;background:#0006;z-index:50;display:none}
+.drawer.open{display:block}
+.panel{position:absolute;right:0;top:0;height:100%;width:min(430px,100%);background:#fff;padding:20px;overflow:auto}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.close{background:#f3f0f5;border-radius:10px;padding:8px 11px}
+.cart-row{display:flex;gap:10px;border-bottom:1px solid var(--border);padding:13px 0}
+.cart-row img{width:65px;height:65px;object-fit:cover;border-radius:10px;background:#f4f1f6}
+.cart-row .grow{flex:1}.qty{display:flex;gap:7px;align-items:center;margin-top:7px}
+.qty button{background:#eee8f3;width:25px;height:25px;border-radius:7px}
+.checkout{width:100%;background:var(--primary);color:#fff;padding:13px;border-radius:11px;margin-top:14px}
+.modal{position:fixed;inset:0;background:#0007;z-index:60;display:none;place-items:center;padding:18px}
+.modal.open{display:grid}
+.modal-box{width:min(520px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:20px;padding:22px}
+.form{display:grid;gap:10px}.form input,.form select,.form textarea{width:100%;border:1px solid #ddd4e5;border-radius:10px;padding:11px;outline:0}.form textarea{min-height:80px}
+.tabs{display:flex;gap:8px;margin:12px 0}.tab{padding:8px 12px;border-radius:9px;background:#f2edf6}.tab.active{background:var(--primary);color:#fff}
+.order{border:1px solid var(--border);border-radius:14px;padding:13px;margin:10px 0}.status{display:inline-block;margin-top:7px;background:#ede9fe;color:#5b21b6;padding:5px 8px;border-radius:8px;font-size:12px}
+@media(max-width:900px){.products{grid-template-columns:repeat(3,1fr)}.hero{grid-template-columns:1fr}.hero-side{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){.nav{flex-wrap:wrap}.logo{flex:1}.search{order:3;max-width:none;flex-basis:100%}.products{grid-template-columns:repeat(2,1fr)}.product-img{height:180px}.hero-main{padding:27px;min-height:290px}.footer-inner{grid-template-columns:1fr}.nav-actions{gap:4px}.iconbtn{padding:9px}}
+.buy-now{margin-top:8px;background:#111827!important}.track-result img{max-width:120px;border-radius:10px}.help-fab{position:fixed;right:18px;bottom:18px;z-index:70}.footer-extra{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:28px}.footer-extra a{display:block;margin:7px 0}.social-links{display:flex;flex-wrap:wrap;gap:10px}.qrbox{width:160px;height:160px}.topbar{overflow:hidden;white-space:nowrap}.topbar span{display:inline-block;animation:marquee 18s linear infinite}@keyframes marquee{from{transform:translateX(100%)}to{transform:translateX(-100%)}}@media(max-width:700px){.footer-extra{grid-template-columns:1fr 1fr}}
+</style>
+
+<style>
+.announcement-ticker{overflow:hidden;white-space:nowrap}.announcement-ticker span{display:inline-block;padding-left:100%;animation:ticker 18s linear infinite}@keyframes ticker{to{transform:translateX(-100%)}}.social-links{display:flex;gap:12px;flex-wrap:wrap}.social-links a{font-weight:800;text-decoration:none;padding:10px 14px;border-radius:12px;background:#f3eef8}.help-fab{position:fixed;right:18px;bottom:18px;z-index:80;background:var(--primary);color:#fff;padding:13px 18px;border-radius:999px;box-shadow:0 10px 30px #0003}.buy-now{width:100%;margin-top:8px;background:#f59e0b;color:#fff;padding:11px;border-radius:10px;font-weight:800}.footer-extra{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:22px;padding:26px 0}.footer-extra h3{margin:0 0 10px}.footer-extra a{display:block;margin:8px 0}.qrbox{max-width:150px;background:#fff;padding:8px;border-radius:12px}.track-card{max-width:760px;margin:20px auto;padding:18px;border:1px solid var(--border);border-radius:18px;background:#fff}.track-result img{width:90px;height:90px;object-fit:cover;border-radius:12px}.hidden-email{display:none!important}</style></head>
+<body>
+<div class="topbar announcement-ticker" id="announcement"><span>🎁 Welcome to The Gift Hamper Studio — Beautiful gifts for every moment</span></div>
+<header>
+  <div class="nav">
+    <a class="logo" href="#">THE GIFT HAMPER<span>STUDIO</span></a>
+    <div class="search"><input id="searchInput" placeholder="Search gifts, hampers, occasions..."><button onclick="renderProducts()">Search</button></div>
+    <div class="nav-actions">
+      <button class="iconbtn" onclick="openWishlist()">♡<span class="badge" id="wishCount">0</span></button>
+      <button class="iconbtn" onclick="openOrders()">📦</button>
+      <button class="iconbtn" onclick="openCart()">🛒<span class="badge" id="cartCount">0</span></button>
+      <button class="iconbtn" onclick="openLogin()">👤</button>
+    </div>
+  </div>
+  <div class="categories" id="chips"></div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-main">
+      <div>
+        <div class="chip" style="display:inline-block">Curated with love ✨</div>
+        <h1>Make every<br>moment giftable.</h1>
+        <p>Thoughtfully curated hampers and gifts for birthdays, anniversaries, weddings, couples, festivals and all the little surprises.</p>
+        <button class="cta" onclick="document.getElementById('productsSection').scrollIntoView({behavior:'smooth'})">Shop Gifts →</button>
+      </div>
+    </div>
+    <div class="hero-side">
+      <div class="promo"><small>💝 For someone special</small><h3>Personalized Gifts</h3><p>Make it uniquely theirs.</p></div>
+      <div class="promo"><small>🚚 Easy gifting</small><h3>Gift Hampers</h3><p>Ready-to-gift collections for every occasion.</p></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><small>SHOP BY OCCASION</small><h2>Popular Categories</h2></div><small>Swipe →</small></div>
+    <div class="hscroll" id="catList"></div>
+  </section>
+
+  <section class="section" id="productsSection">
+    <div class="section-head"><div><small>HANDPICKED FOR YOU</small><h2>Featured Gifts</h2></div><small id="productCount"></small></div>
+    <div class="products" id="productGrid"></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><small>GIFTING MADE EASY</small><h2>Why shop with us?</h2></div></div>
+    <div class="hscroll">
+      <div class="cat-card"><div class="cat-icon">🎀</div><b>Beautifully Packed</b><p class="meta">Gift-ready presentation</p></div>
+      <div class="cat-card"><div class="cat-icon">💌</div><b>Personal Message</b><p class="meta">Add a special note</p></div>
+      <div class="cat-card"><div class="cat-icon">🚚</div><b>Reliable Delivery</b><p class="meta">Track your order</p></div>
+      <div class="cat-card"><div class="cat-icon">💜</div><b>Made with Love</b><p class="meta">Curated gifting</p></div>
+    </div>
+  </section>
+</main>
+
+<section id="specialCategorySequence" style="padding:28px 16px;max-width:1200px;margin:auto">
+<h2 style="text-align:center">🎁 Special Gift Categories</h2>
+<p style="text-align:center">Find the perfect gift for every special moment.</p>
+<div class="final-cats"><div class="final-cat" data-category="Happy Birthday Gifts">Happy Birthday Gifts</div><div class="final-cat" data-category="Anniversary Gifts">Anniversary Gifts</div><div class="final-cat" data-category="Surprise Gifts">Surprise Gifts</div><div class="final-cat" data-category="Wedding Gifts">Wedding Gifts</div><div class="final-cat" data-category="Couple Gifts">Couple Gifts</div><div class="final-cat" data-category="Love & Lovers Gifts">Love & Lovers Gifts</div><div class="final-cat" data-category="Gift for Her">Gift for Her</div><div class="final-cat" data-category="Gift for Him">Gift for Him</div><div class="final-cat" data-category="Custom Gift Hampers">Custom Gift Hampers</div><div class="final-cat" data-category="Festival & Special Gifts">Festival & Special Gifts</div><div class="final-cat" data-category="Baby & Kids Gifts">Baby & Kids Gifts</div><div class="final-cat" data-category="Corporate Gifts">Corporate Gifts</div></div></section><footer>
+  <div class="footer-inner">
+    <div><div class="logo" style="color:#fff">THE GIFT HAMPER STUDIO<span style="color:#aaa">MAKE MOMENTS MEMORABLE</span></div><p>Your destination for thoughtful gifts, curated hampers and memorable surprises.</p></div>
+    <div><b>Quick Links</b><p>Categories<br>Orders<br>Wishlist<br>Contact Us</p></div>
+    <div><b>Need Help?</b><p>WhatsApp: Contact us<br>Email: hello@thegifthamperstudio.com</p></div>
+  </div>
+</footer>
+
+<div class="drawer" id="drawer" onclick="if(event.target===this)closeDrawer()">
+  <div class="panel">
+    <div class="panel-head"><h2 id="panelTitle">Cart</h2><button class="close" onclick="closeDrawer()">✕</button></div>
+    <div id="panelContent"></div>
+  </div>
+</div>
+
+<div class="modal" id="loginModal">
+  <div class="modal-box">
+    <div class="panel-head"><h2>Welcome 👋</h2><button class="close" onclick="closeLogin()">✕</button></div>
+    <div class="tabs"><button class="tab active" id="emailTab" onclick="showLogin('email')">Email</button><button class="tab" id="phoneTab" onclick="showLogin('phone')">Phone OTP</button></div>
+    <div class="form" id="emailForm">
+      <input id="email" type="email" placeholder="Email address">
+      <input id="password" type="password" placeholder="Password">
+      <button class="cta" onclick="emailLogin()">Login / Sign up</button>
+      <button class="buy" onclick="googleLogin()">Continue with Google</button>
+    </div>
+    <div class="form" id="phoneForm" style="display:none">
+      <input id="phone" placeholder="+91XXXXXXXXXX">
+      <div id="recaptcha-container"></div>
+      <button class="cta" onclick="sendOTP()">Send OTP</button>
+      <input id="otp" placeholder="Enter OTP">
+      <button class="buy" onclick="verifyOTP()">Verify OTP</button>
+    </div>
+    <p id="loginMsg" class="meta" style="margin-top:10px"></p>
+  </div>
+</div>
+
+<div class="modal" id="checkoutModal">
+  <div class="modal-box">
+    <div class="panel-head"><h2>Checkout</h2><button class="close" onclick="closeCheckout()">✕</button></div>
+    <div id="checkoutSummary"></div>
+    <div class="form">
+      <input id="customerName" placeholder="Full name">
+      <input id="customerMobile" placeholder="Mobile number">
+      <input id="customerEmail" placeholder="Email">
+      <textarea id="address" placeholder="Full delivery address"></textarea>
+      <input id="city" placeholder="City">
+      <input id="pincode" placeholder="PIN code">
+      <select id="paymentMethod">
+        <option value="COD">Cash on Delivery</option>
+        <option value="UPI">UPI</option>
+        <option value="Google Pay">Google Pay</option>
+        <option value="PhonePe">PhonePe</option>
+        <option value="Paytm">Paytm</option>
+        <option value="Card">Debit / Credit Card</option>
+        <option value="Net Banking">Net Banking</option>
+        <option value="Bank Transfer">Bank Transfer</option>
+      </select>
+      <input id="coupon" placeholder="Coupon / Voucher code (e.g. GIFT99)">
+      <button class="buy" onclick="applyCoupon()">Apply Coupon</button>
+      <div id="couponMsg" class="meta"></div>
+      <button class="checkout" onclick="placeOrder()">Place Order</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,GoogleAuthProvider,signInWithPopup,RecaptchaVerifier,signInWithPhoneNumber,signOut} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import {getFirestore,collection,addDoc,getDocs,doc,getDoc,setDoc,query,where,orderBy,limit} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+const firebaseConfig={
+  apiKey:"AIzaSyCfILW5a7H4B8cQfVnJwh_Dcvn04FxAwJs",
+  authDomain:"the-gift-hamper-studio.firebaseapp.com",
+  projectId:"the-gift-hamper-studio",
+  storageBucket:"the-gift-hamper-studio.firebasestorage.app",
+  messagingSenderId:"1002125530065",
+  appId:"1:1002125530065:web:dea65445fd5631c7c0c6f0"
+};
+
+let app,auth,db;
+const firebaseReady=!Object.values(firebaseConfig).some(v=>String(v).includes("PASTE_"));
+if(firebaseReady){
+  app=initializeApp(firebaseConfig); auth=getAuth(app); db=getFirestore(app);
+  onAuthStateChanged(auth,user=>{window.currentUser=user;});
+}
+
+const categories=[
+ ["🎂","Happy Birthday"],["💍","Anniversary"],["🎁","Surprise Gift"],["💒","Wedding"],
+ ["💑","Couple Gift"],["❤️","Lovers Gift"],["👩","Gift for Her"],["👨","Gift for Him"],
+ ["✨","Custom Hampers"],["🎉","Festival Specials"],["🧸","Baby & Kids"],["🏢","Corporate Gifts"]
+];
+let products=[
+ {id:"demo1",name:"Chocolate & Self-Care Hamper",mainCategory:"Gift for Her",material:"Chocolates, candle, self-care items",quantity:6,size:"Standard",sku:"GHS-001",originalPrice:1499,sellingPrice:999,discount:33,offerActive:true,stock:20,description:"A sweet and relaxing gift hamper.",image:"https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=800&q=80",featured:true,bestSeller:true},
+ {id:"demo2",name:"Couple Celebration Hamper",mainCategory:"Couple Gift",material:"Mug, chocolates, greeting card",quantity:4,size:"Standard",sku:"GHS-002",originalPrice:1799,sellingPrice:1299,discount:28,offerActive:true,stock:15,description:"A fun hamper for two.",image:"https://images.unsplash.com/photo-1512909006721-3d6018887383?auto=format&fit=crop&w=800&q=80",featured:true,bestSeller:true},
+ {id:"demo3",name:"Birthday Surprise Box",mainCategory:"Happy Birthday",material:"Chocolates, décor, card",quantity:7,size:"Large",sku:"GHS-003",originalPrice:1299,sellingPrice:899,discount:31,offerActive:true,stock:30,description:"A cheerful birthday surprise.",image:"https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?auto=format&fit=crop&w=800&q=80",featured:true},
+ {id:"demo4",name:"Elegant Anniversary Hamper",mainCategory:"Anniversary",material:"Premium keepsakes and chocolates",quantity:5,size:"Premium",sku:"GHS-004",originalPrice:2299,sellingPrice:1699,discount:26,offerActive:true,stock:10,description:"A romantic anniversary gift.",image:"https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=80",featured:true}
+];
+let cart=JSON.parse(localStorage.getItem("ghs_cart")||"[]");
+let wishlist=JSON.parse(localStorage.getItem("ghs_wishlist")||"[]");
+let activeCoupon=null;
+
+function money(n){return "₹"+Number(n||0).toLocaleString("en-IN")}
+function saveLocal(){localStorage.setItem("ghs_cart",JSON.stringify(cart));localStorage.setItem("ghs_wishlist",JSON.stringify(wishlist));updateBadges()}
+function updateBadges(){document.getElementById("cartCount").textContent=cart.reduce((a,x)=>a+x.qty,0);document.getElementById("wishCount").textContent=wishlist.length}
+function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+
+function renderCategories(){
+ document.getElementById("catList").innerHTML=categories.map(c=>`<button class="cat-card" onclick="filterCategory('${c[1].replaceAll("'","\\'")}')"><div class="cat-icon">${c[0]}</div><b>${c[1]}</b></button>`).join("");
+ document.getElementById("chips").innerHTML=categories.map(c=>`<button class="chip" onclick="filterCategory('${c[1].replaceAll("'","\\'")}')">${c[0]} ${c[1]}</button>`).join("");
+}
+window.filterCategory=(cat)=>{document.getElementById("searchInput").value=cat;renderProducts()}
+
+function productCard(p){
+ const liked=wishlist.includes(p.id);
+ return `<article class="product">
+ <div class="product-img">${p.image?`<img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" onerror="this.style.display='none'">`:`<div class="placeholder">🎁</div>`}
+ ${p.offerActive?`<span class="tag">${p.discount||0}% OFF</span>`:""}<button class="wish" onclick="toggleWish('${p.id}')">${liked?"♥":"♡"}</button></div>
+ <div class="product-info"><h3>${escapeHtml(p.name)}</h3><div class="meta">${escapeHtml(p.mainCategory||"Gift")} · ${escapeHtml(p.size||"Standard")}</div>
+ <div class="price"><strong>${money(p.sellingPrice)}</strong>${p.originalPrice?`<span class="old">${money(p.originalPrice)}</span>`:""}${p.discount?`<span class="discount">${p.discount}%</span>`:""}</div>
+ <button class="buy" onclick="addToCart('${p.id}')">Add to Cart</button><button class="buy buy-now" onclick="buyNow('${p.id}')">Buy Now</button></div></article>`;
+}
+function renderProducts(){
+ const q=document.getElementById("searchInput").value.trim().toLowerCase();
+ let list=products.filter(p=>!q||`${p.name} ${p.mainCategory} ${p.subCategory||""} ${p.material||""}`.toLowerCase().includes(q));
+ document.getElementById("productCount").textContent=`${list.length} gifts`;
+ document.getElementById("productGrid").innerHTML=list.length?list.map(productCard).join(""):`<div class="empty">No gifts found. Try another search.</div>`;
+}
+window.toggleWish=(id)=>{wishlist=wishlist.includes(id)?wishlist.filter(x=>x!==id):[...wishlist,id];saveLocal();renderProducts()}
+window.addToCart=(id)=>{
+ const p=products.find(x=>x.id===id);if(!p)return;
+ const row=cart.find(x=>x.id===id); if(row)row.qty++;else cart.push({id,qty:1});
+ saveLocal();openCart();
+}
+window.buyNow=(id)=>{cart=[{id,qty:1}];saveLocal();openCheckout();};
+window.openCart=()=>{
+ document.getElementById("panelTitle").textContent="Your Cart";
+ const rows=cart.map(x=>{const p=products.find(y=>y.id===x.id);return p?`<div class="cart-row"><div class="grow"><b>${escapeHtml(p.name)}</b><div class="meta">${money(p.sellingPrice)} each</div><div class="qty"><button onclick="changeQty('${p.id}',-1)">−</button><b>${x.qty}</b><button onclick="changeQty('${p.id}',1)">+</button><button onclick="removeCart('${p.id}')" style="margin-left:7px">🗑</button></div></div><b>${money(p.sellingPrice*x.qty)}</b></div>`:""}).join("");
+ const total=cart.reduce((s,x)=>{const p=products.find(y=>y.id===x.id);return s+(p?p.sellingPrice*x.qty:0)},0);
+ document.getElementById("panelContent").innerHTML=rows||`<div class="empty">Your cart is empty 🎁</div>`;
+ if(cart.length)document.getElementById("panelContent").innerHTML+=`<div style="padding-top:18px"><div style="display:flex;justify-content:space-between"><b>Subtotal</b><b>${money(total)}</b></div><button class="checkout" onclick="openCheckout()">Proceed to Checkout</button></div>`;
+ document.getElementById("drawer").classList.add("open");
+}
+window.changeQty=(id,n)=>{const x=cart.find(a=>a.id===id);if(!x)return;x.qty+=n;if(x.qty<=0)cart=cart.filter(a=>a.id!==id);saveLocal();openCart()}
+window.removeCart=(id)=>{cart=cart.filter(x=>x.id!==id);saveLocal();openCart()}
+window.openWishlist=()=>{document.getElementById("panelTitle").textContent="Saved Gifts";const list=products.filter(p=>wishlist.includes(p.id));document.getElementById("panelContent").innerHTML=list.length?list.map(productCard).join(""):`<div class="empty">No saved gifts yet ♡</div>`;document.getElementById("drawer").classList.add("open")}
+window.closeDrawer=()=>document.getElementById("drawer").classList.remove("open");
+
+window.openLogin=()=>document.getElementById("loginModal").classList.add("open");
+window.closeLogin=()=>document.getElementById("loginModal").classList.remove("open");
+window.showLogin=(type)=>{document.getElementById("emailForm").style.display=type==="email"?"grid":"none";document.getElementById("phoneForm").style.display=type==="phone"?"grid":"none";document.getElementById("emailTab").classList.toggle("active",type==="email");document.getElementById("phoneTab").classList.toggle("active",type==="phone")}
+
+window.emailLogin=async()=>{
+ if(!firebaseReady)return msg("Add your Firebase config first.");
+ const e=document.getElementById("email").value.trim(),p=document.getElementById("password").value;
+ try{try{await signInWithEmailAndPassword(auth,e,p)}catch{await createUserWithEmailAndPassword(auth,e,p)}msg("Login successful.");closeLogin()}catch(err){msg(err.message)}
+}
+window.googleLogin=async()=>{
+ if(!firebaseReady)return msg("Add your Firebase config first.");
+ try{await signInWithPopup(auth,new GoogleAuthProvider());msg("Login successful.");closeLogin()}catch(e){msg(e.message)}
+}
+let confirmationResult=null;
+window.sendOTP=async()=>{
+ if(!firebaseReady)return msg("Add your Firebase config first.");
+ try{if(!window.recaptchaVerifier)window.recaptchaVerifier=new RecaptchaVerifier(auth,"recaptcha-container",{});confirmationResult=await signInWithPhoneNumber(auth,document.getElementById("phone").value,window.recaptchaVerifier);msg("OTP sent.")}catch(e){msg(e.message)}
+}
+window.verifyOTP=async()=>{try{if(!confirmationResult)return msg("Send OTP first.");await confirmationResult.confirm(document.getElementById("otp").value);msg("Phone verified.");closeLogin()}catch(e){msg(e.message)}}
+function msg(t){document.getElementById("loginMsg").textContent=t}
+
+window.openCheckout=()=>{
+ closeDrawer();
+ if(!cart.length)return;
+ document.getElementById("checkoutSummary").innerHTML=`<div class="order"><b>${cart.reduce((a,x)=>a+x.qty,0)} item(s)</b><div class="meta">Subtotal: ${money(cart.reduce((s,x)=>{const p=products.find(y=>y.id===x.id);return s+(p?p.sellingPrice*x.qty:0)},0))}</div></div>`;
+ if(window.currentUser){document.getElementById("customerEmail").value=window.currentUser.email||"";document.getElementById("customerName").value=window.currentUser.displayName||""}
+ document.getElementById("checkoutModal").classList.add("open");
+}
+window.closeCheckout=()=>document.getElementById("checkoutModal").classList.remove("open");
+window.applyCoupon=async()=>{
+ const code=document.getElementById("coupon").value.trim().toUpperCase();
+ if(!code)return;
+ if(firebaseReady){try{const snap=await getDocs(query(collection(db,"coupons"),where("code","==",code),limit(1)));if(!snap.empty){const c=snap.docs[0].data();if(c.active!==false){activeCoupon=c;document.getElementById("couponMsg").textContent="Coupon applied.";return}}}catch(e){}}
+ if(code==="GIFT99"){activeCoupon={code,discountType:"fixed",discountValue:99};document.getElementById("couponMsg").textContent="₹99 coupon applied."}
+ else document.getElementById("couponMsg").textContent="Coupon not found.";
+}
+window.placeOrder=async()=>{
+ if(!cart.length)return;
+ const name=document.getElementById("customerName").value.trim(),mobile=document.getElementById("customerMobile").value.trim(),email=document.getElementById("customerEmail").value.trim(),address=document.getElementById("address").value.trim();
+ if(!name||!mobile||!address)return alert("Please fill name, mobile and address.");
+ const subtotal=cart.reduce((s,x)=>{const p=products.find(y=>y.id===x.id);return s+(p?p.sellingPrice*x.qty:0)},0);
+ let discount=0;if(activeCoupon){discount=activeCoupon.discountType==="percentage"?subtotal*Number(activeCoupon.discountValue||0)/100:Number(activeCoupon.discountValue||0);if(activeCoupon.maxDiscount)discount=Math.min(discount,Number(activeCoupon.maxDiscount))}
+ const total=Math.max(0,subtotal-discount);
+ const order={orderId:"GHS-"+Date.now(),customerName:name,customerMobile:mobile,customerEmail:email,address,city:document.getElementById("city").value,pincode:document.getElementById("pincode").value,products:cart.map(x=>{const p=products.find(y=>y.id===x.id);return {productId:x.id,name:p?.name,quantity:x.qty,price:p?.sellingPrice}}),subtotal,discount,total,paymentMethod:document.getElementById("paymentMethod").value,paymentStatus:"Pending",orderStatus:"Order Placed",orderDate:new Date().toISOString(),expectedDeliveryDate:"",trackingId:"",trackingUrl:"",adminNote:""};
+ try{if(firebaseReady)await addDoc(collection(db,"orders"),{...order,userId:window.currentUser?.uid||null});localStorage.setItem("last_order",JSON.stringify(order));cart=[];activeCoupon=null;saveLocal();closeCheckout();alert("Order placed successfully! Order ID: "+order.orderId);openOrders()}catch(e){alert("Order save failed: "+e.message)}
+}
+window.openOrders=async()=>{
+ document.getElementById("panelTitle").textContent="My Orders";let orders=[];
+ const local=localStorage.getItem("last_order");if(local)orders.push(JSON.parse(local));
+ if(firebaseReady&&window.currentUser){try{const snap=await getDocs(query(collection(db,"orders"),where("userId","==",window.currentUser.uid),limit(20)));snap.forEach(d=>orders.push(d.data()))}catch(e){}}
+ const seen=new Set();orders=orders.filter(o=>o.orderId&&!seen.has(o.orderId)&&(seen.add(o.orderId)));
+ document.getElementById("panelContent").innerHTML=orders.length?orders.map(o=>`<div class="order"><b>${escapeHtml(o.orderId)}</b><div class="meta">${new Date(o.orderDate).toLocaleString("en-IN")}</div><div style="margin-top:7px">${money(o.total)}</div><span class="status">${escapeHtml(o.orderStatus||"Order Placed")}</span>${o.expectedDeliveryDate?`<div class="meta" style="margin-top:8px">Delivery: ${escapeHtml(o.expectedDeliveryDate)}</div>`:""}${o.trackingId?`<div class="meta">Tracking: ${escapeHtml(o.trackingId)}</div>`:""}</div>`).join(""):`<div class="empty">No orders yet 📦</div>`;
+ document.getElementById("drawer").classList.add("open");
+}
+
+async function loadSiteSettings(){
+ if(!firebaseReady)return;
+ try{const s=await getDoc(doc(db,"settings","site"));if(s.exists()){const x=s.data();if(x.announcement)document.getElementById("announcement").textContent=x.announcement;document.title=x.storeName||document.title}}catch(e){}
+}
+async function loadProducts(){
+ if(!firebaseReady)return;
+ try{const snap=await getDocs(collection(db,"products"));if(!snap.empty){products=snap.docs.map(d=>({id:d.id,...d.data()}));renderProducts()}}catch(e){console.warn(e)}
+}
+renderCategories();renderProducts();updateBadges();loadSiteSettings();loadProducts();
+</script>
+
+<!-- FINAL FEATURE EXTENSION -->
+<section class="track-card" id="trackOrderSection"><h2>Track Your Order</h2><p>Order ID या Mobile Number डालकर अपनी पूरी order information देखें।</p><div class="row"><input id="trackQuery" placeholder="Order ID / Mobile Number"><button class="checkout" style="width:auto" onclick="window.trackOrderNow()">View My Order</button></div><div id="trackResult" class="track-result"></div></section>
+<button class="help-fab" onclick="window.openHelp()">How can I help?</button>
+<div class="modal" id="helpModal"><div class="modal-box"><div class="panel-head"><h2>How can I help?</h2><button class="close" onclick="window.closeHelp()">✕</button></div><div class="form"><button onclick="window.helpAction('delivery')">Delivery कब तक होगी?</button><button onclick="window.helpAction('international')">International Shipping</button><button onclick="window.helpAction('payment')">Payment कैसे करें?</button><button onclick="window.helpAction('return')">Return कैसे करें?</button><button onclick="window.helpAction('order')">मेरा Order कहाँ है?</button><button onclick="window.helpAction('product')">Product के बारे में पूछना है</button><button onclick="window.helpAction('support')">Customer Support WhatsApp</button></div><p id="helpAnswer" class="meta"></p></div></div>
+<div class="footer-extra" id="finalFooter">
+<div id="footerAboutBlock"><h3 id="footerStore">The Gift Hamper Studio</h3><p id="footerDescription">The Gift Hamper Studio brings thoughtful gift hampers and special gifts for every celebration and memorable moment.</p><div class="social-links" id="socialLinks"></div></div>
+<div id="footerLinksBlock"><h3>Useful Links</h3><div id="usefulLinks"></div></div>
+<div id="footerContactBlock"><h3>Contact Us</h3><p id="shopAddress">Shop address will be updated by admin.</p><p id="shopContact"></p><p id="shopEmail"></p><p id="shopWhatsapp"></p></div>
+<div id="footerQRBlock"><h3>📱 Scan &amp; Visit</h3><p>Scan the QR code to visit our store.</p><img class="qrbox" id="storeQR" alt="Scan to Visit Store"></div>
+</div>
+<section id="deliveryInfo" class="track-card"><h2>Delivery Information</h2><p>Delivery timeline and charges are updated by The Gift Hamper Studio.</p></section><section id="internationalShipping" class="track-card"><h2>International Shipping</h2><p>International delivery availability is confirmed during inquiry/order processing.</p></section><section id="returnPolicy" class="track-card"><h2>Return Policy</h2><p id="returnPolicyText">Return policy will be updated by admin.</p></section>
+<script type="module">import{initializeApp}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";import{getFirestore,doc,getDoc,collection,getDocs}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";const cfg={apiKey:"AIzaSyCfILW5a7H4B8cQfVnJwh_Dcvn04FxAwJs",authDomain:"the-gift-hamper-studio.firebaseapp.com",projectId:"the-gift-hamper-studio",storageBucket:"the-gift-hamper-studio.firebasestorage.app",messagingSenderId:"1002125530065",appId:"1:1002125530065:web:dea65445fd5631c7c0c6f0"};const DB=getFirestore(initializeApp(cfg,'finalExtension'));let site={};async function settings(){try{let d=await getDoc(doc(DB,'settings','site'));if(!d.exists())return;site=d.data();let x=site;const set=(id,v)=>{let e=document.getElementById(id);if(e)e.textContent=v||''};set('footerStore',x.sStoreName||'The Gift Hamper Studio');set('footerTagline',x.sTagline||'Gift for Every Special Moment');set('shopAddress',x.sAddress);set('shopContact',x.sContact);set('shopEmail',x.sEmail);set('returnPolicyText',x.sReturnPolicy);if(x.sAnnouncement){let e=document.querySelector('#announcement span');if(e)e.textContent=x.sAnnouncement}let L={Instagram:x.sInstagram,Facebook:x.sFacebook,YouTube:x.sYoutube,Telegram:x.sTelegram,'Twitter/X':x.sTwitter};document.getElementById('socialLinks').innerHTML=Object.entries(L).filter(z=>z[1]).map(z=>`<a target="_blank" href="${z[1]}">${z[0]}</a>`).join('');document.getElementById('storeQR').src='https://api.qrserver.com/v1/create-qr-code/?size=160x160&data='+encodeURIComponent(x.sWebsite||location.href)}catch(e){console.warn(e)}}settings();window.openHelp=()=>document.getElementById('helpModal').classList.add('open');window.closeHelp=()=>document.getElementById('helpModal').classList.remove('open');window.helpAction=k=>{let x={delivery:'Delivery time location aur product ke hisaab se vary kar sakta hai. Order place karne ke baad My Orders se status check karein.',international:'International shipping destination ke according available ho sakti hai. Shipping charges, customs aur delivery time ke liye support se contact karein.',payment:'Checkout par available payment methods show honge. Payment sirf official checkout screen par hi karein.',return:'Return request ke liye apna order number ready rakhein aur The Gift Hamper Studio support se contact karein.',order:'My Orders page open karke apne order ki available status information check karein.',product:'Product page par details dekhein. Aap WhatsApp Inquiry button se product ka naam, price, metal aur purity ke saath enquiry bhej sakte hain.',support:'Customer Support WhatsApp se direct support lein.'};let el=document.getElementById('helpAnswer');el.textContent=x[k];el.style.cssText='display:block;background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5;padding:12px;border-radius:10px;margin-top:12px;font-weight:600';if(k==='support'&&site.sWhatsapp)window.open('https://wa.me/'+String(site.sWhatsapp).replace(/\D/g,''),'_blank')}};window.trackOrderNow=async()=>{let q=document.getElementById('trackQuery').value.trim(),out=document.getElementById('trackResult');if(!q)return;out.textContent='Searching...';try{let S=await getDocs(collection(DB,'orders')),o=S.docs.map(d=>({id:d.id,...d.data()})).find(x=>String(x.orderId||x.id).toLowerCase()===q.toLowerCase()||String(x.mobile||'').replace(/\D/g,'')===q.replace(/\D/g,''));if(!o){out.textContent='Order not found.';return}let it=(o.items||[])[0]||{};out.innerHTML=`<div class="order"><h3>${o.orderId||o.id}</h3>${it.image?`<img src="${it.image}">`:''}<p><b>Product:</b> ${it.name||o.productName||'Order Product'}</p><p><b>Payment:</b> ${o.paymentMethod||'N/A'} — ${o.paymentStatus||'Pending'}</p><p><b>Amount:</b> ${o.total||0}</p><p><b>Delivery:</b> ${o.expectedDeliveryDate||'To be updated'}</p><p><b>Tracking:</b> ${o.trackingId||'To be updated'}</p><p><b>Status:</b> ${o.orderStatus||o.status||'Order Placed'}</p><p><b>Address:</b> ${o.address||''}</p></div>`}catch(e){out.textContent='Unable to load tracking details.'}};</script>
+
+<!-- Updated: search-email reset, Buy Now, Help Center answers, responsive categories, order tracking fallback, WhatsApp -->
+<style>.final-help-answer{display:none;margin:14px 0;padding:14px;border-radius:12px;background:#fee2e2;border:1px solid #ef4444;color:#991b1b;font-weight:700}.final-cats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.final-cat{padding:15px;border-radius:15px;background:linear-gradient(135deg,#fff1f2,#f5f3ff);font-weight:800;text-align:center}.final-wa{position:fixed;right:18px;bottom:18px;z-index:9999;background:#25D366;color:#fff;border:0;border-radius:999px;padding:14px 18px;font-weight:800}.final-buy{margin-left:8px;background:#7c3aed!important;color:#fff!important}@media(max-width:800px){.final-cats{grid-template-columns:repeat(2,1fr)}}</style>
+<script>const FINAL_HELP={delivery:'Delivery time location aur product ke hisaab se vary kar sakta hai. Order place karne ke baad My Orders se status check karein.',international:'International shipping destination ke according available ho sakti hai. Shipping charges, customs aur delivery time ke liye support se contact karein.',payment:'Checkout par available payment methods show honge. Payment sirf official checkout screen par hi karein.',return:'Return request ke liye apna order number ready rakhein aur The Gift Hamper Studio support se contact karein.',order:'My Orders page open karke apne order ki available status information check karein.',product:'Product page par details dekhein. Aap WhatsApp Inquiry button se product ka naam, price, metal aur purity ke saath enquiry bhej sakte hain.'};function finalHelp(k){let x=document.getElementById('finalHelpAnswer');if(x){x.textContent=FINAL_HELP[k];x.style.display='block'}}function finalPatch(){document.querySelectorAll('input').forEach(i=>{if((i.placeholder||'').toLowerCase().includes('search')&&(i.value||'').includes('@'))i.value=''});document.querySelectorAll('button').forEach(b=>{if(b.textContent.trim()==='Add to Cart'){let extras=[...b.parentElement.querySelectorAll('.final-buy')];extras.slice(1).forEach(x=>x.remove());if(!extras.length){let n=b.cloneNode(true);n.textContent='Buy Now';n.classList.add('final-buy');n.dataset.finalBuy='1';n.onclick=()=>{if(window.openCheckout)window.openCheckout();else b.click()};b.after(n)}}});let h=[...document.querySelectorAll('section,div')].find(e=>(e.textContent||'').includes('How Can I Help'));if(h&&!document.getElementById('finalHelpAnswer')){let z=document.createElement('div');z.innerHTML='<div style="display:grid;gap:8px"><button onclick="finalHelp(\'delivery\')">📦 Delivery कब होगी?</button><button onclick="finalHelp(\'international\')">🌍 Kya international shipping hai?</button><button onclick="finalHelp(\'payment\')">💳 Payment kaise karna hai?</button><button onclick="finalHelp(\'return\')">↩️ Return kaise karun?</button><button onclick="finalHelp(\'order\')">📍 Mera order kahan hai?</button><button onclick="finalHelp(\'product\')">💎 Product ke baare mein poochna hai</button></div><div id="finalHelpAnswer" class="final-help-answer"></div>';h.after(z)}}document.addEventListener('DOMContentLoaded',finalPatch);setTimeout(finalPatch,1000);</script><button class="final-wa" style="display:none" onclick="let n=localStorage.getItem('tgWhatsapp')||'';n?open('https://wa.me/'+n.replace(/\\D/g,''),'_blank'):alert('Set WhatsApp number in Admin Settings')">WhatsApp Support</button>
+
+<!-- GHS FINAL INTEGRATION PATCH -->
+<style>
+.ghs-answer{display:none;background:#fee2e2;color:#991b1b;border:1px solid #ef4444;padding:12px;border-radius:10px;margin:8px 0 12px;font-weight:700;line-height:1.5}.ghs-inquiry{width:100%;margin-top:8px;background:#16a34a;color:#fff;padding:10px;border-radius:10px;font-weight:700}.ghs-banner-slider{position:relative;overflow:hidden;border-radius:20px;margin-bottom:18px}.ghs-banner-track{display:flex;transition:transform .6s ease}.ghs-banner-slide{min-width:100%}.ghs-banner-dots{display:flex;justify-content:center;gap:7px;margin-top:10px}.ghs-banner-dots button{width:9px;height:9px;border:0;border-radius:50%;background:#bbb;padding:0}.ghs-banner-dots button.active{background:#5b21b6}.ghs-banner{min-height:260px;border-radius:20px;overflow:hidden;background:#eee;position:relative;margin-bottom:18px}.ghs-banner img{width:100%;height:100%;min-height:260px;object-fit:cover}.ghs-banner-content{position:absolute;inset:0;padding:28px;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(90deg,#000a,transparent);color:#fff}.ghs-banner-content a{display:inline-block;width:max-content;margin-top:12px;background:#fff;color:#171225;padding:10px 16px;border-radius:9px;font-weight:800}.special-products{margin:12px 0 24px}.special-products h3{margin:12px 0}.track-result a{color:#5b21b6;font-weight:700}
+</style>
+<script type="module">
+import{initializeApp,getApps}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import{getFirestore,collection,getDocs,doc,getDoc,query,where}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+const cfg={apiKey:"AIzaSyCfILW5a7H4B8cQfVnJwh_Dcvn04FxAwJs",authDomain:"the-gift-hamper-studio.firebaseapp.com",projectId:"the-gift-hamper-studio",storageBucket:"the-gift-hamper-studio.firebasestorage.app",messagingSenderId:"1002125530065",appId:"1:1002125530065:web:dea65445fd5631c7c0c6f0"};
+const APP=getApps()[0]||initializeApp(cfg),DB=getFirestore(APP);
+const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+async function loadFinalBanners(){try{const s=await getDocs(collection(DB,'banners'));const list=s.docs.map(d=>d.data()).filter(b=>b.active!==false).sort((a,b)=>(a.slot||0)-(b.slot||0));let host=document.getElementById('ghsBannerHost');if(!host){host=document.createElement('div');host.id='ghsBannerHost';document.querySelector('main')?.prepend(host)}host.innerHTML=list.map(b=>`<div class="ghs-banner">${b.image?`<img src="${esc(b.image)}" alt="${esc(b.title)}">`:''}<div class="ghs-banner-content"><h2>${esc(b.title)}</h2><p>${esc(b.subtitle)}</p>${b.link?`<a href="${esc(b.link)}">${esc(b.buttonText||'Shop Now')}</a>`:''}</div></div>`).join('')}catch(e){console.warn('Banner load',e)}}
+async function loadSpecialProducts(){try{const s=await getDocs(collection(DB,'products'));const ps=s.docs.map(d=>({id:d.id,...d.data()}));document.querySelectorAll('.final-cat').forEach(c=>{const cat=c.dataset.category;const list=ps.filter(p=>[p.mainCategory,p.subCategory,p.category].some(x=>String(x||'').toLowerCase()===String(cat).toLowerCase()));let box=document.getElementById('special-'+cat.replace(/[^a-z0-9]/gi,'-'));if(!box){box=document.createElement('div');box.id='special-'+cat.replace(/[^a-z0-9]/gi,'-');box.className='special-products';c.after(box)}box.innerHTML=list.length?`<h3>${esc(cat)}</h3><div class="products">${list.map(p=>`<div class="product"><div class="product-img">${p.image?`<img src="${esc(p.image)}">`:''}</div><div class="product-info"><h3>${esc(p.name)}</h3><div class="price"><strong>₹${Number(p.sellingPrice||0).toLocaleString('en-IN')}</strong></div></div></div>`).join('')}</div>`:''});}catch(e){console.warn(e)}}
+window.trackOrderNow=async()=>{const q=(document.getElementById('trackQuery')?.value||'').trim(),out=document.getElementById('trackResult');if(!q||!out)return;out.textContent='Searching...';try{const s=await getDocs(collection(DB,'orders'));const n=q.replace(/\D/g,'');const o=s.docs.map(d=>({id:d.id,...d.data()})).find(x=>String(x.orderId||x.id).toLowerCase()===q.toLowerCase()||String(x.customerMobile||x.mobile||'').replace(/\D/g,'')===n);if(!o){out.textContent='Order not found.';return}out.innerHTML=`<div class="order"><h3>${esc(o.orderId||o.id)}</h3><p><b>Customer:</b> ${esc(o.customerName||'')}</p><p><b>Address:</b> ${esc(o.address||'')}</p><p><b>Payment:</b> ${esc(o.paymentMethod||'N/A')} — <b>${esc(o.paymentStatus||'Pending')}</b></p><p><b>Total Amount:</b> ₹${Number(o.total||0).toLocaleString('en-IN')}</p><p><b>Pending Amount:</b> ₹${Number(o.pendingAmount||0).toLocaleString('en-IN')}</p><p><b>Order Status:</b> ${esc(o.orderStatus||o.status||'Order Placed')}</p><p><b>Delivery Partner:</b> ${esc(o.deliveryPartner||'To be updated')}</p><p><b>Confirmed Delivery Date:</b> ${esc(o.expectedDeliveryDate||'To be updated')}</p><p><b>Tracking ID:</b> ${esc(o.trackingId||'To be updated')}</p>${o.trackingUrl?`<p><a target="_blank" href="${esc(o.trackingUrl)}">Track Parcel →</a></p>`:''}<p><b>Parcel Status:</b> ${esc(o.parcelStatus||o.orderStatus||o.status||'Order Placed')}</p><hr><p><b>Return Status:</b> ${esc(o.returnStatus||'No Return')}</p><p><b>Refund Amount:</b> ₹${Number(o.refundAmount||0).toLocaleString('en-IN')}</p><p><b>Refund Payment Status:</b> ${esc(o.refundPaymentStatus||'N/A')}</p></div>`}catch(e){out.textContent='Unable to load tracking details.'}}
+function fixHelp(){document.querySelectorAll('#helpModal .form button').forEach(b=>{const map={'Delivery कब तक होगी?':'Delivery time location aur product ke hisaab se vary kar sakta hai. Order place karne ke baad My Orders se status check karein.','International Shipping':'International shipping destination ke according available ho sakti hai. Shipping charges, customs aur delivery time ke liye support se contact karein.','Payment कैसे करें?':'Checkout par available payment methods show honge. Payment sirf official checkout screen par hi karein.','Return कैसे करें?':'Return request ke liye apna order number ready rakhein aur The Gift Hamper Studio support se contact karein.','मेरा Order कहाँ है?':'My Orders page open karke apne order ki available status information check karein.','Product के बारे में पूछना है':'Product page par details dekhein. Aap WhatsApp Inquiry button se product ka naam, price, metal aur purity ke saath enquiry bhej sakte hain.'};const ans=map[b.textContent.trim()];if(!ans)return;b.onclick=()=>{document.querySelectorAll('.ghs-answer').forEach(x=>x.remove());const d=document.createElement('div');d.className='ghs-answer';d.textContent=ans;d.style.display='block';b.after(d)}})}
+function fixButtons(){document.querySelectorAll('.product').forEach(card=>{const buys=[...card.querySelectorAll('button')].filter(b=>b.textContent.trim()==='Buy Now');buys.slice(1).forEach(b=>b.remove());if(!card.querySelector('.ghs-inquiry')){const b=document.createElement('button');b.className='ghs-inquiry';b.textContent='WhatsApp Inquiry';b.onclick=()=>{const p=card.querySelector('h3')?.textContent||'Product';const n=localStorage.getItem('tgWhatsapp')||'';if(!n)return alert('WhatsApp number is not set in Admin Settings');window.open('https://wa.me/'+n.replace(/\D/g,'')+'?text='+encodeURIComponent('Hello, I want to inquire about: '+p),'_blank')};card.appendChild(b)}})}
+document.addEventListener('DOMContentLoaded',()=>{fixHelp();fixButtons();loadFinalBanners();loadSpecialProducts();setTimeout(fixButtons,1200)});
+</script>
+
+<script type="module">
+import{initializeApp,getApps}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import{getFirestore,collection,getDocs,query,where,limit}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+const __app=getApps()[0]||initializeApp({apiKey:"AIzaSyCfILW5a7H4B8cQfVnJwh_Dcvn04FxAwJs",authDomain:"the-gift-hamper-studio.firebaseapp.com",projectId:"the-gift-hamper-studio",storageBucket:"the-gift-hamper-studio.firebasestorage.app",messagingSenderId:"1002125530065",appId:"1:1002125530065:web:dea65445fd5631c7c0c6f0"});
+const __db=getFirestore(__app);
+const __e=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+function __details(o){
+ const url=String(o.trackingUrl||'').trim();
+ const track=url && !/example\.com/i.test(url)
+   ? `<p><a target="_blank" rel="noopener" href="${__e(url)}">Track Parcel →</a></p>`
+   : `<p class="meta">Tracking link: Not available yet</p>`;
+ return `<div class="order">
+ <h3>${__e(o.orderId||o.id||'Order')}</h3>
+ <p><b>Customer:</b> ${__e(o.customerName||'')}</p>
+ <p><b>Mobile Number:</b> ${__e(o.customerMobile||o.mobile||o.phone||'Not available')}</p>
+ <p><b>Address:</b> ${__e(o.address||'')}</p>
+ <p><b>Payment:</b> ${__e(o.paymentMethod||'N/A')} — <b>${__e(o.paymentStatus||'Pending')}</b></p>
+ <p><b>Total Amount:</b> ₹${Number(o.total||0).toLocaleString('en-IN')}</p>
+ <p><b>Pending Amount:</b> ₹${Number(o.pendingAmount||0).toLocaleString('en-IN')}</p>
+ <p><b>Order Status:</b> ${__e(o.orderStatus||o.status||'Order Placed')}</p>
+ <p><b>Delivery Partner:</b> ${__e(o.deliveryPartner||'To be updated')}</p>
+ <p><b>Confirmed Delivery Date:</b> ${__e(o.expectedDeliveryDate||'To be updated')}</p>
+ <p><b>Tracking ID:</b> ${__e(o.trackingId||'To be updated')}</p>
+ ${track}
+ <p><b>Parcel Status:</b> ${__e(o.parcelStatus||o.orderStatus||o.status||'Order Placed')}</p>
+ <hr>
+ <p><b>Return Status:</b> ${__e(o.returnStatus||'No Return')}</p>
+ <p><b>Refund Amount:</b> ₹${Number(o.refundAmount||0).toLocaleString('en-IN')}</p>
+ <p><b>Refund Payment Status:</b> ${__e(o.refundPaymentStatus||'N/A')}</p>
+ </div>`;
+}
+window.trackOrderNow=async()=>{
+ const q=(document.getElementById('trackQuery')?.value||'').trim();
+ const out=document.getElementById('trackResult'); if(!q||!out)return;
+ out.textContent='Searching...';
+ try{
+  const s=await getDocs(collection(__db,'orders')), n=q.replace(/\D/g,'');
+  const o=s.docs.map(d=>({id:d.id,...d.data()})).find(x=>
+    String(x.orderId||x.id).toLowerCase()===q.toLowerCase() ||
+    String(x.customerMobile||x.mobile||x.phone||'').replace(/\D/g,'')===n
+  );
+  out.innerHTML=o?__details(o):'Order not found.';
+ }catch(e){out.textContent='Unable to load tracking details.'}
+};
+window.openOrders=async()=>{
+ const title=document.getElementById('panelTitle'), content=document.getElementById('panelContent'), drawer=document.getElementById('drawer');
+ if(title)title.textContent='My Orders';
+ let orders=[];
+ const local=localStorage.getItem('last_order'); if(local){try{orders.push(JSON.parse(local))}catch(e){}}
+ try{
+  if(window.currentUser){
+   const snap=await getDocs(query(collection(__db,'orders'),where('userId','==',window.currentUser.uid),limit(50)));
+   snap.forEach(d=>orders.push({id:d.id,...d.data()}));
+  }
+ }catch(e){}
+ const seen=new Set(); orders=orders.filter(o=>o&&(o.orderId||o.id)&&!seen.has(o.orderId||o.id)&&(seen.add(o.orderId||o.id)));
+ if(content)content.innerHTML=orders.length
+  ? orders.map(o=>`<div class="order"><b>${__e(o.orderId||o.id)}</b><div class="meta">${o.orderDate?new Date(o.orderDate).toLocaleString('en-IN'):''}</div><div style="margin-top:7px">₹${Number(o.total||0).toLocaleString('en-IN')}</div><span class="status">${__e(o.orderStatus||o.status||'Order Placed')}</span><button class="checkout" style="margin-top:10px;width:auto" onclick="window.showMyOrderDetails('${__e(o.orderId||o.id)}')">View Details</button></div>`).join('')
+  : '<div class="empty">No orders yet 📦</div>';
+ if(drawer)drawer.classList.add('open');
+ window.__myOrders=orders;
+};
+window.showMyOrderDetails=(id)=>{
+ const o=(window.__myOrders||[]).find(x=>String(x.orderId||x.id)===String(id));
+ const content=document.getElementById('panelContent'); if(content&&o)content.innerHTML=`<button onclick="window.openOrders()" style="margin-bottom:12px">← Back to My Orders</button>${__details(o)}`;
+};
+</script>
+
+
+<style>
+.footer-extra{max-width:1200px;margin:auto;align-items:start}.footer-extra h3{font-size:18px}.footer-extra p{word-break:break-word}.social-links a{display:inline-flex!important;align-items:center;gap:7px}.social-links a .si{font-size:20px}.useful-link{display:block;padding:5px 0;text-decoration:none}.qrbox{width:160px;height:160px;object-fit:contain}@media(max-width:700px){.footer-extra{padding:24px 18px}.qrbox{width:140px;height:140px}}
+</style>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";import{getFirestore,doc,getDoc,collection,getDocs}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+const cfg={apiKey:"AIzaSyCfILW5a7H4B8cQfVnJwh_Dcvn04FxAwJs",authDomain:"the-gift-hamper-studio.firebaseapp.com",projectId:"the-gift-hamper-studio",storageBucket:"the-gift-hamper-studio.firebasestorage.app",messagingSenderId:"1002125530065",appId:"1:1002125530065:web:dea65445fd5631c7c0c6f0"};const APP2=initializeApp(cfg,'footerComplete');const DB2=getFirestore(APP2);
+const txt=(id,v)=>{let e=document.getElementById(id);if(e)e.textContent=v||''};
+async function loadCompleteFooter(){try{let d=await getDoc(doc(DB2,'settings','site'));let x=d.exists()?d.data():{};txt('footerStore',x.sStoreName||'The Gift Hamper Studio');txt('footerDescription',x.sDescription||x.sTagline||'The Gift Hamper Studio brings thoughtful gift hampers and special gifts for every celebration and memorable moment.');txt('shopAddress',x.sAddress||'');txt('shopContact',x.sContact?'📞 '+x.sContact:'');txt('shopEmail',x.sEmail?'📧 '+x.sEmail:'');txt('shopWhatsapp',x.sWhatsapp?'💬 WhatsApp: '+x.sWhatsapp:'');txt('returnPolicyText',x.sReturnPolicy||'Return policy will be updated by admin.');let socials=[['Instagram','📸',x.sInstagram,x.sInstagramEnabled],['Facebook','ⓕ',x.sFacebook,x.sFacebookEnabled],['YouTube','▶️',x.sYoutube,x.sYoutubeEnabled],['WhatsApp','💬',x.sWhatsapp?('https://wa.me/'+String(x.sWhatsapp).replace(/\D/g,'')):'',x.sWhatsappEnabled],['Telegram','✈️',x.sTelegram,x.sTelegramEnabled],['Twitter/X','𝕏',x.sTwitter,x.sTwitterEnabled]];document.getElementById('socialLinks').innerHTML=socials.filter(z=>z[2]&&z[3]!=='false').map(z=>`<a target="_blank" rel="noopener" href="${z[2]}"><span class="si">${z[1]}</span>${z[0]}</a>`).join('');let links=[['🏠 Home','#',x.sLinkHomeEnabled],['🛍️ Shop / Products','#products',x.sLinkShopEnabled],['🎁 Special Gift Categories','#specialGiftCategories',x.sLinkSpecialEnabled],['📦 Track Order','#trackOrderSection',x.sLinkTrackEnabled],['🧾 My Orders','#trackOrderSection',x.sLinkOrdersEnabled],['📞 Contact Us','#footerContactBlock',x.sLinkContactEnabled],['↩️ Return Policy','#returnPolicy',x.sLinkReturnEnabled],['🚚 Shipping Policy','#deliveryInfo',x.sLinkShippingEnabled]];document.getElementById('usefulLinks').innerHTML=links.filter(z=>z[2]!=='false').map(z=>`<a class="useful-link" href="${z[1]}">${z[0]}</a>`).join('');[['footerAboutBlock',x.sFooterAboutEnabled],['footerLinksBlock',x.sFooterLinksEnabled],['footerContactBlock',x.sFooterContactEnabled],['footerQRBlock',x.sFooterQREnabled]].forEach(z=>{let e=document.getElementById(z[0]);if(e)e.style.display=z[1]==='false'?'none':''});document.getElementById('storeQR').src='https://api.qrserver.com/v1/create-qr-code/?size=160x160&data='+encodeURIComponent(x.sWebsite||location.href)}catch(e){console.warn(e)}}
+async function forceBannerSlider(){try{let snap=await getDocs(collection(DB2,'banners'));let list=snap.docs.map(d=>d.data()).filter(b=>b.active!==false&&b.image).sort((a,b)=>(a.slot||0)-(b.slot||0));let host=document.getElementById('ghsBannerHost');if(!host||!list.length)return;host.innerHTML=`<div class="ghs-banner-slider"><div class="ghs-banner-track">${list.map(b=>`<div class="ghs-banner-slide"><div class="ghs-banner"><img src="${b.image}" alt="${b.title||'Banner'}"><div class="ghs-banner-content"><h2>${b.title||''}</h2><p>${b.subtitle||''}</p>${b.link?`<a href="${b.link}">${b.buttonText||'Shop Now'}</a>`:''}</div></div></div>`).join('')}</div></div><div class="ghs-banner-dots">${list.map((_,i)=>`<button data-i="${i}" class="${i===0?'active':''}"></button>`).join('')}</div>`;let track=host.querySelector('.ghs-banner-track'),dots=[...host.querySelectorAll('.ghs-banner-dots button')],i=0;function go(n){i=(n+list.length)%list.length;track.style.transform=`translateX(-${i*100}%)`;dots.forEach((d,j)=>d.classList.toggle('active',j===i))}dots.forEach(d=>d.onclick=()=>go(+d.dataset.i));if(list.length>1)setInterval(()=>go(i+1),4500)}catch(e){console.warn(e)}}
+loadCompleteFooter();setTimeout(forceBannerSlider,500);
+</script>
+
+<!-- CLEAN HELP CENTER FIX -->
+<style>
+#helpModal .form{display:grid;gap:10px}#helpModal .form button.help-clean-btn{background:#f5f3ff;border:1px solid #ddd6fe;color:#312e81;text-align:left;padding:14px 16px;border-radius:12px;font-weight:800;font-size:15px}#helpModal .form button.help-clean-btn:hover{background:#ede9fe}#helpAnswer.help-clean-answer{display:none!important;background:#fee2e2!important;color:#991b1b!important;border:1px solid #ef4444!important;padding:14px!important;border-radius:12px!important;margin-top:12px!important;font-weight:700!important;line-height:1.6!important}.help-title-note{color:#6b7280;font-size:13px;margin:-6px 0 12px}
+</style>
+<script>
+(function(){
+ const answers={
+  delivery:'Delivery time location aur product ke hisaab se vary kar sakta hai. Order place karne ke baad My Orders se status check karein.',
+  international:'International shipping destination ke according available ho sakti hai. Shipping charges, customs aur delivery time ke liye support se contact karein.',
+  payment:'Checkout par available payment methods show honge. Payment sirf official checkout screen par hi karein.',
+  return:'Return request ke liye apna order number ready rakhein aur The Gift Hamper Studio support se contact karein.',
+  order:'My Orders page open karke apne order ki available status information check karein.',
+  product:'Product page par details dekhein. Aap WhatsApp Inquiry button se product ka naam, price, metal aur purity ke saath enquiry bhej sakte hain.'
+ };
+ const labels={delivery:'📦 Delivery kab hogi?',international:'🌍 Kya international shipping hai?',payment:'💳 Payment kaise karna hai?',return:'↩️ Return kaise karun?',order:'📍 Mera order kahan hai?',product:'💎 Product ke baare mein poochna hai'};
+ function setup(){
+  const modal=document.getElementById('helpModal'); if(!modal||modal.dataset.cleanHelp)return; modal.dataset.cleanHelp='1';
+  const box=modal.querySelector('.modal-box'); const form=modal.querySelector('.form'); const ans=document.getElementById('helpAnswer'); if(!box||!form||!ans)return;
+  let note=box.querySelector('.help-title-note'); if(!note){note=document.createElement('p');note.className='help-title-note';note.textContent='Neeche kisi bhi option par click karein — jawab automatic yahin show hoga.';form.before(note)}
+  form.innerHTML=''; Object.keys(labels).forEach(k=>{const b=document.createElement('button');b.type='button';b.className='help-clean-btn';b.textContent=labels[k];b.onclick=()=>{ans.textContent=answers[k];ans.className='help-clean-answer';ans.style.display='block'};form.appendChild(b)});
+ }
+ document.addEventListener('DOMContentLoaded',setup); setTimeout(setup,1200); setTimeout(setup,2500);
+})();
+</script>
+
+
+<!-- FINAL BANNER SLIDER GUARANTEE -->
+<style>
+#ghsBannerHost{width:100%;overflow:hidden;margin:0 0 20px}
+#ghsBannerHost .ghs-banner-slider{width:100%;overflow:hidden;position:relative}
+#ghsBannerHost .ghs-banner-track{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;width:100%;transition:transform .7s ease!important;will-change:transform}
+#ghsBannerHost .ghs-banner-slide{display:block!important;flex:0 0 100%!important;width:100%!important;min-width:100%!important;max-width:100%!important;margin:0!important}
+#ghsBannerHost .ghs-banner{width:100%!important;margin:0!important;display:block!important}
+#ghsBannerHost .ghs-banner-dots{display:flex!important;justify-content:center;gap:8px;margin:10px 0}
+</style>
+<script type="module">
+// Run after all banner loaders so banners can never remain in a vertical list.
+setTimeout(()=>{ if(window.forceBannerSlider) window.forceBannerSlider(); },1800);
+setTimeout(()=>{ if(window.forceBannerSlider) window.forceBannerSlider(); },3500);
+</script>
+
+<!-- FINAL CLEAN CORRECTION 2026 -->
+<style>
+/* Left-side independent support buttons */
+#ghsHelpFloat,#ghsWaFloat{position:fixed;left:16px;right:auto;z-index:9999;border:0;border-radius:999px;padding:13px 17px;font-weight:800;box-shadow:0 10px 25px #0004;color:#fff}
+#ghsHelpFloat{bottom:82px;background:#7c3aed}#ghsWaFloat{bottom:20px;background:#16a34a}
+.ghs-view-btn,.ghs-cart-btn,.ghs-buy-btn,.ghs-wa-btn{width:100%;margin-top:8px;padding:10px;border-radius:10px;font-weight:800;border:0}.ghs-view-btn{background:#e0e7ff;color:#3730a3}.ghs-cart-btn{background:#f0e9ff;color:#5b21b6}.ghs-buy-btn{background:#111827;color:#fff}.ghs-wa-btn{background:#16a34a;color:#fff}
+#productDetailsModal .modal-box{width:min(760px,100%)}.ghs-detail-img{width:100%;max-height:320px;object-fit:cover;border-radius:14px;margin-bottom:12px}.ghs-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.ghs-detail-grid p{padding:8px;background:#f8f7fa;border-radius:8px}
+@media(max-width:600px){#ghsHelpFloat,#ghsWaFloat{left:10px;padding:11px 13px;font-size:13px}.ghs-detail-grid{grid-template-columns:1fr}}
+</style>
+<button id="ghsHelpFloat" type="button">💬 How Can I Help?</button>
+<button id="ghsWaFloat" type="button">🟢 WhatsApp</button>
+<div class="modal" id="productDetailsModal"><div class="modal-box"><div class="panel-head"><h2>Product Details</h2><button class="close" onclick="document.getElementById('productDetailsModal').classList.remove('open')">✕</button></div><div id="productDetailsBody"></div></div></div>
+<script type="module">
+import{initializeApp,getApps}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import{getFirestore,doc,getDoc,collection,getDocs}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+const __cfg={apiKey:"AIzaSyCfILW5a7H4B8cQfVnJwh_Dcvn04FxAwJs",authDomain:"the-gift-hamper-studio.firebaseapp.com",projectId:"the-gift-hamper-studio",storageBucket:"the-gift-hamper-studio.firebasestorage.app",messagingSenderId:"1002125530065",appId:"1:1002125530065:web:dea65445fd5631c7c0c6f0"};
+const __db2=getFirestore(getApps()[0]||initializeApp(__cfg));
+const __esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+let __site={};
+function __link(v,fallback){return String(v||fallback||'#').trim()||fallback||'#'}
+async function __loadFinalSite(){try{let d=await getDoc(doc(__db2,'settings','site'));__site=d.exists()?d.data():{};let x=__site;
+ const ul=document.getElementById('usefulLinks');if(ul){const links=[['🏠 Home','sLinkHome','sLinkHomeEnabled','#'],['🛍️ Shop / Products','sLinkShop','sLinkShopEnabled','#productsSection'],['🎁 Special Gift Categories','sLinkSpecial','sLinkSpecialEnabled','#specialCategorySequence'],['📦 Track Order','sLinkTrack','sLinkTrackEnabled','#trackOrderSection'],['🧾 My Orders','sLinkOrders','sLinkOrdersEnabled','#'],['📞 Contact Us','sLinkContact','sLinkContactEnabled','#footerContactBlock'],['↩️ Return Policy','sLinkReturn','sLinkReturnEnabled','#returnPolicy'],['🚚 Shipping Policy','sLinkShipping','sLinkShippingEnabled','#deliveryInfo']];ul.innerHTML=links.filter(a=>x[a[2]]!=='false').map(a=>`<a class="useful-link" href="${__esc(__link(x[a[1]],a[3]))}">${a[0]}</a>`).join('')}
+ document.getElementById('ghsWaFloat').onclick=()=>{let n=String(x.sWhatsapp||localStorage.getItem('tgWhatsapp')||'').replace(/\D/g,'');if(!n)return alert('WhatsApp number is not set in Admin Settings');open('https://wa.me/'+n,'_blank')};
+}catch(e){console.warn(e)}}
+async function __banner(){try{let snap=await getDocs(collection(__db2,'banners'));let a=snap.docs.map(d=>d.data()).filter(b=>b.active!==false&&b.image).sort((x,y)=>(x.slot||0)-(y.slot||0));let h=document.getElementById('ghsBannerHost');if(!h||!a.length)return;h.innerHTML=`<div class="ghs-banner-slider"><div class="ghs-banner-track">${a.map(b=>`<div class="ghs-banner-slide"><div class="ghs-banner"><img src="${__esc(b.image)}" alt="banner"><div class="ghs-banner-content"><h2>${__esc(b.title||'')}</h2><p>${__esc(b.subtitle||'')}</p></div></div></div>`).join('')}</div></div><div class="ghs-banner-dots">${a.map((_,i)=>`<button data-i="${i}" class="${i?'':'active'}"></button>`).join('')}</div>`;let t=h.querySelector('.ghs-banner-track'),ds=[...h.querySelectorAll('[data-i]')],i=0,go=n=>{i=(n+a.length)%a.length;t.style.transform=`translateX(-${i*100}%)`;ds.forEach((z,j)=>z.classList.toggle('active',j===i))};ds.forEach(z=>z.onclick=()=>go(+z.dataset.i));if(a.length>1)setInterval(()=>go(i+1),4500)}catch(e){console.warn(e)}}
+function __findProduct(id){return (window.products||[]).find(p=>String(p.id)===String(id))}
+window.showProductDetails=id=>{let p=__findProduct(id);if(!p)return;let image=(p.images&&p.images[0])||p.image||'';let price=p.sellingPrice??p.salePrice??p.price??0;document.getElementById('productDetailsBody').innerHTML=`${image?`<img class="ghs-detail-img" src="${__esc(image)}">`:''}<h2>${__esc(p.name)}</h2><p>${__esc(p.description||'No description available.')}</p><div class="ghs-detail-grid"><p><b>Price:</b> ₹${Number(price).toLocaleString('en-IN')}</p><p><b>Category:</b> ${__esc(p.mainCategory||p.category||'')}</p><p><b>Stock:</b> ${__esc(p.stock??'')}</p><p><b>SKU:</b> ${__esc(p.sku||'')}</p></div><button class="ghs-cart-btn" onclick="addToCart('${__esc(id)}')">🛒 Add to Cart</button><button class="ghs-buy-btn" onclick="buyNow('${__esc(id)}')">⚡ Buy Now</button><button class="ghs-wa-btn" onclick="window.productInquiry('${__esc(id)}')">💬 WhatsApp Inquiry</button>`;document.getElementById('productDetailsModal').classList.add('open')};
+window.productInquiry=id=>{let p=__findProduct(id);if(!p)return;let n=String(__site.sWhatsapp||localStorage.getItem('tgWhatsapp')||'').replace(/\D/g,'');if(!n)return alert('WhatsApp number is not set in Admin Settings');let price=p.sellingPrice??p.salePrice??p.price??0;let msg=`Hello, I want product details.\nProduct: ${p.name||''}\nPrice: ₹${price}\nCategory: ${p.mainCategory||p.category||''}\nSKU: ${p.sku||''}\nDescription: ${p.description||''}`;open('https://wa.me/'+n+'?text='+encodeURIComponent(msg),'_blank')};
+function __decorate(){document.querySelectorAll('#productGrid .product').forEach(card=>{let title=card.querySelector('h3')?.textContent||'';let p=(window.products||[]).find(x=>x.name===title);if(!p||card.dataset.finalDecor)return;card.dataset.finalDecor='1';card.querySelectorAll('button').forEach(b=>b.remove());let box=card.querySelector('.product-info')||card;box.insertAdjacentHTML('beforeend',`<button class="ghs-view-btn" onclick="showProductDetails('${__esc(p.id)}')">👁️ View Details</button><button class="ghs-cart-btn" onclick="addToCart('${__esc(p.id)}')">🛒 Add to Cart</button><button class="ghs-buy-btn" onclick="buyNow('${__esc(p.id)}')">⚡ Buy Now</button><button class="ghs-wa-btn" onclick="productInquiry('${__esc(p.id)}')">💬 WhatsApp Inquiry</button>`)});}
+const __oldRender=window.renderProducts; if(__oldRender){window.renderProducts=function(){__oldRender();setTimeout(__decorate,0)}}
+document.getElementById('ghsHelpFloat').onclick=()=>{let m=document.getElementById('helpModal');if(m)m.classList.add('open')};
+__loadFinalSite();__banner();setTimeout(__decorate,1200);setTimeout(__decorate,2500);
+</script>
+
+<!-- FINAL LOGIN + COMPLETE DETAILS PATCH -->
+<script>
+(function(){
+  /* LOGIN REQUIRED BEFORE CHECKOUT */
+  const originalOpenCheckout = window.openCheckout;
+  window.openCheckout = function(){
+    if(!window.currentUser){
+      if(typeof window.openLogin === 'function') window.openLogin();
+      else {
+        const login = document.getElementById('loginModal');
+        if(login) login.classList.add('open');
+      }
+      alert('Please login first to continue with your order.');
+      return;
+    }
+    return originalOpenCheckout ? originalOpenCheckout() : null;
+  };
+
+  const originalPlaceOrder = window.placeOrder;
+  window.placeOrder = async function(){
+    if(!window.currentUser){
+      alert('Please login first before placing an order.');
+      if(typeof window.openLogin === 'function') window.openLogin();
+      return;
+    }
+    return originalPlaceOrder ? originalPlaceOrder() : null;
+  };
+
+  /* COMPLETE PRODUCT DETAILS: SHOW ONLY FILLED FIELDS */
+  function esc(v){
+    return String(v ?? '').replace(/[&<>"']/g, c => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    })[c]);
+  }
+  function productById(id){
+    const list = window.products || window.allProducts || [];
+    return list.find(p => String(p.id||p.productId||'') === String(id||'')) || null;
+  }
+  function field(label, value){
+    if(value === undefined || value === null || String(value).trim() === '') return '';
+    return `<div class="ghs-detail-item"><b>${esc(label)}</b><br>${esc(value)}</div>`;
+  }
+
+  window.showProductDetails = function(id){
+    const p = productById(id);
+    const modal = document.getElementById('productDetailsModal');
+    const body = document.getElementById('productDetailsBody');
+    if(!modal || !body){ alert('Product details are not available.'); return; }
+    if(!p){ body.innerHTML='<p>Product details are loading. Please try again.</p>'; modal.classList.add('open'); return; }
+
+    let images = [];
+    if(Array.isArray(p.images)) images.push(...p.images);
+    if(Array.isArray(p.pImages)) images.push(...p.pImages);
+    [p.image,p.imageUrl,p.pImage].forEach(x=>{if(x) images.push(x)});
+    images=[...new Set(images.filter(Boolean))];
+
+    const name = p.name || p.productName || '';
+    const sale = p.sellingPrice ?? p.salePrice ?? p.price;
+    const original = p.originalPrice ?? p.mrp;
+    const discount = p.discount ?? p.discountPercent;
+
+    body.innerHTML = `
+      ${images.length ? `<div class="ghs-product-gallery">${images.map(u=>`<img src="${esc(u)}" alt="${esc(name)}">`).join('')}</div>` : ''}
+      ${name ? `<h2>${esc(name)}</h2>` : ''}
+      ${(sale!==undefined && sale!==null && String(sale)!=='') ? `<p><b>Sale Price:</b> ₹${esc(sale)}</p>` : ''}
+      ${(original!==undefined && original!==null && String(original)!=='') ? `<p><b>Original Price:</b> ₹${esc(original)}</p>` : ''}
+      ${(discount!==undefined && discount!==null && String(discount)!=='') ? `<p><b>Discount:</b> ${esc(discount)}%</p>` : ''}
+      <div class="ghs-detail-grid">
+        ${field('Main Category',p.mainCategory ?? p.category)}
+        ${field('Item / Sub Category',p.subCategory ?? p.item ?? p.itemType)}
+        ${field('Material',p.material ?? p.metalType ?? p.metal)}
+        ${field('Purity',p.purity)}
+        ${field('Quantity',p.quantity ?? p.packQuantity)}
+        ${field('Size / Variant',p.size ?? p.variant)}
+        ${field('Stock',p.stock ?? p.availableStock)}
+        ${field('SKU',p.sku ?? p.SKU ?? p.productSku)}
+        ${(p.featured===true || p.pFeatured===true) ? field('Featured Status','Featured') : ''}
+        ${(p.bestSeller===true || p.bestseller===true || p.pBestSeller===true) ? field('Best Seller Status','Best Seller') : ''}
+      </div>
+      ${(p.description || p.productDescription) ? `<div class="ghs-description"><h3>Description</h3><p>${esc(p.description || p.productDescription)}</p></div>` : ''}
+      <div class="ghs-detail-actions">
+        <button class="ghs-cart-btn" onclick="addToCart('${esc(p.id||id)}')">🛒 Add to Cart</button>
+        <button class="ghs-buy-btn" onclick="buyNow('${esc(p.id||id)}')">⚡ Buy Now</button>
+        <button class="ghs-wa-btn" onclick="productInquiry('${esc(p.id||id)}')">💬 WhatsApp Inquiry</button>
+      </div>`;
+    modal.classList.add('open');
+  };
+})();
+</script>
+<style>
+.ghs-product-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:14px}
+.ghs-product-gallery img{width:100%;height:220px;object-fit:cover;border-radius:12px}
+.ghs-detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:14px 0}
+.ghs-detail-item{padding:11px;border-radius:10px;background:#f7f7f7}
+.ghs-description{margin:14px 0;padding:12px;background:#fff8f3;border-radius:10px}
+.ghs-detail-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:14px}
+@media(max-width:650px){.ghs-detail-actions{grid-template-columns:1fr}.ghs-product-gallery img{height:190px}}
+</style>
+<!-- END FINAL LOGIN + COMPLETE DETAILS PATCH -->
+
+</body>
+<script>document.addEventListener('DOMContentLoaded',()=>{const q=document.getElementById('searchInput');if(q){q.value='';q.placeholder='Search gifts, hampers, occasions...';}});</script></html>
+<!-- FINAL INTERACTION REPAIR -->
+<style>
+#ghsHelpFloat,#ghsWaFloat{z-index:2147483000!important;pointer-events:auto!important;cursor:pointer!important}
+#helpModal{z-index:2147483001!important}.modal.open{display:flex!important;pointer-events:auto!important}
+#helpModal .modal-box{position:relative;z-index:2147483002!important}
+#helpAnswer{display:none}
+.ghs-view-btn{display:block!important;pointer-events:auto!important;cursor:pointer!important}
+</style>
+<script>
+(function(){
+ const answers={
+ delivery:'Delivery time location aur product ke hisaab se vary kar sakta hai. Order place karne ke baad My Orders se status check karein.',
+ international:'International shipping destination ke according available ho sakti hai. Shipping charges, customs aur delivery time ke liye support se contact karein.',
+ payment:'Checkout par available payment methods show honge. Payment sirf official checkout screen par hi karein.',
+ return:'Return request ke liye apna order number ready rakhein aur The Gift Hamper Studio support se contact karein.',
+ order:'My Orders page open karke apne order ki available status information check karein.',
+ product:'Product page par details dekhein. Aap WhatsApp Inquiry button se product ka naam aur price ke saath enquiry bhej sakte hain.'
+ };
+ window.openHelp=function(){var m=document.getElementById('helpModal');if(m){m.classList.add('open');m.style.display='flex'}};
+ window.closeHelp=function(){var m=document.getElementById('helpModal');if(m){m.classList.remove('open');m.style.display=''}};
+ window.helpAction=function(k){var a=document.getElementById('helpAnswer');if(!a)return;a.textContent=answers[k]||'';a.style.display='block';a.style.background='#fee2e2';a.style.color='#b91c1c';a.style.border='1px solid #ef4444';a.style.padding='12px';a.style.borderRadius='10px';a.style.marginTop='12px';};
+ function bindHelp(){var b=document.getElementById('ghsHelpFloat');if(b){b.onclick=function(e){e.preventDefault();e.stopPropagation();window.openHelp()};b.style.pointerEvents='auto'} document.querySelectorAll('.help-fab').forEach(x=>x.onclick=function(e){e.preventDefault();window.openHelp()})}
+ function productFromCard(card){var title=(card.querySelector('h3')||{}).textContent||'';var ps=window.products||[];return ps.find(p=>String(p.id||'')===String(card.dataset.productId||''))||ps.find(p=>p.name===title)||null}
+ function addViewButtons(){document.querySelectorAll('#productGrid .product').forEach(card=>{if(card.querySelector('.ghs-view-btn'))return;var p=productFromCard(card);var box=card.querySelector('.product-info')||card;var id=p&&p.id!=null?p.id:'';var btn=document.createElement('button');btn.type='button';btn.className='ghs-view-btn';btn.textContent='👁️ View Details';btn.onclick=function(){if(id!==''&&window.showProductDetails)window.showProductDetails(id);else alert('Product details are loading. Please try again in a moment.');};box.appendChild(btn);});}
+ document.addEventListener('DOMContentLoaded',function(){bindHelp();addViewButtons();setTimeout(addViewButtons,1000);setTimeout(addViewButtons,2500);});
+ setInterval(bindHelp,1500);
+ setInterval(addViewButtons,2000);
+})();
+</script>
+
+<style id="page-specific-support-style">
+#ghsHelpFloat,#ghsWhatsappFloat{position:fixed!important;left:18px!important;right:auto!important;z-index:2147483000!important;pointer-events:auto!important;cursor:pointer!important}
+#ghsHelpFloat{bottom:82px!important}
+#ghsWhatsappFloat{bottom:18px!important;background:#25D366!important;color:#fff!important;border:0!important;border-radius:999px!important;padding:14px 18px!important;font-weight:800!important;box-shadow:0 10px 30px rgba(0,0,0,.25)!important}
+</style>
+<button id="ghsWhatsappFloat" type="button">📱 WhatsApp</button>
+<script>
+(function(){
+  function getWhatsApp(){
+    var n=(window.site&&site.sWhatsapp)||localStorage.getItem('tgWhatsapp')||localStorage.getItem('whatsapp')||'';
+    return String(n).replace(/\D/g,'');
+  }
+  function openWA(){
+    var n=getWhatsApp();
+    if(n) window.open('https://wa.me/'+n,'_blank');
+    else alert('WhatsApp number Admin Panel → Site Settings में सेट करें।');
+  }
+  var wa=document.getElementById('ghsWhatsappFloat'); if(wa) wa.onclick=openWA;
+  function isSupportOnlyPage(){
+    var title=(document.getElementById('panelTitle')||{}).textContent||'';
+    var cartOpen=!!document.querySelector('#cartModal.open,#cartModal[style*="display: flex"],#cartModal[style*="display:flex"]');
+    var checkoutOpen=!!document.querySelector('#checkoutModal.open,#checkoutModal[style*="display: flex"],#checkoutModal[style*="display:flex"]');
+    return /cart|my orders|order details|checkout/i.test(title)||cartOpen||checkoutOpen;
+  }
+  function updateSupportButtons(){
+    var help=document.getElementById('ghsHelpFloat');
+    var wa=document.getElementById('ghsWhatsappFloat');
+    var helpOnly=isSupportOnlyPage();
+    if(help) help.style.display=helpOnly?'none':'block';
+    if(wa) wa.style.display='block';
+  }
+  var observer=new MutationObserver(updateSupportButtons);
+  observer.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','style']});
+  document.addEventListener('click',function(){setTimeout(updateSupportButtons,50)});
+  setInterval(updateSupportButtons,500);
+  updateSupportButtons();
+})();
+</script>
