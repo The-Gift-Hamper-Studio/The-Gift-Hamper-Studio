@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Gift Hamper Studio - Admin Panel</title>
+<style>
+:root{--bg:#f7f5f2;--card:#fff;--ink:#24211e;--muted:#766f68;--line:#e9e3dc;--accent:#8b5e3c;--accent2:#d9a86c;--danger:#b42318}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--ink)}
+.login{min-height:100vh;display:grid;place-items:center;padding:20px}.login-card{width:min(440px,100%);background:#fff;padding:28px;border-radius:22px;box-shadow:0 14px 50px #0001}
+input,select,textarea,button{font:inherit}input,select,textarea{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;background:#fff}textarea{min-height:100px;resize:vertical}
+button{border:0;border-radius:10px;padding:11px 15px;cursor:pointer;font-weight:700}.primary{background:var(--accent);color:#fff}.secondary{background:#f0ebe5;color:var(--ink)}.danger{background:#fee4e2;color:var(--danger)}
+.app{display:none}.top{height:66px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 18px;position:sticky;top:0;z-index:10}.brand{font-weight:800}.layout{display:grid;grid-template-columns:250px 1fr;min-height:calc(100vh - 66px)}
+.sidebar{background:#fff;border-right:1px solid var(--line);padding:12px}.navbtn{display:block;width:100%;text-align:left;background:transparent;margin:4px 0}.navbtn.active,.navbtn:hover{background:#f3ece5;color:var(--accent)}
+main{padding:22px;max-width:1500px;width:100%;margin:auto}.view{display:none}.view.active{display:block}.grid{display:grid;gap:16px}.stats{grid-template-columns:repeat(5,minmax(130px,1fr))}.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px}.stat b{font-size:26px;display:block;margin-top:7px}.two{grid-template-columns:1fr 1fr}.three{grid-template-columns:repeat(3,1fr)}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row>*{flex:1;min-width:150px}.actions{display:flex;gap:8px;flex-wrap:wrap}.actions>*{flex:0 0 auto}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden}th,td{padding:11px;border-bottom:1px solid var(--line);text-align:left;font-size:14px;vertical-align:top}th{background:#f8f4f0}.muted{color:var(--muted);font-size:13px}.tag{display:inline-block;padding:4px 8px;border-radius:999px;background:#f3ece5;font-size:12px}.hidden{display:none}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{display:flex;overflow:auto;gap:4px;white-space:nowrap}.navbtn{width:auto}.stats{grid-template-columns:repeat(2,1fr)}.two,.three{grid-template-columns:1fr}main{padding:14px}}
+
+/* Product photo preview system */
+.product-thumb{width:58px;height:58px;border-radius:10px;object-fit:cover;display:block;cursor:pointer;border:1px solid rgba(0,0,0,.12);background:#f5f5f5}.no-photo{width:58px;height:58px;border-radius:10px;display:grid;place-items:center;background:#f3f3f3;font-size:22px}.image-preview-wrap{margin-top:10px;display:flex;gap:12px;align-items:center}.image-preview-wrap img{width:110px;height:110px;object-fit:cover;border-radius:12px;border:1px solid rgba(0,0,0,.12)}.image-preview-wrap .muted{word-break:break-all;font-size:12px}.photo-modal{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:20px;z-index:9999}.photo-modal.show{display:flex}.photo-modal-box{position:relative;max-width:min(92vw,800px);max-height:90vh}.photo-modal img{max-width:100%;max-height:85vh;border-radius:14px;display:block}.photo-close{position:absolute;right:-8px;top:-10px;width:38px;height:38px;border-radius:50%;border:0;font-size:24px;cursor:pointer}
+</style>
+</head>
+<body><div style="padding:12px 18px;text-align:center;background:#111;color:#d4af37;font-weight:900;letter-spacing:1px">THE GIFT HAMPER STUDIO <span style="font-size:12px;opacity:.85">— SINCE 2020</span></div>
+
+<section class="login" id="loginBox">
+  <div class="login-card">
+    <h1>🎁 The Gift Hamper Studio</h1>
+    <p class="muted">Admin Panel</p>
+    <p class="muted">Login after adding your Firebase configuration and authorized admin access.</p>
+    <input id="adminEmail" type="email" placeholder="Admin email">
+    <input id="adminPassword" type="password" placeholder="Password" style="margin-top:10px">
+    <button class="primary" style="width:100%;margin-top:12px" id="loginBtn">Login</button>
+    <p id="loginMsg" class="muted"></p>
+  </div>
+</section>
+
+<div class="app" id="app">
+<header class="top">
+  <div class="brand">🎁 The Gift Hamper Studio — Admin</div>
+  <div class="row" style="max-width:300px"><span id="adminName" class="muted">Admin</span><button class="secondary" id="logoutBtn">Logout</button></div>
+</header>
+<div class="layout">
+<aside class="sidebar">
+<button class="navbtn active" data-view="dashboard">📊 Dashboard</button>
+<button class="navbtn" data-view="products">🎁 Products</button>
+<button class="navbtn" data-view="orders">📦 Orders</button>
+<button class="navbtn" data-view="payments">💳 Payment Manager</button>
+<button class="navbtn" data-view="delivery">🚚 Delivery & Tracking</button>
+<button class="navbtn" data-view="returns">↩️ Return & Refund</button>
+<button class="navbtn" data-view="coupons">🎟️ Coupons / Vouchers</button>
+<button class="navbtn" data-view="banners">🖼️ Banner Manager</button>
+<button class="navbtn" data-view="additionalCharges">➕ Additional Charge Manager</button>
+<button class="navbtn" data-view="settings">⚙️ Site Settings</button>
+</aside>
+
+<main>
+<section class="view active" id="dashboard">
+<h2>Dashboard</h2>
+<div class="grid stats">
+<div class="card stat">Today Orders<b id="todayOrders">0</b></div>
+<div class="card stat">Total Orders<b id="totalOrders">0</b></div>
+<div class="card stat">Processing<b id="processingOrders">0</b></div>
+<div class="card stat">Delivered<b id="deliveredOrders">0</b></div>
+<div class="card stat">Revenue<b id="totalRevenue">₹0</b></div>
+</div>
+<div class="card" style="margin-top:16px"><h3>Recent Orders</h3><div id="recentOrders" class="muted">No orders loaded.</div></div>
+</section>
+
+<section class="view" id="products">
+<h2>Product Manager</h2>
+<div class="card">
+<div class="grid three">
+<input id="pName" placeholder="Product Name">
+<input id="pMainCategory" placeholder="Main Category (Birthday, Anniversary...)">
+<input id="pSubCategory" placeholder="Sub Category">
+<input id="pMaterial" placeholder="Material / Contents">
+<input id="pQuantity" type="number" placeholder="Quantity">
+<input id="pSize" placeholder="Size / Variant">
+<input id="pSKU" placeholder="SKU">
+<input id="pOriginalPrice" type="number" placeholder="Original Price">
+<input id="pSellingPrice" type="number" placeholder="Selling Price">
+<input id="pDiscount" type="number" placeholder="Discount %">
+<select id="pOffer"><option value="false">Offer Inactive</option><option value="true">Offer Active</option></select>
+<input id="pStock" type="number" placeholder="Stock Available">
+</div>
+<div class="grid two" style="margin-top:10px">
+<input id="pImage" placeholder="Main Product Image URL">
+<input id="pImages" placeholder="More Image URLs (comma separated)">
+</div>
+<div class="image-preview-wrap" id="productImagePreview"><div class="no-photo">🖼️</div><div><b>Current Product Photo</b><div class="muted" id="productImageUrlText">No image URL added yet.</div></div></div>
+<textarea id="pDescription" placeholder="Product Description" style="margin-top:10px"></textarea>
+<div class="row" style="margin-top:10px"><label><input type="checkbox" id="pFeatured" style="width:auto"> Featured Product</label><label><input type="checkbox" id="pBestSeller" style="width:auto"> Best Seller</label><button class="primary" id="saveProduct">Save Product</button><button class="secondary" id="clearProduct">Clear</button></div>
+</div>
+<div class="card" style="margin-top:16px"><div class="row"><h3 style="flex:1">All Products</h3><input id="productSearch" placeholder="Search product / SKU"></div><div id="productTable"></div></div>
+</section>
+
+<section class="view" id="orders">
+<h2>Customer Orders</h2>
+<div class="card"><div class="row"><input id="orderSearch" placeholder="Search Order ID / Customer / Mobile"><select id="orderStatusFilter"><option value="">All Status</option><option>Order Placed</option><option>Confirmed</option><option>Processing</option><option>Preparing Gift</option><option>Packed</option><option>Shipped</option><option>Out for Delivery</option><option>Delivered</option><option>Cancelled</option></select><button class="secondary" id="reloadOrders">Reload</button></div></div>
+<div class="card" style="margin-top:16px"><div id="orderTable"></div></div>
+</section>
+
+<section class="view" id="payments">
+<h2>Payment Manager</h2>
+<div class="card"><div class="row"><input id="paymentSearch" placeholder="Order ID / Mobile Number"><button class="secondary" id="reloadPayments">Reload</button></div></div>
+<div class="card" style="margin-top:16px"><div id="paymentTable"></div></div>
+</section>
+
+<section class="view" id="delivery">
+<h2>Delivery & Tracking Manager</h2>
+<div class="card">
+<div class="grid three">
+<input id="dOrderId" placeholder="Order ID">
+<input id="dPartner" placeholder="Delivery Partner">
+<input id="dTrackingId" placeholder="Tracking / AWB Number">
+<input id="dTrackingUrl" placeholder="Tracking URL">
+<input id="dExpectedDate" type="date">
+<input id="dMessage" placeholder="Customer update message">
+</div>
+<div class="actions" style="margin-top:10px"><button class="primary" id="saveDelivery">Save Delivery Update</button><button class="secondary" id="findDelivery">Find Order</button></div>
+</div>
+</section>
+
+<section class="view" id="returns">
+<h2>Return & Refund Manager</h2>
+<div class="card">
+<div class="grid three"><input id="rOrderId" placeholder="Order ID"><select id="rStatus"><option>Return Requested</option><option>Return Approved</option><option>Return Rejected</option><option>Return Received</option><option>Refund Processing</option><option>Refunded</option><option>Refund Rejected</option></select><input id="rAmount" type="number" placeholder="Refund Amount"></div>
+<textarea id="rReason" placeholder="Return / Refund Reason" style="margin-top:10px"></textarea>
+<textarea id="rAdminNote" placeholder="Admin Note" style="margin-top:10px"></textarea>
+<button class="primary" id="saveReturn" style="margin-top:10px">Save Return / Refund Update</button>
+</div>
+</section>
+
+<section class="view" id="coupons">
+<h2>Coupon / Voucher Manager</h2>
+<div class="card"><div class="grid three"><input id="cCode" placeholder="Coupon Code e.g. GIFT99"><select id="cType"><option value="percentage">Percentage</option><option value="fixed">Fixed Amount</option></select><input id="cValue" type="number" placeholder="Discount Value"><input id="cMinOrder" type="number" placeholder="Minimum Order"><input id="cMaxDiscount" type="number" placeholder="Maximum Discount"><select id="cActive"><option value="true">Active</option><option value="false">Inactive</option></select><input id="cStart" type="date"><input id="cEnd" type="date"></div><button class="primary" id="saveCoupon" style="margin-top:10px">Save Coupon</button></div>
+<div class="card" style="margin-top:16px"><div id="couponTable"></div></div>
+</section>
+
+<section class="view" id="banners">
+<h2>Banner Manager</h2>
+<div class="card"><p class="muted">Up to 8 banner slots. Image URL based.</p>
+<div class="grid three"><input id="bSlot" type="number" min="1" max="8" placeholder="Slot 1-8"><input id="bTitle" placeholder="Banner Title"><input id="bSubtitle" placeholder="Subtitle"><input id="bImage" placeholder="Banner Image URL"><input id="bButtonText" placeholder="Button Text"><input id="bLink" placeholder="Button / Offer URL"><select id="bActive"><option value="true">Active</option><option value="false">Inactive</option></select></div>
+<button class="primary" id="saveBanner" style="margin-top:10px">Save Banner</button></div>
+</section>
+
+<section class="view" id="settings">
+<h2>Site Settings</h2>
+<div class="card"><div class="grid three">
+<input id="sStoreName" placeholder="Store Name"><input id="sTagline" placeholder="Site Tagline"><input id="sContact" placeholder="Contact Number">
+<input id="sWhatsapp" placeholder="WhatsApp Number"><input id="sWhatsappMessage" placeholder="Default WhatsApp Message"><input id="sEmail" placeholder="Email ID">
+<input id="sWebsite" placeholder="Website URL"><input id="sCurrency" placeholder="Currency Symbol e.g. ₹"><input id="sDeliveryCharge" type="number" placeholder="Delivery Charge">
+<input id="sFreeDeliveryMin" type="number" placeholder="Free Delivery Minimum Amount"><select id="sFreeDelivery"><option value="true">Free Delivery Available</option><option value="false">No Free Delivery</option></select><select id="sCOD"><option value="true">COD / Cash on Delivery: ON</option><option value="false">COD / Cash on Delivery: OFF (Online Payment Only)</option></select>
+<input id="sInstagram" placeholder="Instagram URL"><input id="sFacebook" placeholder="Facebook URL"><input id="sYoutube" placeholder="YouTube URL"><input id="sTelegram" placeholder="Telegram URL"><input id="sTwitter" placeholder="Twitter/X URL"><input id="sAddress" placeholder="Full Shop Address">
+</div>
+<label for="sDescription" style="display:block;margin-top:12px;font-weight:800">📝 The Gift Hamper Studio Description</label><textarea id="sDescription" placeholder="Write the website About / Footer description here..." style="margin-top:8px"></textarea><p class="muted">Save Site Settings ke baad ye description website footer me automatically update hoga.</p>
+<div class="grid three" style="margin-top:10px"><select id="sFooterAboutEnabled"><option value="true">About/Description: Enabled</option><option value="false">About/Description: Disabled</option></select><select id="sFooterLinksEnabled"><option value="true">Useful Links: Enabled</option><option value="false">Useful Links: Disabled</option></select><select id="sFooterContactEnabled"><option value="true">Contact Us: Enabled</option><option value="false">Contact Us: Disabled</option></select><select id="sFooterQREnabled"><option value="true">Scan & Visit QR: Enabled</option><option value="false">Scan & Visit QR: Disabled</option></select></div>
+<div class="grid three" style="margin-top:10px"><select id="sInstagramEnabled"><option value="true">Instagram: Enabled</option><option value="false">Instagram: Disabled</option></select><select id="sFacebookEnabled"><option value="true">Facebook: Enabled</option><option value="false">Facebook: Disabled</option></select><select id="sYoutubeEnabled"><option value="true">YouTube: Enabled</option><option value="false">YouTube: Disabled</option></select><select id="sWhatsappEnabled"><option value="true">WhatsApp: Enabled</option><option value="false">WhatsApp: Disabled</option></select><select id="sTelegramEnabled"><option value="true">Telegram: Enabled</option><option value="false">Telegram: Disabled</option></select><select id="sTwitterEnabled"><option value="true">Twitter/X: Enabled</option><option value="false">Twitter/X: Disabled</option></select></div>
+<h3 style="margin-top:18px">🔗 Useful Links — URL + Enable / Disable</h3><div class="grid two" style="margin-top:10px"><input id="sLinkHome" placeholder="Home URL (e.g. https://yourwebsite.com/)"><input id="sLinkShop" placeholder="Shop URL"><input id="sLinkSpecial" placeholder="Special Gift Categories URL"><input id="sLinkTrack" placeholder="Track Order URL"><input id="sLinkOrders" placeholder="My Orders URL"><input id="sLinkContact" placeholder="Contact Us URL"><input id="sLinkReturn" placeholder="Return Policy URL"><input id="sLinkShipping" placeholder="Shipping Policy URL"></div><div class="grid three" style="margin-top:10px"><select id="sLinkHomeEnabled"><option value="true">Home Link: Enabled</option><option value="false">Home Link: Disabled</option></select><select id="sLinkShopEnabled"><option value="true">Shop Link: Enabled</option><option value="false">Shop Link: Disabled</option></select><select id="sLinkSpecialEnabled"><option value="true">Special Categories Link: Enabled</option><option value="false">Special Categories Link: Disabled</option></select><select id="sLinkTrackEnabled"><option value="true">Track Order Link: Enabled</option><option value="false">Track Order Link: Disabled</option></select><select id="sLinkOrdersEnabled"><option value="true">My Orders Link: Enabled</option><option value="false">My Orders Link: Disabled</option></select><select id="sLinkContactEnabled"><option value="true">Contact Link: Enabled</option><option value="false">Contact Link: Disabled</option></select><select id="sLinkReturnEnabled"><option value="true">Return Policy Link: Enabled</option><option value="false">Return Policy Link: Disabled</option></select><select id="sLinkShippingEnabled"><option value="true">Shipping Policy Link: Enabled</option><option value="false">Shipping Policy Link: Disabled</option></select></div>
+<textarea id="sAnnouncement" placeholder="Announcement / Top Bar Text" style="margin-top:10px"></textarea>
+<textarea id="sReturnPolicy" placeholder="Return Policy" style="margin-top:10px"></textarea>
+<div class="row" style="margin-top:10px"><button class="primary" id="saveSettings">Save Site Settings</button><button class="secondary" id="loadSettings">Reload Settings</button></div>
+</div>
+</section>
+
+<section class="view" id="additionalCharges">
+  <h2>➕ Additional Charge Manager</h2>
+  <p class="muted">Select an order, then add unlimited charges. Only charges with a name and Customer Visibility ON are intended to appear on the customer website.</p>
+  <div class="card">
+    <div class="row"><input id="acOrderSearch" placeholder="Enter Order ID / Customer Mobile"><button class="secondary" id="acFindOrder">Find Order</button></div>
+    <div id="acOrderInfo" class="muted" style="margin-top:10px">No order selected.</div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h3 id="acFormTitle">Add New Charge</h3>
+    <div class="grid three">
+      <input id="acName" placeholder="Charge Name / Reason (e.g. Delivery Charge)">
+      <input id="acAmount" type="number" min="0" step="0.01" placeholder="Charge Amount ₹">
+      <select id="acStatus"><option>Pending</option><option>Processing</option><option>Paid</option><option>Success</option><option>Failed</option><option>Rejected</option><option>Refund Processing</option><option>Refunded</option></select>
+      <select id="acVisible"><option value="true">Show on Customer Website: ON</option><option value="false">Show on Customer Website: OFF</option></select>
+      <input id="acNote" placeholder="Optional Admin Note">
+    </div>
+    <div class="actions" style="margin-top:12px"><button class="primary" id="acSave">Save Charge</button><button class="secondary" id="acReset">Cancel Edit</button></div>
+  </div>
+  <div class="card" style="margin-top:16px"><h3>Charges for Selected Order</h3><div id="acList" class="muted">Select an order to manage charges.</div></div>
+</section>
+</main></div></div>
+
+<script type="module">
+/* ============================================================
+   FIREBASE CONFIGURATION
+   Paste your The Gift Hamper Studio Firebase Web App config here.
+   ============================================================ */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, getDoc, doc, setDoc, updateDoc, deleteDoc, serverTimestamp, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCfILW5a7H4B8cQfVnJwh_Dcvn04FxAwJs",
+  authDomain: "the-gift-hamper-studio.firebaseapp.com",
+  projectId: "the-gift-hamper-studio",
+  storageBucket: "the-gift-hamper-studio.firebasestorage.app",
+  messagingSenderId: "1002125530065",
+  appId: "1:1002125530065:web:dea65445fd5631c7c0c6f0"
+};
+
+const ADMIN_EMAIL = "meenavicky3960@gmail.com";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const $ = id => document.getElementById(id);
+const val = id => $(id).value.trim();
+const num = id => Number($(id).value || 0);
+
+function money(n){return "₹"+Number(n||0).toLocaleString("en-IN")}
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function orderData(id){return {id,...$(id).dataset}}
+
+document.querySelectorAll(".navbtn").forEach(b=>b.onclick=()=>{
+ document.querySelectorAll(".navbtn").forEach(x=>x.classList.remove("active"));b.classList.add("active");
+ document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));$(b.dataset.view).classList.add("active");
+});
+
+$("loginBtn").onclick=async()=>{
+ try{await signInWithEmailAndPassword(auth,val("adminEmail"),val("adminPassword"));$("loginMsg").textContent=""}
+ catch(e){$("loginMsg").textContent=e.message}
+};
+$("logoutBtn").onclick=()=>signOut(auth);
+
+onAuthStateChanged(auth,user=>{
+ if(user && (!ADMIN_EMAIL.includes("PASTE_")) && user.email?.toLowerCase()===ADMIN_EMAIL.toLowerCase()){
+   $("loginBox").style.display="none";$("app").style.display="block";$("adminName").textContent=user.email;
+   loadAll();
+ }else if(user){
+   $("loginMsg").textContent="This account is not authorized as admin.";signOut(auth);
+ }else{$("loginBox").style.display="grid";$("app").style.display="none"}
+});
+
+let products=[],orders=[];
+
+async function loadProducts(){
+ const snap=await getDocs(collection(db,"products"));products=snap.docs.map(d=>({id:d.id,...d.data()}));
+ renderProducts();
+}
+function renderProducts(){
+ const q=val("productSearch").toLowerCase();const list=products.filter(p=>!q||`${p.name} ${p.sku} ${p.mainCategory} ${p.id}`.toLowerCase().includes(q));
+ $("productTable").innerHTML=`<table><tr><th>Photo</th><th>Product</th><th>Product ID / SKU</th><th>Category</th><th>Price</th><th>Stock</th><th>Actions</th></tr>${list.map(p=>{const img=p.image||(Array.isArray(p.images)?p.images[0]:"");return `<tr><td>${img?`<img class="product-thumb" src="${esc(img)}" alt="${esc(p.name)}" onclick="window.openPhotoPreview('${String(img).replace(/'/g,"\\'")}')" onerror="this.outerHTML='<div class=\'no-photo\'>🖼️</div>'">`:`<div class="no-photo">🖼️</div>`}</td><td><b>${esc(p.name)}</b></td><td><b>${esc(p.productId||p.id)}</b><br><span class="muted">${esc(p.sku||"")}</span></td><td>${esc(p.mainCategory||p.subCategory||"")}</td><td>${money(p.sellingPrice)}</td><td>${p.stock??0}</td><td><div class="actions"><button class="secondary" onclick="window.editProduct('${p.id}')">Edit</button><button class="danger" onclick="window.deleteProduct('${p.id}')">Delete</button></div></td></tr>`}).join("")}</table>`;
+}
+$("productSearch").oninput=renderProducts;
+$("clearProduct").onclick=()=>document.querySelectorAll("#products input,#products textarea").forEach(x=>{if(x.type==="checkbox")x.checked=false;else x.value=""});
+function updateProductImagePreview(){const u=val("pImage").trim();const box=$("productImagePreview"),txt=$("productImageUrlText");txt.textContent=u||"No image URL added yet.";box.querySelector("div:first-child").outerHTML=u?`<img src="${esc(u)}" alt="Current product photo" onerror="this.outerHTML='<div class=\'no-photo\'>🖼️</div>'">`:`<div class="no-photo">🖼️</div>`}
+$("pImage").addEventListener("input",updateProductImagePreview);
+window.openPhotoPreview=url=>{if(!url)return;$("photoModalImage").src=url;$("photoModal").classList.add("show")};window.closePhotoPreview=()=>$("photoModal").classList.remove("show");
+
+$("saveProduct").onclick=async()=>{
+ const data={name:val("pName"),mainCategory:val("pMainCategory"),subCategory:val("pSubCategory"),material:val("pMaterial"),quantity:num("pQuantity"),size:val("pSize"),sku:val("pSKU"),originalPrice:num("pOriginalPrice"),sellingPrice:num("pSellingPrice"),discount:num("pDiscount"),offerActive:$("pOffer").value==="true",stock:num("pStock"),image:val("pImage"),images:val("pImages").split(",").map(x=>x.trim()).filter(Boolean),description:val("pDescription"),featured:$("pFeatured").checked,bestSeller:$("pBestSeller").checked,updatedAt:serverTimestamp()};
+ if(!data.name){alert("Product name is required");return}
+ const editId=$("saveProduct").dataset.editId;
+ if(editId){await updateDoc(doc(db,"products",editId),data);delete $("saveProduct").dataset.editId;$("saveProduct").textContent="Save Product"}else await addDoc(collection(db,"products"),{...data,createdAt:serverTimestamp()});
+ await loadProducts();alert("Product saved");
+};
+window.editProduct=id=>{const p=products.find(x=>x.id===id);if(!p)return;
+ const map={pName:"name",pMainCategory:"mainCategory",pSubCategory:"subCategory",pMaterial:"material",pQuantity:"quantity",pSize:"size",pSKU:"sku",pOriginalPrice:"originalPrice",pSellingPrice:"sellingPrice",pDiscount:"discount",pStock:"stock",pImage:"image",pDescription:"description"};Object.entries(map).forEach(([a,b])=>$(a).value=p[b]??"");$("pImages").value=(p.images||[]).join(", ");$("pOffer").value=String(!!p.offerActive);$("pFeatured").checked=!!p.featured;$("pBestSeller").checked=!!p.bestSeller;$("saveProduct").dataset.editId=id;$("saveProduct").textContent="Update Product";updateProductImagePreview();document.querySelector('[data-view="products"]').click()};
+window.deleteProduct=async id=>{if(confirm("Delete this product?")){await deleteDoc(doc(db,"products",id));loadProducts()}};
+
+async function loadOrders(){
+ const snap=await getDocs(collection(db,"orders"));orders=snap.docs.map(d=>({id:d.id,...d.data()}));
+ renderOrders();renderPayments();renderDashboard();
+}
+function renderDashboard(){
+ const today=new Date().toISOString().slice(0,10);const dateOf=o=>o.createdAt?.toDate?o.createdAt.toDate().toISOString().slice(0,10):"";
+ $("todayOrders").textContent=orders.filter(o=>dateOf(o)===today).length;$("totalOrders").textContent=orders.length;$("processingOrders").textContent=orders.filter(o=>["Processing","Preparing Gift","Packed"].includes(o.status)).length;$("deliveredOrders").textContent=orders.filter(o=>o.status==="Delivered").length;$("totalRevenue").textContent=money(orders.filter(o=>["Paid","Success"].includes(o.paymentStatus)).reduce((s,o)=>s+Number(o.total||0),0));
+ $("recentOrders").innerHTML=orders.slice(0,5).map(o=>`<p><b>${esc(o.orderId||o.id)}</b> — ${esc(o.customerName||"Customer")} — <span class="tag">${esc(o.status||"Order Placed")}</span></p>`).join("")||"No orders yet.";
+}
+function filteredOrders(){const q=val("orderSearch").toLowerCase(),s=$("orderStatusFilter").value;return orders.filter(o=>(!q||`${o.orderId||o.id} ${o.customerName||""} ${o.mobile||""}`.toLowerCase().includes(q))&&(!s||o.status===s))}
+function renderOrders(){
+ const list=filteredOrders();$("orderTable").innerHTML=`<table><tr><th>Order</th><th>Customer / Address</th><th>Payment</th><th>Status</th><th>Control</th></tr>${list.map(o=>`<tr><td><b>${esc(o.orderId||o.id)}</b><br>${money(o.total)}</td><td>${esc(o.customerName||"")}<br>${esc(o.mobile||"")}<br><span class="muted">${esc(o.address||"")}</span></td><td>${esc(o.paymentMethod||"")}<br><span class="tag">${esc(o.paymentStatus||"Pending")}</span></td><td><select onchange="window.updateOrder('${o.id}','status',this.value)">${["Order Placed","Confirmed","Processing","Preparing Gift","Packed","Shipped","Out for Delivery","Delivered","Cancelled"].map(x=>`<option ${o.status===x?"selected":""}>${x}</option>`).join("")}</select></td><td><button class="secondary" onclick="window.openDelivery('${esc(o.orderId||o.id)}')">Tracking</button></td></tr>`).join("")}</table>`;
+}
+$("orderSearch").oninput=renderOrders;$("orderStatusFilter").onchange=renderOrders;$("reloadOrders").onclick=loadOrders;
+window.updateOrder=async(id,key,value)=>{await updateDoc(doc(db,"orders",id),{[key]:value,updatedAt:serverTimestamp()});loadOrders()};
+window.openDelivery=id=>{document.querySelector('[data-view="delivery"]').click();$("dOrderId").value=id};
+
+function renderPayments(){
+ const q=val("paymentSearch").toLowerCase();const list=orders.filter(o=>!q||`${o.orderId||o.id} ${o.mobile||""}`.toLowerCase().includes(q));
+ $("paymentTable").innerHTML=`<table><tr><th>Order</th><th>Customer</th><th>Method</th><th>Total</th><th>Payment Status</th><th>Action</th></tr>${list.map(o=>`<tr><td>${esc(o.orderId||o.id)}</td><td>${esc(o.customerName||"")}<br>${esc(o.mobile||"")}</td><td>${esc(o.paymentMethod||"COD")}</td><td>${money(o.total)}</td><td><select onchange="window.updateOrder('${o.id}','paymentStatus',this.value)">${["Pending","Processing","Paid","Success","Failed","Rejected","Refund Processing","Refunded"].map(x=>`<option ${o.paymentStatus===x?"selected":""}>${x}</option>`).join("")}</select></td><td><button class="danger" onclick="window.updateOrder('${o.id}','paymentStatus','Rejected')">Reject</button></td></tr>`).join("")}</table>`;
+}
+$("paymentSearch").oninput=renderPayments;$("reloadPayments").onclick=loadOrders;
+
+$("findDelivery").onclick=()=>{const id=val("dOrderId");const o=orders.find(x=>(x.orderId||x.id)===id);alert(o?`Found: ${o.customerName||"Customer"}`:"Order not found")};
+$("saveDelivery").onclick=async()=>{const id=val("dOrderId");const o=orders.find(x=>(x.orderId||x.id)===id);if(!o){alert("Find a valid Order ID first");return}await updateDoc(doc(db,"orders",o.id),{deliveryPartner:val("dPartner"),trackingId:val("dTrackingId"),trackingUrl:val("dTrackingUrl"),expectedDeliveryDate:val("dExpectedDate"),customerMessage:val("dMessage"),updatedAt:serverTimestamp()});alert("Delivery update saved");loadOrders()};
+
+$("saveReturn").onclick=async()=>{const id=val("rOrderId"),o=orders.find(x=>(x.orderId||x.id)===id);if(!o){alert("Order not found");return}await updateDoc(doc(db,"orders",o.id),{returnStatus:$("rStatus").value,refundAmount:num("rAmount"),returnReason:val("rReason"),adminNote:val("rAdminNote"),updatedAt:serverTimestamp()});alert("Return/refund updated");loadOrders()};
+
+async function loadCoupons(){const s=await getDocs(collection(db,"coupons"));const list=s.docs.map(d=>({id:d.id,...d.data()}));$("couponTable").innerHTML=`<table><tr><th>Code</th><th>Discount</th><th>Active</th></tr>${list.map(c=>`<tr><td><b>${esc(c.code)}</b></td><td>${esc(c.type)}: ${esc(c.value)}</td><td>${String(c.active)}</td></tr>`).join("")}</table>`}
+$("saveCoupon").onclick=async()=>{const code=val("cCode").toUpperCase();if(!code){alert("Coupon code required");return}await setDoc(doc(db,"coupons",code),{code,type:$("cType").value,value:num("cValue"),minOrder:num("cMinOrder"),maxDiscount:num("cMaxDiscount"),active:$("cActive").value==="true",startDate:val("cStart"),endDate:val("cEnd"),updatedAt:serverTimestamp()});alert("Coupon saved");loadCoupons()};
+
+$("saveBanner").onclick=async()=>{const slot=Number($("bSlot").value);if(slot<1||slot>8){alert("Banner slot must be 1 to 8");return}await setDoc(doc(db,"banners",String(slot)),{slot,title:val("bTitle"),subtitle:val("bSubtitle"),image:val("bImage"),buttonText:val("bButtonText"),link:val("bLink"),active:$("bActive").value==="true",updatedAt:serverTimestamp()});alert("Banner saved")};
+
+const settingIds=["sStoreName","sTagline","sDescription","sContact","sWhatsapp","sWhatsappMessage","sEmail","sWebsite","sCurrency","sDeliveryCharge","sFreeDeliveryMin","sFreeDelivery","sCOD","sInstagram","sFacebook","sYoutube","sTelegram","sTwitter","sAddress","sAnnouncement","sReturnPolicy","sFooterAboutEnabled","sFooterLinksEnabled","sFooterContactEnabled","sFooterQREnabled","sInstagramEnabled","sFacebookEnabled","sYoutubeEnabled","sWhatsappEnabled","sTelegramEnabled","sTwitterEnabled","sLinkHomeEnabled","sLinkShopEnabled","sLinkSpecialEnabled","sLinkTrackEnabled","sLinkOrdersEnabled","sLinkContactEnabled","sLinkReturnEnabled","sLinkShippingEnabled","sLinkHome","sLinkShop","sLinkSpecial","sLinkTrack","sLinkOrders","sLinkContact","sLinkReturn","sLinkShipping"];
+$("saveSettings").onclick=async()=>{const data={};settingIds.forEach(id=>data[id]=($(id).type==="number"?num(id):$(id).value));await setDoc(doc(db,"settings","site"),{...data,updatedAt:serverTimestamp()});alert("Site settings saved")};
+$("loadSettings").onclick=loadSettings;
+async function loadSettings(){const d=await getDoc(doc(db,"settings","site"));if(d.exists())Object.entries(d.data()).forEach(([k,v])=>{if($(k))$(k).value=v??""})}
+
+async function loadAll(){await Promise.all([loadProducts(),loadOrders(),loadCoupons(),loadSettings()])}
+</script>
+<script>document.addEventListener('DOMContentLoaded',()=>{let b=document.getElementById('saveSettings');if(b){let old=b.onclick;b.onclick=async function(e){localStorage.setItem('tgWhatsapp',(document.getElementById('sWhatsapp')||{}).value||'');return old?old.call(this,e):undefined}}})</script>
+<!-- FINAL ADMIN PATCH -->
+<script type="module">
+import{getFirestore,collection,getDocs,doc,updateDoc,setDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import{initializeApp,getApps}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+const cfg={apiKey:"AIzaSyCfILW5a7H4B8cQfVnJwh_Dcvn04FxAwJs",authDomain:"the-gift-hamper-studio.firebaseapp.com",projectId:"the-gift-hamper-studio",storageBucket:"the-gift-hamper-studio.firebasestorage.app",messagingSenderId:"1002125530065",appId:"1:1002125530065:web:dea65445fd5631c7c0c6f0"};const DB=getFirestore(getApps()[0]||initializeApp(cfg));
+const $=id=>document.getElementById(id), val=id=>($(id)?.value||'').trim();
+function addShippedCard(){const dash=document.getElementById('dashboard');if(!dash||document.getElementById('shippedOrders'))return;const c=document.createElement('div');c.className='card';c.innerHTML='<h3>🚚 Shipped Orders</h3><div class="stat" id="shippedOrders">0</div>';dash.querySelector('.grid')?.appendChild(c)}
+function todayCount(list){const now=new Date();return list.filter(o=>{const raw=o.orderDate||o.createdAt?.toDate?.();const d=raw instanceof Date?raw:new Date(raw);return !isNaN(d)&&d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth()&&d.getDate()===now.getDate()}).length}
+async function refreshDash(){try{const s=await getDocs(collection(DB,'orders'));const os=s.docs.map(d=>d.data());const t=$('todayOrders'),sh=$('shippedOrders');if(t)t.textContent=todayCount(os);if(sh)sh.textContent=os.filter(o=>(o.orderStatus||o.status)==='Shipped').length}catch(e){}}
+function patchBanner(){const p=$('bSlot');if(p){p.max='20';p.placeholder='Slot 1-20'}const note=document.querySelector('#banners .card p');if(note)note.textContent='Up to 20 banner slots. Save, edit by same slot, or disable without deleting.';const btn=$('saveBanner');if(btn)btn.onclick=async()=>{const slot=Number(val('bSlot'));if(slot<1||slot>20)return alert('Banner slot must be 1 to 20');await setDoc(doc(DB,'banners',String(slot)),{slot,title:val('bTitle'),subtitle:val('bSubtitle'),image:val('bImage'),buttonText:val('bButtonText'),link:val('bLink'),active:$('bActive').value==='true',updatedAt:serverTimestamp()});alert('Banner saved')}}
+function patchDelivery(){const box=document.querySelector('#delivery .grid');if(box&&!$('dParcelStatus')){box.insertAdjacentHTML('beforeend','<select id="dParcelStatus"><option>Order Placed</option><option>Confirmed</option><option>Processing</option><option>Packed</option><option>Shipped</option><option>Out for Delivery</option><option>Delivered</option></select><input id="dPendingAmount" type="number" placeholder="Pending Amount">')}const save=$('saveDelivery');if(save)save.onclick=async()=>{const id=val('dOrderId');const s=await getDocs(collection(DB,'orders'));const d=s.docs.find(x=>(x.data().orderId||x.id)===id);if(!d)return alert('Order not found');await updateDoc(doc(DB,'orders',d.id),{deliveryPartner:val('dPartner'),trackingId:val('dTrackingId'),trackingUrl:val('dTrackingUrl'),expectedDeliveryDate:val('dExpectedDate'),customerMessage:val('dMessage'),parcelStatus:val('dParcelStatus'),pendingAmount:Number(val('dPendingAmount')||0),orderStatus:val('dParcelStatus'),status:val('dParcelStatus'),updatedAt:serverTimestamp()});alert('Delivery & tracking updated');refreshDash()}}
+function patchReturns(){const b=$('saveReturn');if(b)b.onclick=async()=>{const id=val('rOrderId');const s=await getDocs(collection(DB,'orders'));const d=s.docs.find(x=>(x.data().orderId||x.id)===id);if(!d)return alert('Order not found');await updateDoc(doc(DB,'orders',d.id),{returnStatus:$('rStatus').value,refundAmount:Number(val('rAmount')||0),refundPaymentStatus:$('rStatus').value.includes('Refund')?$('rStatus').value:'Pending',returnReason:val('rReason'),adminNote:val('rAdminNote'),updatedAt:serverTimestamp()});alert('Return/refund updated')}}
+document.addEventListener('DOMContentLoaded',()=>{addShippedCard();patchBanner();patchDelivery();patchReturns();setTimeout(refreshDash,1500);setInterval(refreshDash,30000)});
+</script>
+
+<!-- FINAL BANNER DELETE MANAGER PATCH -->
+<script type="module">
+import { getFirestore, collection, getDocs, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+const __bannerDeleteDB = window.DB || window.db;
+async function renderBannerDeleteList(){
+  try{
+    const dbx = __bannerDeleteDB;
+    if(!dbx) return;
+    let box=document.getElementById('bannerDeleteList');
+    if(!box){
+      box=document.createElement('div');
+      box.id='bannerDeleteList';
+      box.style.marginTop='18px';
+      const sec=document.getElementById('banners') || document.querySelector('[id*="banner"]');
+      (sec||document.body).appendChild(box);
+    }
+    const snap=await getDocs(collection(dbx,'banners'));
+    const list=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.slot||0)-(b.slot||0));
+    box.innerHTML='<h3>Existing Banners</h3>'+(
+      list.length ? list.map(b=>`
+        <div style="display:flex;gap:10px;align-items:center;padding:10px;border:1px solid #ddd;border-radius:10px;margin:8px 0">
+          ${b.image?`<img src="${b.image}" style="width:90px;height:50px;object-fit:cover;border-radius:7px">`:''}
+          <div style="flex:1"><b>Slot ${b.slot||b.id}</b><br><small>${b.title||'Untitled Banner'}</small></div>
+          <button data-banner-delete="${b.id}" style="background:#dc2626;color:#fff;border:0;padding:9px 12px;border-radius:8px;cursor:pointer">🗑 Delete</button>
+        </div>`).join('') : '<p>No banners added yet.</p>'
+    );
+    box.querySelectorAll('[data-banner-delete]').forEach(btn=>{
+      btn.onclick=async()=>{
+        if(!confirm('Delete this banner permanently?')) return;
+        await deleteDoc(doc(dbx,'banners',btn.dataset.bannerDelete));
+        await renderBannerDeleteList();
+        alert('Banner deleted successfully.');
+      };
+    });
+  }catch(e){ console.warn('Banner delete manager:',e); }
+}
+document.addEventListener('DOMContentLoaded',()=>setTimeout(renderBannerDeleteList,1800));
+window.renderBannerDeleteList=renderBannerDeleteList;
+</script>
+<!-- END FINAL BANNER DELETE MANAGER PATCH -->
+
+<!-- FINAL ORDER TRACKING PATCH -->
+<script type="module">
+import {initializeApp,getApps} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {getFirestore,collection,getDocs,doc,updateDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+const AC={apiKey:"AIzaSyCfILW5a7H4B8cQfVnJwh_Dcvn04FxAwJs",authDomain:"the-gift-hamper-studio.firebaseapp.com",projectId:"the-gift-hamper-studio",storageBucket:"the-gift-hamper-studio.firebasestorage.app",messagingSenderId:"1002125530065",appId:"1:1002125530065:web:dea65445fd5631c7c0c6f0"};
+const A=getApps()[0]||initializeApp(AC),D=getFirestore(A),$=id=>document.getElementById(id),v=id=>($(id)?.value||'').trim();let current=null;
+function setv(id,x){const e=$(id);if(e)e.value=x??''}
+async function find(){const id=v('dOrderId');if(!id)return alert('Enter Order ID first.');try{const s=await getDocs(collection(D,'orders'));const hit=s.docs.find(d=>String(d.data().orderId||d.id).toLowerCase()===id.toLowerCase());if(!hit){current=null;return alert('Order not found.')}current={id:hit.id,...hit.data()};setv('dOrderId',current.orderId||hit.id);setv('dPartner',current.deliveryPartner);setv('dTrackingId',current.trackingId||current.trackingAWB);setv('dTrackingUrl',current.trackingUrl);setv('dExpectedDate',current.expectedDeliveryDate);setv('dMessage',current.customerMessage);setv('dPendingAmount',current.pendingAmount);if($('dParcelStatus'))$('dParcelStatus').value=current.orderStatus||current.status||current.parcelStatus||'Order Placed';alert('Order loaded. All previously saved delivery details are shown.')}catch(e){alert('Unable to find order: '+e.message)}}
+function ensure(){const box=document.querySelector('#delivery .grid');if(box&&!$('dParcelStatus'))box.insertAdjacentHTML('beforeend',`<select id="dParcelStatus"><option>Order Placed</option><option>Confirmed</option><option>Processing</option><option>Preparing Gift</option><option>Packed</option><option>Shipped</option><option>Out for Delivery</option><option>Delivered</option><option>Cancelled</option></select><input id="dPendingAmount" type="number" min="0" placeholder="Pending Amount">`)}
+async function save(){if(!current)await find();if(!current)return;const status=v('dParcelStatus')||'Order Placed';const data={deliveryPartner:v('dPartner'),trackingId:v('dTrackingId'),trackingAWB:v('dTrackingId'),trackingUrl:v('dTrackingUrl'),expectedDeliveryDate:v('dExpectedDate'),customerMessage:v('dMessage'),pendingAmount:Number(v('dPendingAmount')||0),orderStatus:status,status:status,parcelStatus:status,updatedAt:serverTimestamp()};try{await updateDoc(doc(D,'orders',current.id),data);current={...current,...data};alert('Order status and tracking details saved successfully.');}catch(e){alert('Save failed: '+e.message)}}
+document.addEventListener('DOMContentLoaded',()=>{ensure();$('findDelivery')?.addEventListener('click',e=>{e.preventDefault();find()});$('saveDelivery')?.addEventListener('click',e=>{e.preventDefault();save()});});
+</script>
+<!-- END FINAL ORDER TRACKING PATCH -->
+
+<!-- FINAL GHS ADMIN EXTENSION -->
+<style>
+.support-settings .grid input,.support-settings .grid select{min-width:0}.promo-admin-row{border:1px solid var(--line);padding:14px;border-radius:12px;margin-top:12px}
+</style>
+<script type="module">
+import{initializeApp,getApps}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import{getFirestore,doc,getDoc,setDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+const CFG={apiKey:"AIzaSyCfILW5a7H4B8cQfVnJwh_Dcvn04FxAwJs",authDomain:"the-gift-hamper-studio.firebaseapp.com",projectId:"the-gift-hamper-studio",storageBucket:"the-gift-hamper-studio.firebasestorage.app",messagingSenderId:"1002125530065",appId:"1:1002125530065:web:dea65445fd5631c7c0c6f0"};
+const GDB=getFirestore(getApps()[0]||initializeApp(CFG));const $=x=>document.getElementById(x);
+function input(id,ph,type='text'){return `<input id="${id}" type="${type}" placeholder="${ph}">`}
+function promo(n,title,heading,desc,cat){return `<div class="promo-admin-row"><h3>Section ${n}</h3><div class="grid three">${input('pr'+n+'Title','Small Title')}${input('pr'+n+'Heading','Heading')}${input('pr'+n+'Description','Description')}${input('pr'+n+'Image','Image URL / Icon (emoji allowed)')}${input('pr'+n+'Category','Category to open')}</div><select id="pr${n}Enabled" style="margin-top:10px"><option value="true">Show Section</option><option value="false">Hide Section</option></select></div>`}
+function addUI(){let s=$('settings');if(s&&!$('supportSettingsCard'))s.querySelector('.card').insertAdjacentHTML('beforeend',`<div class="support-settings" id="supportSettingsCard" style="margin-top:22px;border-top:1px solid #e9e3dc;padding-top:18px"><h3>📞 Customer Support Settings</h3><div class="grid three">${input('supportWhatsapp','WhatsApp Number')}${input('supportEmail','Support Email','email')}${input('supportWelcome','WhatsApp Welcome Message')}${input('supportHours','Support Hours e.g. 10 AM - 7 PM')}</div><div class="grid two" style="margin-top:10px"><select id="supportWhatsappEnabled"><option value="true">WhatsApp Support: ON</option><option value="false">WhatsApp Support: OFF</option></select><select id="supportEmailEnabled"><option value="true">Email Support: ON</option><option value="false">Email Support: OFF</option></select></div></div>`);
+let p=$('banners');if(p&&!$('promoManagerCard'))p.insertAdjacentHTML('afterend',`<section class="view" id="promotions"><h2>✨ Promotional Sections</h2><div class="card" id="promoManagerCard">${promo(1)}${promo(2)}</div></section>`);
+let nav=document.querySelector('.sidebar');if(nav&&!document.querySelector('[data-view="promotions"]'))nav.insertAdjacentHTML('beforeend','<button class="navbtn" data-view="promotions">✨ Promotional Sections</button>');}
+async function loadExtra(){try{let d=await getDoc(doc(GDB,'settings','site'));let x=d.exists()?d.data():{};['supportWhatsapp','supportEmail','supportWelcome','supportHours','supportWhatsappEnabled','supportEmailEnabled'].forEach(k=>{if($(k)&&x[k]!=null)$(k).value=x[k]});for(let n=1;n<=2;n++){let z=(x.promoSections||{})[n]||{};for(let k of ['Title','Heading','Description','Image','Category','Enabled'])if($('pr'+n+k)&&z[k.toLowerCase()]!=null)$('pr'+n+k).value=z[k.toLowerCase()]}}}catch(e){}}
+function navFix(){document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>{document.querySelectorAll('.navbtn').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));$(b.dataset.view)?.classList.add('active')})}
+document.addEventListener('DOMContentLoaded',()=>{addUI();navFix();loadExtra();let save=$('saveSettings');save?.addEventListener('click',async()=>{try{let d=await getDoc(doc(GDB,'settings','site')),old=d.exists()?d.data():{};let ps={};for(let n=1;n<=2;n++)ps[n]={title:$('pr'+n+'Title').value.trim(),heading:$('pr'+n+'Heading').value.trim(),description:$('pr'+n+'Description').value.trim(),image:$('pr'+n+'Image').value.trim(),category:$('pr'+n+'Category').value.trim(),enabled:$('pr'+n+'Enabled').value==='true'};await setDoc(doc(GDB,'settings','site'),{...old,supportWhatsapp:$('supportWhatsapp').value.trim(),supportEmail:$('supportEmail').value.trim(),supportWelcome:$('supportWelcome').value.trim(),supportHours:$('supportHours').value.trim(),supportWhatsappEnabled:$('supportWhatsappEnabled').value==='true',supportEmailEnabled:$('supportEmailEnabled').value==='true',promoSections:ps,updatedAt:serverTimestamp()});}catch(e){alert('Support settings save failed: '+e.message)}})})
+</script>
+
+<style>
+#acList .ac-row{display:grid;grid-template-columns:1.2fr .7fr .9fr 1fr auto;gap:10px;align-items:center;border:1px solid var(--line);padding:12px;border-radius:12px;margin:10px 0;background:#fff}@media(max-width:800px){#acList .ac-row{grid-template-columns:1fr}}
+</style>
+<script type="module">
+import {initializeApp,getApps,getApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {getFirestore,collection,getDocs,doc,updateDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+const ACcfg={apiKey:"AIzaSyCfILW5a7H4B8cQfVnJwh_Dcvn04FxAwJs",authDomain:"the-gift-hamper-studio.firebaseapp.com",projectId:"the-gift-hamper-studio",storageBucket:"the-gift-hamper-studio.firebasestorage.app",messagingSenderId:"1002125530065",appId:"1:1002125530065:web:dea65445fd5631c7c0c6f0"};
+const ACdb=getFirestore(getApps().length?getApp():initializeApp(ACcfg));
+const A=id=>document.getElementById(id); let selectedOrder=null, editChargeId=null;
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>'₹'+Number(n||0).toLocaleString('en-IN');
+function resetAC(){editChargeId=null;A('acFormTitle').textContent='Add New Charge';['acName','acAmount','acNote'].forEach(x=>A(x).value='');A('acStatus').value='Pending';A('acVisible').value='true'}
+function renderAC(){if(!selectedOrder){A('acList').textContent='Select an order to manage charges.';return}let arr=Array.isArray(selectedOrder.additionalCharges)?selectedOrder.additionalCharges:[];A('acList').innerHTML=arr.length?arr.map(c=>`<div class="ac-row"><div><b>${esc(c.name||'Unnamed Charge')}</b>${c.note?`<br><small>${esc(c.note)}</small>`:''}</div><div><b>${money(c.amount)}</b></div><div><span class="tag">${esc(c.status||'Pending')}</span></div><div>${c.visible?'👁️ Visible':'🙈 Hidden'}</div><div class="actions"><button class="secondary" data-edit="${esc(c.id)}">✏️ Edit</button><button class="danger" data-del="${esc(c.id)}">🗑️ Delete</button></div></div>`).join(''):'<div class="muted">No additional charges yet.</div>';A('acList').querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{let c=arr.find(x=>x.id===b.dataset.edit);if(!c)return;editChargeId=c.id;A('acFormTitle').textContent='Edit Charge';A('acName').value=c.name||'';A('acAmount').value=c.amount??'';A('acStatus').value=c.status||'Pending';A('acVisible').value=String(c.visible!==false);A('acNote').value=c.note||'';window.scrollTo({top:A('additionalCharges').offsetTop,behavior:'smooth'})});A('acList').querySelectorAll('[data-del]').forEach(b=>b.onclick=async()=>{if(!confirm('Delete this charge?'))return;selectedOrder.additionalCharges=arr.filter(x=>x.id!==b.dataset.del);await updateDoc(doc(ACdb,'orders',selectedOrder.id),{additionalCharges:selectedOrder.additionalCharges,updatedAt:serverTimestamp()});renderAC();alert('Charge deleted successfully. Website order data is updated too.')})}
+A('acFindOrder').onclick=async()=>{let q=A('acOrderSearch').value.trim().toLowerCase();if(!q)return alert('Enter Order ID or customer mobile first.');try{let s=await getDocs(collection(ACdb,'orders'));let hit=s.docs.find(d=>{let x=d.data();return String(x.orderId||d.id).toLowerCase()===q||String(x.customerMobile||x.mobile||'').replace(/\D/g,'')===q.replace(/\D/g,'')});if(!hit){selectedOrder=null;A('acOrderInfo').textContent='Order not found.';renderAC();return}selectedOrder={id:hit.id,...hit.data()};A('acOrderInfo').innerHTML=`<b>${esc(selectedOrder.orderId||hit.id)}</b> — ${esc(selectedOrder.customerName||'Customer')} — Order Total: <b>${money(selectedOrder.total)}</b>`;renderAC()}catch(e){alert('Unable to load order: '+e.message)}};
+A('acSave').onclick=async()=>{if(!selectedOrder)return alert('Find and select an order first.');let name=A('acName').value.trim();let amount=Number(A('acAmount').value);if(!name)return alert('Charge Name / Reason is required. Without a name the charge should remain hidden from customers.');if(!Number.isFinite(amount)||amount<0)return alert('Enter a valid charge amount.');let arr=Array.isArray(selectedOrder.additionalCharges)?selectedOrder.additionalCharges:[];let item={id:editChargeId||('charge_'+Date.now()),name,amount,status:A('acStatus').value,visible:A('acVisible').value==='true',note:A('acNote').value.trim(),updatedAt:new Date().toISOString()};arr=editChargeId?arr.map(x=>x.id===editChargeId?item:x):[...arr,item];selectedOrder.additionalCharges=arr;await updateDoc(doc(ACdb,'orders',selectedOrder.id),{additionalCharges:arr,updatedAt:serverTimestamp()});renderAC();resetAC();alert('Additional charge saved successfully. The order record is connected to the website through Firebase.')};
+A('acReset').onclick=resetAC;
+// Make nav work even if original navigation initialized earlier.
+document.querySelector('[data-view="additionalCharges"]')?.addEventListener('click',()=>{document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));A('additionalCharges').classList.add('active');document.querySelectorAll('.navbtn').forEach(b=>b.classList.remove('active'));document.querySelector('[data-view="additionalCharges"]')?.classList.add('active')});
+</script>
+
+
+
+<!-- CLEAN FINAL BANNER FIX -->
+<script type="module">
+import {initializeApp,getApps} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {getFirestore,collection,getDocs,doc,getDoc,setDoc,deleteDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+const CFG={apiKey:"AIzaSyCfILW5a7H4B8cQfVnJwh_Dcvn04FxAwJs",authDomain:"the-gift-hamper-studio.firebaseapp.com",projectId:"the-gift-hamper-studio",storageBucket:"the-gift-hamper-studio.firebasestorage.app",messagingSenderId:"1002125530065",appId:"1:1002125530065:web:dea65445fd5631c7c0c6f0"};
+const cleanApp=getApps().find(a=>a.name==='cleanBannerAdmin')||initializeApp(CFG,'cleanBannerAdmin');
+const cleanDB=getFirestore(cleanApp); const el=id=>document.getElementById(id); const value=id=>(el(id)?.value||'').trim();
+async function renderCleanBanners(){const box=el('bannerManagerFinalList'); if(!box)return; try{const snap=await getDocs(collection(cleanDB,'banners')); const list=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(Number(a.slot)||0)-(Number(b.slot)||0)); box.innerHTML=list.length?list.map(x=>`<div style="display:flex;gap:10px;align-items:center;border:1px solid #ddd;padding:10px;margin:8px 0;border-radius:8px"><img src="${x.image||''}" onerror="this.style.display='none'" style="width:80px;height:55px;object-fit:cover;border-radius:6px"><span style="flex:1"><b>Slot ${x.slot||x.id}</b><br>${x.title||'Untitled'}</span><button data-edit="${x.id}">✏️ Edit</button><button data-del="${x.id}" class="danger">🗑 Delete Permanently</button></div>`).join(''):'<p>No banners added yet.</p>'; box.querySelectorAll('[data-edit]').forEach(b=>b.onclick=async()=>{try{const d=await getDoc(doc(cleanDB,'banners',b.dataset.edit)); if(!d.exists())return alert('Banner not found.'); const x=d.data()||{}; ['bSlot','bTitle','bSubtitle','bImage','bButtonText','bLink'].forEach(id=>{const key={bSlot:'slot',bTitle:'title',bSubtitle:'subtitle',bImage:'image',bButtonText:'buttonText',bLink:'link'}[id]; if(el(id))el(id).value=x[key]??''}); if(el('bActive'))el('bActive').value=x.active===false?'false':'true'; el('saveBanner').dataset.editId=d.id; el('saveBanner').textContent='Update Banner'; alert('Banner loaded. Change details and click Update Banner.');}catch(e){alert('Unable to load banner: '+e.message)}}); box.querySelectorAll('[data-del]').forEach(b=>b.onclick=async()=>{if(!confirm('Delete this banner permanently?'))return; try{await deleteDoc(doc(cleanDB,'banners',b.dataset.del)); await renderCleanBanners(); alert('Banner deleted permanently.');}catch(e){alert('Banner delete failed: '+e.message)}})}catch(e){box.innerHTML='<p>Unable to load banners: '+e.message+'</p>'}}
+function cleanSaveBanner(){const btn=el('saveBanner'); if(!btn)return; btn.onclick=async()=>{const slot=Number(value('bSlot')); if(!Number.isInteger(slot)||slot<1||slot>20)return alert('Enter a valid banner slot (1-20).'); const editId=btn.dataset.editId; const id=editId||String(slot); const data={slot,title:value('bTitle'),subtitle:value('bSubtitle'),image:value('bImage'),buttonText:value('bButtonText'),link:value('bLink'),active:el('bActive')?.value==='true',updatedAt:serverTimestamp()}; try{await setDoc(doc(cleanDB,'banners',id),data,{merge:false}); delete btn.dataset.editId; btn.textContent='Save Banner'; await renderCleanBanners(); alert(editId?'Banner updated successfully.':'Banner saved successfully.')}catch(e){alert('Banner save failed: '+e.message)}}}
+window.addEventListener('load',()=>setTimeout(()=>{const sec=el('banners'); if(sec&&!el('bannerManagerFinalList'))sec.insertAdjacentHTML('beforeend','<div class="card" style="margin-top:16px"><h3>Existing Banners — Edit / Delete</h3><div id="bannerManagerFinalList"></div></div>'); cleanSaveBanner(); renderCleanBanners();},500));
+</script>
+<div id="photoModal" class="photo-modal" onclick="if(event.target===this)window.closePhotoPreview()"><div class="photo-modal-box"><button class="photo-close" onclick="window.closePhotoPreview()">×</button><img id="photoModalImage" alt="Product photo preview"></div></div></body></html>
+
+
+<!-- RELIABLE FINAL ADMIN PATCH -->
+<script type="module">
+import {getApp,getApps,initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+import {getFirestore,doc,getDoc,setDoc,collection,getDocs,deleteDoc,serverTimestamp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+const AF_CFG={apiKey:'AIzaSyCfILW5a7H4B8cQfVnJwh_Dcvn04FxAwJs',authDomain:'the-gift-hamper-studio.firebaseapp.com',projectId:'the-gift-hamper-studio',storageBucket:'the-gift-hamper-studio.firebasestorage.app',messagingSenderId:'1002125530065',appId:'1:1002125530065:web:dea65445fd5631c7c0c6f0'};
+const AF_APP=getApps().find(a=>a.name==='[DEFAULT]')||getApps()[0]||initializeApp(AF_CFG);const AF_DB=getFirestore(AF_APP);const $=id=>document.getElementById(id);
+const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+/* Automatic discount calculator: enter Original Price + Discount %, Selling Price calculates itself. */
+function calcDiscount(){const o=Number($('pOriginalPrice')?.value||0),d=Math.max(0,Math.min(100,Number($('pDiscount')?.value||0)));if(o>0&&$('pSellingPrice'))$('pSellingPrice').value=Math.round((o*(100-d)/100)*100)/100;}
+$('pOriginalPrice')?.addEventListener('input',calcDiscount);$('pDiscount')?.addEventListener('input',calcDiscount);
+const productForm=$('pDiscount')?.closest('.card')||$('saveProduct')?.parentElement;
+if(productForm&&!$('discountCalculatorNote')){const n=document.createElement('p');n.id='discountCalculatorNote';n.className='muted';n.textContent='🧮 Automatic Discount Calculator: Original Price + Discount % डालें, Selling Price अपने-आप calculate होगी.';$('pSellingPrice')?.insertAdjacentElement('afterend',n);}
+
+/* Admin controlled Help Center answers */
+function addHelpManager(){const settings=$('settings');if(!settings||$('helpManagerCard'))return;const card=document.createElement('div');card.className='card';card.id='helpManagerCard';card.style.marginTop='18px';card.innerHTML=`<h3>❓ How can I help? — Admin Answer Control</h3><p class="muted">Website के Help button के answers यहीं से बदलें.</p><div class="grid two"><textarea id="help_delivery" placeholder="Delivery answer"></textarea><textarea id="help_international" placeholder="International Shipping answer"></textarea><textarea id="help_payment" placeholder="Payment answer"></textarea><textarea id="help_return" placeholder="Return answer"></textarea><textarea id="help_order" placeholder="Order answer"></textarea><textarea id="help_product" placeholder="Product answer"></textarea><textarea id="help_support" placeholder="Support answer"></textarea></div><button class="primary" id="saveHelpAnswers" style="margin-top:10px">Save Help Answers</button><span id="helpSaveMsg" class="muted" style="margin-left:10px"></span>`;settings.appendChild(card);
+ const keys=['delivery','international','payment','return','order','product','support'];getDoc(doc(AF_DB,'settings','site')).then(d=>{const a=d.exists()?(d.data().helpAnswers||{}):{};keys.forEach(k=>{$('help_'+k).value=a[k]||''})});$('saveHelpAnswers').onclick=async()=>{const answers={};keys.forEach(k=>answers[k]=$('help_'+k).value.trim());const old=await getDoc(doc(AF_DB,'settings','site'));await setDoc(doc(AF_DB,'settings','site'),{...(old.exists()?old.data():{}),helpAnswers:answers,updatedAt:serverTimestamp()});$('helpSaveMsg').textContent='Saved successfully.';};}
+
+/* One reliable Banner Manager: same document ID for Save / Edit / Delete. */
+async function renderReliableBanners(){let box=$('reliableBannerList');if(!box){const sec=$('banners');if(!sec)return;box=document.createElement('div');box.id='reliableBannerList';box.className='card';box.style.marginTop='16px';sec.appendChild(box);}try{const snap=await getDocs(collection(AF_DB,'banners'));const list=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(Number(a.slot)||0)-(Number(b.slot)||0));box.innerHTML='<h3>Existing Banners — Edit / Delete</h3>'+(list.length?list.map(b=>`<div style="display:flex;gap:10px;align-items:center;border:1px solid #ddd;padding:10px;margin:8px 0;border-radius:8px"><img src="${esc(b.image||'')}" style="width:100px;height:58px;object-fit:cover;border-radius:6px" onerror="this.style.display='none'"><div style="flex:1"><b>Slot ${esc(b.slot||b.id)}</b><br>${esc(b.title||'Untitled')}</div><button class="secondary" data-edit-banner="${esc(b.id)}">✏️ Edit</button><button class="danger" data-delete-banner="${esc(b.id)}">🗑 Delete Permanently</button></div>`).join(''):'<p class="muted">No banners added yet.</p>');box.querySelectorAll('[data-edit-banner]').forEach(btn=>btn.onclick=async()=>{const d=await getDoc(doc(AF_DB,'banners',btn.dataset.editBanner));if(!d.exists())return;const b=d.data()||{};$('bSlot').value=b.slot||'';$('bTitle').value=b.title||'';$('bSubtitle').value=b.subtitle||'';$('bImage').value=b.image||'';$('bButtonText').value=b.buttonText||'';$('bLink').value=b.link||'';$('bActive').value=b.active===false?'false':'true';$('saveBanner').dataset.editId=btn.dataset.editBanner;$('saveBanner').textContent='Update Banner';document.querySelector('[data-view="banners"]')?.click();});box.querySelectorAll('[data-delete-banner]').forEach(btn=>btn.onclick=async()=>{if(!confirm('Delete this banner permanently?'))return;await deleteDoc(doc(AF_DB,'banners',btn.dataset.deleteBanner));await renderReliableBanners();alert('Banner deleted permanently.');});}catch(e){box.innerHTML='<p class="muted">Banner list error: '+esc(e.message)+'</p>';}}
+function bindReliableBannerSave(){const btn=$('saveBanner');if(!btn)return;btn.onclick=async()=>{const slot=Number($('bSlot').value);if(!Number.isInteger(slot)||slot<1)return alert('Enter a valid banner slot.');const id=btn.dataset.editId||String(slot);await setDoc(doc(AF_DB,'banners',id),{slot,title:$('bTitle').value.trim(),subtitle:$('bSubtitle').value.trim(),image:$('bImage').value.trim(),buttonText:$('bButtonText').value.trim(),link:$('bLink').value.trim(),active:$('bActive').value==='true',updatedAt:serverTimestamp()},{merge:false});delete btn.dataset.editId;btn.textContent='Save Banner';await renderReliableBanners();alert('Banner saved successfully.');};}
+
+window.addEventListener('load',()=>setTimeout(()=>{calcDiscount();addHelpManager();bindReliableBannerSave();renderReliableBanners();},900),{once:true});
+</script>
+<!-- END RELIABLE FINAL ADMIN PATCH -->
