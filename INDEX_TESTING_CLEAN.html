@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Gift Hamper Studio - INDEX TESTING CLEAN</title>
+<meta content="The Gift Hamper Studio - curated gifts for every occasion." name="description"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--primary:#7c3aed;--secondary:#ec4899;--dark:#171225;--muted:#6b6575;--bg:#faf8fc;--card:#fff;--border:#eee8f4}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--dark)}
+button,input,select{font:inherit}button{cursor:pointer;border:0}
+a{text-decoration:none;color:inherit}
+.topbar{background:#171225;color:#fff;text-align:center;padding:8px 12px;font-size:13px}
+header{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--border)}
+.nav{max-width:1200px;margin:auto;padding:14px 18px;display:flex;align-items:center;gap:18px}
+.logo{font-weight:900;font-size:21px;line-height:1.05;color:var(--primary);white-space:nowrap}
+.logo span{display:block;font-size:11px;letter-spacing:2px;color:#8b8495;margin-top:3px}
+.search{flex:1;display:flex;max-width:520px;background:#f6f3f8;border-radius:14px;padding:4px}
+.search input{width:100%;border:0;background:transparent;outline:0;padding:11px 13px}
+.search button{background:var(--primary);color:#fff;border-radius:10px;padding:0 15px}
+.nav-actions{display:flex;gap:8px}
+.iconbtn{background:#f6f3f8;border-radius:12px;padding:10px 12px;position:relative}
+.badge{position:absolute;right:-4px;top:-5px;background:#ef4444;color:#fff;font-size:10px;border-radius:99px;padding:2px 6px}
+.categories{max-width:1200px;margin:auto;padding:10px 18px;display:flex;gap:8px;overflow:auto;white-space:nowrap}
+.chip{background:#f7f2fb;border:1px solid #eee7f5;padding:8px 13px;border-radius:999px;font-size:13px}
+.chip:hover{background:#eee5fb}
+main{max-width:1200px;margin:auto;padding:18px}
+.hero{display:grid;grid-template-columns:1.35fr .65fr;gap:16px;margin-bottom:26px}
+.hero-main{min-height:330px;border-radius:24px;padding:38px;display:flex;align-items:center;background:linear-gradient(135deg,#ede5ff,#ffe8f3);overflow:hidden}
+.hero h1{font-size:clamp(34px,5vw,62px);line-height:.98;margin:10px 0 14px}
+.hero p{color:#625b6c;max-width:520px;line-height:1.6}
+.cta{margin-top:20px;background:var(--primary);color:#fff;padding:13px 19px;border-radius:12px;font-weight:700}
+.hero-side{display:grid;gap:16px}
+.promo{border-radius:22px;padding:25px;background:#fff;border:1px solid var(--border)}
+.promo:first-child{background:#fff0f7}
+.promo h3{font-size:22px;margin:7px 0}
+.section{margin:30px 0}
+.section-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:13px}
+.section-head h2{font-size:24px}.section-head small{color:var(--muted)}
+.hscroll{display:flex;gap:14px;overflow-x:auto;padding-bottom:7px;scrollbar-width:thin}
+.cat-card{min-width:155px;background:#fff;border:1px solid var(--border);border-radius:18px;padding:18px;text-align:center}
+.cat-icon{height:82px;border-radius:15px;background:linear-gradient(135deg,#f1e9ff,#ffeaf4);display:grid;place-items:center;font-size:40px;margin-bottom:12px}
+.cat-card b{font-size:14px}
+.products{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
+.product{background:#fff;border:1px solid var(--border);border-radius:18px;overflow:hidden;min-width:230px}
+.product-img{height:215px;background:#f5f2f7;position:relative;display:grid;place-items:center;overflow:hidden}
+.product-img img{width:100%;height:100%;object-fit:cover}
+.placeholder{font-size:52px}
+.tag{position:absolute;left:10px;top:10px;background:#171225;color:#fff;padding:5px 8px;border-radius:8px;font-size:11px}
+.wish{position:absolute;right:10px;top:10px;background:#fff;border-radius:50%;width:35px;height:35px;font-size:18px}
+.product-info{padding:14px}
+.product-info h3{font-size:15px;margin-bottom:7px}
+.meta{font-size:12px;color:var(--muted);min-height:17px}
+.price{margin-top:10px;display:flex;align-items:center;gap:8px}
+.price strong{font-size:18px}.old{text-decoration:line-through;color:#999;font-size:13px}
+.discount{font-size:11px;color:#15803d;background:#dcfce7;padding:4px 6px;border-radius:6px}
+.buy{width:100%;margin-top:11px;background:#f0e9ff;color:#5b21b6;padding:10px;border-radius:10px;font-weight:700}
+.buy:hover{background:var(--primary);color:#fff}
+.empty{text-align:center;color:var(--muted);padding:35px;width:100%}
+footer{margin-top:40px;background:#171225;color:#eee;padding:35px 18px}
+.footer-inner{max-width:1200px;margin:auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px}
+.footer-inner p{color:#bbb3c3;line-height:1.7;margin-top:8px}
+.drawer{position:fixed;inset:0;background:#0006;z-index:50;display:none}
+.drawer.open{display:block}
+.panel{position:absolute;right:0;top:0;height:100%;width:min(430px,100%);background:#fff;padding:20px;overflow:auto}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.close{background:#f3f0f5;border-radius:10px;padding:8px 11px}
+.cart-row{display:flex;gap:10px;border-bottom:1px solid var(--border);padding:13px 0}
+.cart-row img{width:65px;height:65px;object-fit:cover;border-radius:10px;background:#f4f1f6}
+.cart-row .grow{flex:1}.qty{display:flex;gap:7px;align-items:center;margin-top:7px}
+.qty button{background:#eee8f3;width:25px;height:25px;border-radius:7px}
+.checkout{width:100%;background:var(--primary);color:#fff;padding:13px;border-radius:11px;margin-top:14px}
+.modal{position:fixed;inset:0;background:#0007;z-index:60;display:none;place-items:center;padding:18px}
+.modal.open{display:grid}
+.modal-box{width:min(520px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:20px;padding:22px}
+.form{display:grid;gap:10px}.form input,.form select,.form textarea{width:100%;border:1px solid #ddd4e5;border-radius:10px;padding:11px;outline:0}.form textarea{min-height:80px}
+.tabs{display:flex;gap:8px;margin:12px 0}.tab{padding:8px 12px;border-radius:9px;background:#f2edf6}.tab.active{background:var(--primary);color:#fff}
+.order{border:1px solid var(--border);border-radius:14px;padding:13px;margin:10px 0}.status{display:inline-block;margin-top:7px;background:#ede9fe;color:#5b21b6;padding:5px 8px;border-radius:8px;font-size:12px}
+@media(max-width:900px){.products{grid-template-columns:repeat(3,1fr)}.hero{grid-template-columns:1fr}.hero-side{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){.nav{flex-wrap:wrap}.logo{flex:1}.search{order:3;max-width:none;flex-basis:100%}.products{grid-template-columns:repeat(2,1fr)}.product-img{height:180px}.hero-main{padding:27px;min-height:290px}.footer-inner{grid-template-columns:1fr}.nav-actions{gap:4px}.iconbtn{padding:9px}}
+.buy-now{margin-top:8px;background:#111827!important}.track-result img{max-width:120px;border-radius:10px}.help-fab{position:fixed;right:18px;bottom:18px;z-index:70}.footer-extra{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:28px}.footer-extra a{display:block;margin:7px 0}.social-links{display:flex;flex-wrap:wrap;gap:10px}.qrbox{width:160px;height:160px}.topbar{overflow:hidden;white-space:nowrap}.topbar span{display:inline-block;animation:marquee 18s linear infinite}@keyframes marquee{from{transform:translateX(100%)}to{transform:translateX(-100%)}}@media(max-width:700px){.footer-extra{grid-template-columns:1fr 1fr}}
+</style>
+<style>
+.announcement-ticker{overflow:hidden;white-space:nowrap}.announcement-ticker span{display:inline-block;padding-left:100%;animation:ticker 18s linear infinite}@keyframes ticker{to{transform:translateX(-100%)}}.social-links{display:flex;gap:12px;flex-wrap:wrap}.social-links a{font-weight:800;text-decoration:none;padding:10px 14px;border-radius:12px;background:#f3eef8}.help-fab{position:fixed;right:18px;bottom:18px;z-index:80;background:var(--primary);color:#fff;padding:13px 18px;border-radius:999px;box-shadow:0 10px 30px #0003}.buy-now{width:100%;margin-top:8px;background:#f59e0b;color:#fff;padding:11px;border-radius:10px;font-weight:800}.footer-extra{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:22px;padding:26px 0}.footer-extra h3{margin:0 0 10px}.footer-extra a{display:block;margin:8px 0}.qrbox{max-width:150px;background:#fff;padding:8px;border-radius:12px}.track-card{max-width:760px;margin:20px auto;padding:18px;border:1px solid var(--border);border-radius:18px;background:#fff}.track-result img{width:90px;height:90px;object-fit:cover;border-radius:12px}.hidden-email{display:none!important}</style></head>
+<body>
+<div class="topbar announcement-ticker" id="announcement"><span>🎁 Welcome to The Gift Hamper Studio — Beautiful gifts for every moment</span></div>
+<header>
+<div class="nav">
+<a class="logo" href="#">THE GIFT HAMPER<span>STUDIO</span></a>
+<div class="search"><input id="searchInput" placeholder="Search gifts, hampers, occasions..."/><button onclick="renderProducts()">Search</button></div>
+<div class="nav-actions">
+<button class="iconbtn" onclick="openWishlist()">♡<span class="badge" id="wishCount">0</span></button>
+<button class="iconbtn" onclick="openOrders()">📦</button>
+<button class="iconbtn" onclick="openCart()">🛒<span class="badge" id="cartCount">0</span></button>
+<button class="iconbtn" onclick="openLogin()">👤</button>
+</div>
+</div>
+<div class="categories" id="chips"></div>
+</header>
+<main>
+<section class="hero">
+<div class="hero-main">
+<div>
+<div class="chip" style="display:inline-block">Curated with love ✨</div>
+<h1>Make every<br/>moment giftable.</h1>
+<p>Thoughtfully curated hampers and gifts for birthdays, anniversaries, weddings, couples, festivals and all the little surprises.</p>
+<button class="cta" onclick="document.getElementById('productsSection').scrollIntoView({behavior:'smooth'})">Shop Gifts →</button>
+</div>
+</div>
+<div class="hero-side">
+<div class="promo"><small>💝 For someone special</small><h3>Personalized Gifts</h3><p>Make it uniquely theirs.</p></div>
+<div class="promo"><small>🚚 Easy gifting</small><h3>Gift Hampers</h3><p>Ready-to-gift collections for every occasion.</p></div>
+</div>
+</section>
+<section class="section">
+<div class="section-head"><div><small>SHOP BY OCCASION</small><h2>Popular Categories</h2></div><small>Swipe →</small></div>
+<div class="hscroll" id="catList"></div>
+</section>
+<section class="section" id="productsSection">
+<div class="section-head"><div><small>HANDPICKED FOR YOU</small><h2>Featured Gifts</h2></div><small id="productCount"></small></div>
+<div class="products" id="productGrid"></div>
+</section>
+<section class="section">
+<div class="section-head"><div><small>GIFTING MADE EASY</small><h2>Why shop with us?</h2></div></div>
+<div class="hscroll">
+<div class="cat-card"><div class="cat-icon">🎀</div><b>Beautifully Packed</b><p class="meta">Gift-ready presentation</p></div>
+<div class="cat-card"><div class="cat-icon">💌</div><b>Personal Message</b><p class="meta">Add a special note</p></div>
+<div class="cat-card"><div class="cat-icon">🚚</div><b>Reliable Delivery</b><p class="meta">Track your order</p></div>
+<div class="cat-card"><div class="cat-icon">💜</div><b>Made with Love</b><p class="meta">Curated gifting</p></div>
+</div>
+</section>
+</main>
+<section id="specialCategorySequence" style="padding:28px 16px;max-width:1200px;margin:auto">
+<h2 style="text-align:center">🎁 Special Gift Categories</h2>
+<p style="text-align:center">Find the perfect gift for every special moment.</p>
+<div class="final-cats"><div class="final-cat" data-category="Happy Birthday Gifts">Happy Birthday Gifts</div><div class="final-cat" data-category="Anniversary Gifts">Anniversary Gifts</div><div class="final-cat" data-category="Surprise Gifts">Surprise Gifts</div><div class="final-cat" data-category="Wedding Gifts">Wedding Gifts</div><div class="final-cat" data-category="Couple Gifts">Couple Gifts</div><div class="final-cat" data-category="Love &amp; Lovers Gifts">Love &amp; Lovers Gifts</div><div class="final-cat" data-category="Gift for Her">Gift for Her</div><div class="final-cat" data-category="Gift for Him">Gift for Him</div><div class="final-cat" data-category="Custom Gift Hampers">Custom Gift Hampers</div><div class="final-cat" data-category="Festival &amp; Special Gifts">Festival &amp; Special Gifts</div><div class="final-cat" data-category="Baby &amp; Kids Gifts">Baby &amp; Kids Gifts</div><div class="final-cat" data-category="Corporate Gifts">Corporate Gifts</div></div></section><footer>
+<div class="footer-inner">
+<div><div class="logo" style="color:#fff">THE GIFT HAMPER STUDIO<span style="color:#aaa">MAKE MOMENTS MEMORABLE</span></div><p>Your destination for thoughtful gifts, curated hampers and memorable surprises.</p></div>
+<div><b>Quick Links</b><p>Categories<br/>Orders<br/>Wishlist<br/>Contact Us</p></div>
+<div><b>Need Help?</b><p>WhatsApp: Contact us<br/>Email: hello@thegifthamperstudio.com</p></div>
+</div>
+</footer>
+<div class="drawer" id="drawer" onclick="if(event.target===this)closeDrawer()">
+<div class="panel">
+<div class="panel-head"><h2 id="panelTitle">Cart</h2><button class="close" onclick="closeDrawer()">✕</button></div>
+<div id="panelContent"></div>
+</div>
+</div>
+<div class="modal" id="loginModal">
+<div class="modal-box">
+<div class="panel-head"><h2>Welcome 👋</h2><button class="close" onclick="closeLogin()">✕</button></div>
+<div class="tabs"><button class="tab active" id="emailTab" onclick="showLogin('email')">Email</button><button class="tab" id="phoneTab" onclick="showLogin('phone')">Phone OTP</button></div>
+<div class="form" id="emailForm">
+<input id="email" placeholder="Email address" type="email"/>
+<input id="password" placeholder="Password" type="password"/>
+<button class="cta" onclick="emailLogin()">Login / Sign up</button>
+<button class="buy" onclick="googleLogin()">Continue with Google</button>
+</div>
+<div class="form" id="phoneForm" style="display:none">
+<input id="phone" placeholder="+91XXXXXXXXXX"/>
+<div id="recaptcha-container"></div>
+<button class="cta" onclick="sendOTP()">Send OTP</button>
+<input id="otp" placeholder="Enter OTP"/>
+<button class="buy" onclick="verifyOTP()">Verify OTP</button>
+</div>
+<p class="meta" id="loginMsg" style="margin-top:10px"></p>
+</div>
+</div>
+<div class="modal" id="checkoutModal">
+<div class="modal-box">
+<div class="panel-head"><h2>Checkout</h2><button class="close" onclick="closeCheckout()">✕</button></div>
+<div id="checkoutSummary"></div>
+<div class="form">
+<input id="customerName" placeholder="Full name"/>
+<input id="customerMobile" placeholder="Mobile number"/>
+<input id="customerEmail" placeholder="Email"/>
+<textarea id="address" placeholder="Full delivery address"></textarea>
+<input id="city" placeholder="City"/>
+<input id="pincode" placeholder="PIN code"/>
+<select id="paymentMethod">
+<option value="COD">Cash on Delivery</option>
+<option value="UPI">UPI</option>
+<option value="Google Pay">Google Pay</option>
+<option value="PhonePe">PhonePe</option>
+<option value="Paytm">Paytm</option>
+<option value="Card">Debit / Credit Card</option>
+<option value="Net Banking">Net Banking</option>
+<option value="Bank Transfer">Bank Transfer</option>
+</select>
+<input id="coupon" placeholder="Coupon / Voucher code (e.g. GIFT99)"/>
+<button class="buy" onclick="applyCoupon()">Apply Coupon</button>
+<div class="meta" id="couponMsg"></div>
+<button class="checkout" onclick="placeOrder()">Place Order</button>
+</div>
+</div>
+</div>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,GoogleAuthProvider,signInWithPopup,RecaptchaVerifier,signInWithPhoneNumber,signOut} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import {getFirestore,collection,addDoc,getDocs,doc,getDoc,setDoc,query,where,orderBy,limit} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+const firebaseConfig={
+  apiKey:"AIzaSyCfILW5a7H4B8cQfVnJwh_Dcvn04FxAwJs",
+  authDomain:"the-gift-hamper-studio.firebaseapp.com",
+  projectId:"the-gift-hamper-studio",
+  storageBucket:"the-gift-hamper-studio.firebasestorage.app",
+  messagingSenderId:"1002125530065",
+  appId:"1:1002125530065:web:dea65445fd5631c7c0c6f0"
+};
+
+let app,auth,db;
+const firebaseReady=!Object.values(firebaseConfig).some(v=>String(v).includes("PASTE_"));
+if(firebaseReady){
+  app=initializeApp(firebaseConfig); auth=getAuth(app); db=getFirestore(app);
+  onAuthStateChanged(auth,user=>{window.currentUser=user;});
+}
+
+const categories=[
+ ["🎂","Happy Birthday"],["💍","Anniversary"],["🎁","Surprise Gift"],["💒","Wedding"],
+ ["💑","Couple Gift"],["❤️","Lovers Gift"],["👩","Gift for Her"],["👨","Gift for Him"],
+ ["✨","Custom Hampers"],["🎉","Festival Specials"],["🧸","Baby & Kids"],["🏢","Corporate Gifts"]
+];
+let products=[
+ {id:"demo1",name:"Chocolate & Self-Care Hamper",mainCategory:"Gift for Her",material:"Chocolates, candle, self-care items",quantity:6,size:"Standard",sku:"GHS-001",originalPrice:1499,sellingPrice:999,discount:33,offerActive:true,stock:20,description:"A sweet and relaxing gift hamper.",image:"https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=800&q=80",featured:true,bestSeller:true},
+ {id:"demo2",name:"Couple Celebration Hamper",mainCategory:"Couple Gift",material:"Mug, chocolates, greeting card",quantity:4,size:"Standard",sku:"GHS-002",originalPrice:1799,sellingPrice:1299,discount:28,offerActive:true,stock:15,description:"A fun hamper for two.",image:"https://images.unsplash.com/photo-1512909006721-3d6018887383?auto=format&fit=crop&w=800&q=80",featured:true,bestSeller:true},
+ {id:"demo3",name:"Birthday Surprise Box",mainCategory:"Happy Birthday",material:"Chocolates, décor, card",quantity:7,size:"Large",sku:"GHS-003",originalPrice:1299,sellingPrice:899,discount:31,offerActive:true,stock:30,description:"A cheerful birthday surprise.",image:"https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?auto=format&fit=crop&w=800&q=80",featured:true},
+ {id:"demo4",name:"Elegant Anniversary Hamper",mainCategory:"Anniversary",material:"Premium keepsakes and chocolates",quantity:5,size:"Premium",sku:"GHS-004",originalPrice:2299,sellingPrice:1699,discount:26,offerActive:true,stock:10,description:"A romantic anniversary gift.",image:"https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=80",featured:true}
+];
+let cart=JSON.parse(localStorage.getItem("ghs_cart")||"[]");
+let wishlist=JSON.parse(localStorage.getItem("ghs_wishlist")||"[]");
+let activeCoupon=null;
+
+function money(n){return "₹"+Number(n||0).toLocaleString("en-IN")}
+function saveLocal(){localStorage.setItem("ghs_cart",JSON.stringify(cart));localStorage.setItem("ghs_wishlist",JSON.stringify(wishlist));updateBadges()}
+function updateBadges(){document.getElementById("cartCount").textContent=cart.reduce((a,x)=>a+x.qty,0);document.getElementById("wishCount").textContent=wishlist.length}
+function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+
+function renderCategories(){
+ document.getElementById("catList").innerHTML=categories.map(c=>`<button class="cat-card" onclick="filterCategory('${c[1].replaceAll("'","\\'")}')"><div class="cat-icon">${c[0]}</div><b>${c[1]}</b></button>`).join("");
+ document.getElementById("chips").innerHTML=categories.map(c=>`<button class="chip" onclick="filterCategory('${c[1].replaceAll("'","\\'")}')">${c[0]} ${c[1]}</button>`).join("");
+}
+window.filterCategory=(cat)=>{document.getElementById("searchInput").value=cat;renderProducts()}
+
+function productCard(p){
+ const liked=wishlist.includes(p.id);
+ return `<article class="product">
+ <div class="product-img">${p.image?`<img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" onerror="this.style.display='none'">`:`<div class="placeholder">🎁</div>`}
+ ${p.offerActive?`<span class="tag">${p.discount||0}% OFF</span>`:""}<button class="wish" onclick="toggleWish('${p.id}')">${liked?"♥":"♡"}</button></div>
+ <div class="product-info"><h3>${escapeHtml(p.name)}</h3><div class="meta">${escapeHtml(p.mainCategory||"Gift")} · ${escapeHtml(p.size||"Standard")}</div>
+ <div class="price"><strong>${money(p.sellingPrice)}</strong>${p.originalPrice?`<span class="old">${money(p.originalPrice)}</span>`:""}${p.discount?`<span class="discount">${p.discount}%</span>`:""}</div>
+ <button class="buy" onclick="addToCart('${p.id}')">Add to Cart</button><button class="buy buy-now" onclick="buyNow('${p.id}')">Buy Now</button></div></article>`;
+}
+function renderProducts(){
+ const q=document.getElementById("searchInput").value.trim().toLowerCase();
+ let list=products.filter(p=>!q||`${p.name} ${p.mainCategory} ${p.subCategory||""} ${p.material||""}`.toLowerCase().includes(q));
+ document.getElementById("productCount").textContent=`${list.length} gifts`;
+ document.getElementById("productGrid").innerHTML=list.length?list.map(productCard).join(""):`<div class="empty">No gifts found. Try another search.</div>`;
+}
+window.toggleWish=(id)=>{wishlist=wishlist.includes(id)?wishlist.filter(x=>x!==id):[...wishlist,id];saveLocal();renderProducts()}
+window.addToCart=(id)=>{
+ const p=products.find(x=>x.id===id);if(!p)return;
+ const row=cart.find(x=>x.id===id); if(row)row.qty++;else cart.push({id,qty:1});
+ saveLocal();openCart();
+}
+window.buyNow=(id)=>{cart=[{id,qty:1}];saveLocal();openCheckout();};
+window.openCart=()=>{
+ document.getElementById("panelTitle").textContent="Your Cart";
+ const rows=cart.map(x=>{const p=products.find(y=>y.id===x.id);return p?`<div class="cart-row"><div class="grow"><b>${escapeHtml(p.name)}</b><div class="meta">${money(p.sellingPrice)} each</div><div class="qty"><button onclick="changeQty('${p.id}',-1)">−</button><b>${x.qty}</b><button onclick="changeQty('${p.id}',1)">+</button><button onclick="removeCart('${p.id}')" style="margin-left:7px">🗑</button></div></div><b>${money(p.sellingPrice*x.qty)}</b></div>`:""}).join("");
+ const total=cart.reduce((s,x)=>{const p=products.find(y=>y.id===x.id);return s+(p?p.sellingPrice*x.qty:0)},0);
+ document.getElementById("panelContent").innerHTML=rows||`<div class="empty">Your cart is empty 🎁</div>`;
+ if(cart.length)document.getElementById("panelContent").innerHTML+=`<div style="padding-top:18px"><div style="display:flex;justify-content:space-between"><b>Subtotal</b><b>${money(total)}</b></div><button class="checkout" onclick="openCheckout()">Proceed to Checkout</button></div>`;
+ document.getElementById("drawer").classList.add("open");
+}
+window.changeQty=(id,n)=>{const x=cart.find(a=>a.id===id);if(!x)return;x.qty+=n;if(x.qty<=0)cart=cart.filter(a=>a.id!==id);saveLocal();openCart()}
+window.removeCart=(id)=>{cart=cart.filter(x=>x.id!==id);saveLocal();openCart()}
+window.openWishlist=()=>{document.getElementById("panelTitle").textContent="Saved Gifts";const list=products.filter(p=>wishlist.includes(p.id));document.getElementById("panelContent").innerHTML=list.length?list.map(productCard).join(""):`<div class="empty">No saved gifts yet ♡</div>`;document.getElementById("drawer").classList.add("open")}
+window.closeDrawer=()=>document.getElementById("drawer").classList.remove("open");
+
+window.openLogin=()=>document.getElementById("loginModal").classList.add("open");
+window.closeLogin=()=>document.getElementById("loginModal").classList.remove("open");
+window.showLogin=(type)=>{document.getElementById("emailForm").style.display=type==="email"?"grid":"none";document.getElementById("phoneForm").style.display=type==="phone"?"grid":"none";document.getElementById("emailTab").classList.toggle("active",type==="email");document.getElementById("phoneTab").classList.toggle("active",type==="phone")}
+
+window.emailLogin=async()=>{
+ if(!firebaseReady)return msg("Add your Firebase config first.");
+ const e=document.getElementById("email").value.trim(),p=document.getElementById("password").value;
+ try{try{await signInWithEmailAndPassword(auth,e,p)}catch{await createUserWithEmailAndPassword(auth,e,p)}msg("Login successful.");closeLogin()}catch(err){msg(err.message)}
+}
+window.googleLogin=async()=>{
+ if(!firebaseReady)return msg("Add your Firebase config first.");
+ try{await signInWithPopup(auth,new GoogleAuthProvider());msg("Login successful.");closeLogin()}catch(e){msg(e.message)}
+}
+let confirmationResult=null;
+window.sendOTP=async()=>{
+ if(!firebaseReady)return msg("Add your Firebase config first.");
+ try{if(!window.recaptchaVerifier)window.recaptchaVerifier=new RecaptchaVerifier(auth,"recaptcha-container",{});confirmationResult=await signInWithPhoneNumber(auth,document.getElementById("phone").value,window.recaptchaVerifier);msg("OTP sent.")}catch(e){msg(e.message)}
+}
+window.verifyOTP=async()=>{try{if(!confirmationResult)return msg("Send OTP first.");await confirmationResult.confirm(document.getElementById("otp").value);msg("Phone verified.");closeLogin()}catch(e){msg(e.message)}}
+function msg(t){document.getElementById("loginMsg").textContent=t}
+
+window.openCheckout=()=>{
+ closeDrawer();
+ if(!cart.length)return;
+ document.getElementById("checkoutSummary").innerHTML=`<div class="order"><b>${cart.reduce((a,x)=>a+x.qty,0)} item(s)</b><div class="meta">Subtotal: ${money(cart.reduce((s,x)=>{const p=products.find(y=>y.id===x.id);return s+(p?p.sellingPrice*x.qty:0)},0))}</div></div>`;
+ if(window.currentUser){document.getElementById("customerEmail").value=window.currentUser.email||"";document.getElementById("customerName").value=window.currentUser.displayName||""}
+ document.getElementById("checkoutModal").classList.add("open");
+}
+window.closeCheckout=()=>document.getElementById("checkoutModal").classList.remove("open");
+window.applyCoupon=async()=>{
+ const code=document.getElementById("coupon").value.trim().toUpperCase();
+ if(!code)return;
+ if(firebaseReady){try{const snap=await getDocs(query(collection(db,"coupons"),where("code","==",code),limit(1)));if(!snap.empty){const c=snap.docs[0].data();if(c.active!==false){activeCoupon=c;document.getElementById("couponMsg").textContent="Coupon applied.";return}}}catch(e){}}
+ if(code==="GIFT99"){activeCoupon={code,discountType:"fixed",discountValue:99};document.getElementById("couponMsg").textContent="₹99 coupon applied."}
+ else document.getElementById("couponMsg").textContent="Coupon not found.";
+}
+window.placeOrder=async()=>{
+ if(!cart.length)return;
+ const name=document.getElementById("customerName").value.trim(),mobile=document.getElementById("customerMobile").value.trim(),email=document.getElementById("customerEmail").value.trim(),address=document.getElementById("address").value.trim();
+ if(!name||!mobile||!address)return alert("Please fill name, mobile and address.");
+ const subtotal=cart.reduce((s,x)=>{const p=products.find(y=>y.id===x.id);return s+(p?p.sellingPrice*x.qty:0)},0);
+ let discount=0;if(activeCoupon){discount=activeCoupon.discountType==="percentage"?subtotal*Number(activeCoupon.discountValue||0)/100:Number(activeCoupon.discountValue||0);if(activeCoupon.maxDiscount)discount=Math.min(discount,Number(activeCoupon.maxDiscount))}
+ const total=Math.max(0,subtotal-discount);
+ const order={orderId:"GHS-"+Date.now(),customerName:name,customerMobile:mobile,customerEmail:email,address,city:document.getElementById("city").value,pincode:document.getElementById("pincode").value,products:cart.map(x=>{const p=products.find(y=>y.id===x.id);return {productId:x.id,name:p?.name,quantity:x.qty,price:p?.sellingPrice,image:(p?.image||p?.imageUrl||p?.pImage||(Array.isArray(p?.images)?p.images[0]:'' )||'')}}),subtotal,discount,total,paymentMethod:document.getElementById("paymentMethod").value,paymentStatus:"Pending",orderStatus:"Order Placed",orderDate:new Date().toISOString(),expectedDeliveryDate:"",trackingId:"",trackingUrl:"",adminNote:""};
+ try{if(firebaseReady)await addDoc(collection(db,"orders"),{...order,userId:window.currentUser?.uid||null});localStorage.setItem("last_order",JSON.stringify(order));cart=[];activeCoupon=null;saveLocal();closeCheckout();alert("Order placed successfully! Order ID: "+order.orderId);openOrders()}catch(e){alert("Order save failed: "+e.message)}
+}
+window.openOrders=async()=>{
+ document.getElementById("panelTitle").textContent="My Orders";let orders=[];
+ const local=localStorage.getItem("last_order");if(local)orders.push(JSON.parse(local));
+ if(firebaseReady&&window.currentUser){try{const snap=await getDocs(query(collection(db,"orders"),where("userId","==",window.currentUser.uid),limit(20)));snap.forEach(d=>orders.push(d.data()))}catch(e){}}
+ const seen=new Set();orders=orders.filter(o=>o.orderId&&!seen.has(o.orderId)&&(seen.add(o.orderId)));
+ document.getElementById("panelContent").innerHTML=orders.length?orders.map(o=>`<div class="order"><b>${escapeHtml(o.orderId)}</b><div class="meta">${new Date(o.orderDate).toLocaleString("en-IN")}</div><div style="margin-top:7px">${money(o.total)}</div><span class="status">${escapeHtml(o.orderStatus||"Order Placed")}</span>${o.expectedDeliveryDate?`<div class="meta" style="margin-top:8px">Delivery: ${escapeHtml(o.expectedDeliveryDate)}</div>`:""}${o.trackingId?`<div class="meta">Tracking: ${escapeHtml(o.trackingId)}</div>`:""}</div>`).join(""):`<div class="empty">No orders yet 📦</div>`;
+ document.getElementById("drawer").classList.add("open");
+}
+
+async function loadSiteSettings(){
+ if(!firebaseReady)return;
+ try{const s=await getDoc(doc(db,"settings","site"));if(s.exists()){const x=s.data();if(x.announcement)document.getElementById("announcement").textContent=x.announcement;document.title=x.storeName||document.title}}catch(e){}
+}
+async function loadProducts(){
+ if(!firebaseReady)return;
+ try{const snap=await getDocs(collection(db,"products"));if(!snap.empty){products=snap.docs.map(d=>({id:d.id,...d.data()}));renderProducts()}}catch(e){console.warn(e)}
+}
+renderCategories();renderProducts();updateBadges();loadSiteSettings();loadProducts();
+</script>
+<!-- FINAL FEATURE EXTENSION -->
+<section class="track-card" id="trackOrderSection"><h2>Track Your Order</h2><p>Order ID या Mobile Number डालकर अपनी पूरी order information देखें।</p><div class="row"><input id="trackQuery" placeholder="Order ID / Mobile Number"/><button class="checkout" onclick="window.trackOrderNow()" style="width:auto">View My Order</button></div><div class="track-result" id="trackResult"></div></section>
+<button class="help-fab" onclick="window.openHelp()">How can I help?</button>
+<div class="modal" id="helpModal"><div class="modal-box"><div class="panel-head"><h2>How can I help?</h2><button class="close" onclick="window.closeHelp()">✕</button></div><div class="form"><button onclick="window.helpAction('delivery')">Delivery कब तक होगी?</button><button onclick="window.helpAction('international')">International Shipping</button><button onclick="window.helpAction('payment')">Payment कैसे करें?</button><button onclick="window.helpAction('return')">Return कैसे करें?</button><button onclick="window.helpAction('order')">मेरा Order कहाँ है?</button><button onclick="window.helpAction('product')">Product के बारे में पूछना है</button><button onclick="window.helpAction('support')">Customer Support WhatsApp</button></div><p class="meta" id="helpAnswer"></p></div></div>
+<div class="footer-extra" id="finalFooter">
+<div id="footerAboutBlock"><h3 id="footerStore">The Gift Hamper Studio</h3><p id="footerDescription">The Gift Hamper Studio brings thoughtful gift hampers and special gifts for every celebration and memorable moment.</p><div class="social-links" id="socialLinks"></div></div>
+<div id="footerLinksBlock"><h3>Useful Links</h3><div id="usefulLinks"></div></div>
+<div id="footerContactBlock"><h3>Contact Us</h3><p id="shopAddress">Shop address will be updated by admin.</p><p id="shopContact"></p><p id="shopEmail"></p><p id="shopWhatsapp"></p></div>
+<div id="footerQRBlock"><h3>📱 Scan &amp; Visit</h3><p>Scan the QR code to visit our store.</p><img alt="Scan to Visit Store" class="qrbox" id="storeQR"/></div>
+</div>
+<section class="track-card" id="deliveryInfo"><h2>Delivery Information</h2><p>Delivery timeline and charges are updated by The Gift Hamper Studio.</p></section><section class="track-card" id="internationalShipping"><h2>International Shipping</h2><p>International delivery availability is confirmed during inquiry/order processing.</p></section><section class="track-card" id="returnPolicy"><h2>Return Policy</h2><p id="returnPolicyText">Return policy will be updated by admin.</p></section>
+
+<!-- Updated: search-email reset, Buy Now, Help Center answers, responsive categories, order tracking fallback, WhatsApp -->
+<style>.final-help-answer{display:none;margin:14px 0;padding:14px;border-radius:12px;background:#fee2e2;border:1px solid #ef4444;color:#991b1b;font-weight:700}.final-cats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.final-cat{padding:15px;border-radius:15px;background:linear-gradient(135deg,#fff1f2,#f5f3ff);font-weight:800;text-align:center}.final-wa{position:fixed;right:18px;bottom:18px;z-index:9999;background:#25D366;color:#fff;border:0;border-radius:999px;padding:14px 18px;font-weight:800}.final-buy{margin-left:8px;background:#7c3aed!important;color:#fff!important}@media(max-width:800px){.final-cats{grid-template-columns:repeat(2,1fr)}}</style>
+<button class="final-wa" onclick="let n=localStorage.getItem('tgWhatsapp')||'';n?open('https://wa.me/'+n.replace(/\\D/g,''),'_blank'):alert('Set WhatsApp number in Admin Settings')" style="display:none">WhatsApp Support</button>
+<!-- GHS FINAL INTEGRATION PATCH -->
+<style>
+.ghs-answer{display:none;background:#fee2e2;color:#991b1b;border:1px solid #ef4444;padding:12px;border-radius:10px;margin:8px 0 12px;font-weight:700;line-height:1.5}.ghs-inquiry{width:100%;margin-top:8px;background:#16a34a;color:#fff;padding:10px;border-radius:10px;font-weight:700}.ghs-banner-slider{position:relative;overflow:hidden;border-radius:20px;margin-bottom:18px}.ghs-banner-track{display:flex;transition:transform .6s ease}.ghs-banner-slide{min-width:100%}.ghs-banner-dots{display:flex;justify-content:center;gap:7px;margin-top:10px}.ghs-banner-dots button{width:9px;height:9px;border:0;border-radius:50%;background:#bbb;padding:0}.ghs-banner-dots button.active{background:#5b21b6}.ghs-banner{min-height:260px;border-radius:20px;overflow:hidden;background:#eee;position:relative;margin-bottom:18px}.ghs-banner img{width:100%;height:100%;min-height:260px;object-fit:cover}.ghs-banner-content{position:absolute;inset:0;padding:28px;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(90deg,#000a,transparent);color:#fff}.ghs-banner-content a{display:inline-block;width:max-content;margin-top:12px;background:#fff;color:#171225;padding:10px 16px;border-radius:9px;font-weight:800}.special-products{margin:12px 0 24px}.special-products h3{margin:12px 0}.track-result a{color:#5b21b6;font-weight:700}
+</style>
+
+
+<style>
+.footer-extra{max-width:1200px;margin:auto;align-items:start}.footer-extra h3{font-size:18px}.footer-extra p{word-break:break-word}.social-links a{display:inline-flex!important;align-items:center;gap:7px}.social-links a .si{font-size:20px}.useful-link{display:block;padding:5px 0;text-decoration:none}.qrbox{width:160px;height:160px;object-fit:contain}@media(max-width:700px){.footer-extra{padding:24px 18px}.qrbox{width:140px;height:140px}}
+</style>
+
+<!-- CLEAN HELP CENTER FIX -->
+<style>
+#helpModal .form{display:grid;gap:10px}#helpModal .form button.help-clean-btn{background:#f5f3ff;border:1px solid #ddd6fe;color:#312e81;text-align:left;padding:14px 16px;border-radius:12px;font-weight:800;font-size:15px}#helpModal .form button.help-clean-btn:hover{background:#ede9fe}#helpAnswer.help-clean-answer{display:none!important;background:#fee2e2!important;color:#991b1b!important;border:1px solid #ef4444!important;padding:14px!important;border-radius:12px!important;margin-top:12px!important;font-weight:700!important;line-height:1.6!important}.help-title-note{color:#6b7280;font-size:13px;margin:-6px 0 12px}
+</style>
+
+<!-- FINAL BANNER SLIDER GUARANTEE -->
+<style>
+#ghsBannerHost{width:100%;overflow:hidden;margin:0 0 20px}
+#ghsBannerHost .ghs-banner-slider{width:100%;overflow:hidden;position:relative}
+#ghsBannerHost .ghs-banner-track{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;width:100%;transition:transform .7s ease!important;will-change:transform}
+#ghsBannerHost .ghs-banner-slide{display:block!important;flex:0 0 100%!important;width:100%!important;min-width:100%!important;max-width:100%!important;margin:0!important}
+#ghsBannerHost .ghs-banner{width:100%!important;margin:0!important;display:block!important}
+#ghsBannerHost .ghs-banner-dots{display:flex!important;justify-content:center;gap:8px;margin:10px 0}
+</style>
+
+<!-- FINAL CLEAN CORRECTION 2026 -->
+<style>
+/* Left-side independent support buttons */
+#ghsHelpFloat,#ghsWaFloat{position:fixed;left:16px;right:auto;z-index:9999;border:0;border-radius:999px;padding:13px 17px;font-weight:800;box-shadow:0 10px 25px #0004;color:#fff}
+#ghsHelpFloat{bottom:82px;background:#7c3aed}#ghsWaFloat{bottom:20px;background:#16a34a}
+.ghs-view-btn,.ghs-cart-btn,.ghs-buy-btn,.ghs-wa-btn{width:100%;margin-top:8px;padding:10px;border-radius:10px;font-weight:800;border:0}.ghs-view-btn{background:#e0e7ff;color:#3730a3}.ghs-cart-btn{background:#f0e9ff;color:#5b21b6}.ghs-buy-btn{background:#111827;color:#fff}.ghs-wa-btn{background:#16a34a;color:#fff}
+#productDetailsModal .modal-box{width:min(760px,100%)}.ghs-detail-img{width:100%;max-height:320px;object-fit:cover;border-radius:14px;margin-bottom:12px}.ghs-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.ghs-detail-grid p{padding:8px;background:#f8f7fa;border-radius:8px}
+@media(max-width:600px){#ghsHelpFloat,#ghsWaFloat{left:10px;padding:11px 13px;font-size:13px}.ghs-detail-grid{grid-template-columns:1fr}}
+</style>
+<button id="ghsHelpFloat" type="button">💬 How Can I Help?</button>
+<button id="ghsWaFloat" type="button">🟢 WhatsApp</button>
+<div class="modal" id="productDetailsModal"><div class="modal-box"><div class="panel-head"><h2>Product Details</h2><button class="close" onclick="document.getElementById('productDetailsModal').classList.remove('open')">✕</button></div><div id="productDetailsBody"></div></div></div>
+
+<!-- FINAL LOGIN + COMPLETE DETAILS PATCH -->
+
+<style>
+.ghs-product-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:14px}
+.ghs-product-gallery img{width:100%;height:220px;object-fit:cover;border-radius:12px}
+.ghs-detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:14px 0}
+.ghs-detail-item{padding:11px;border-radius:10px;background:#f7f7f7}
+.ghs-description{margin:14px 0;padding:12px;background:#fff8f3;border-radius:10px}
+.ghs-detail-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:14px}
+@media(max-width:650px){.ghs-detail-actions{grid-template-columns:1fr}.ghs-product-gallery img{height:190px}}
+</style>
+<!-- END FINAL LOGIN + COMPLETE DETAILS PATCH -->
+<style>.ghs-product-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}.ghs-product-gallery img{width:100%;height:220px;object-fit:cover;border-radius:12px}.ghs-detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:14px 0}.ghs-detail-item{padding:11px;border-radius:10px;background:#f7f7f7}.ghs-description{padding:12px;background:#fff8f3;border-radius:10px}.ghs-detail-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:14px}.ghs-detail-actions button{pointer-events:auto!important;cursor:pointer!important;position:relative;z-index:99}@media(max-width:650px){.ghs-detail-actions{grid-template-columns:1fr}}</style>
+<!-- PROFESSIONAL CUSTOMER ACCOUNT SYSTEM -->
+<style>
+#proAccount{position:fixed;top:14px;right:14px;z-index:10050;font-family:Arial,sans-serif}
+.pro-account-btn{border:0;border-radius:24px;padding:10px 15px;font-weight:700;cursor:pointer;box-shadow:0 4px 18px #0002;background:#fff}
+.pro-account-menu{display:none;position:absolute;right:0;top:48px;width:220px;background:#fff;border-radius:14px;padding:10px;box-shadow:0 12px 35px #0003}
+.pro-account-menu.open{display:block}.pro-account-menu b{display:block;padding:9px 10px;border-bottom:1px solid #eee;margin-bottom:5px}
+.pro-account-menu button{width:100%;text-align:left;border:0;background:transparent;padding:11px;border-radius:8px;cursor:pointer;font-weight:600}
+.pro-account-menu button:hover{background:#f5f5f5}
+#proAuthModal{display:none;position:fixed;inset:0;background:#0008;z-index:20000;align-items:center;justify-content:center;padding:18px}
+#proAuthModal.open{display:flex}.pro-auth-box{background:#fff;width:min(420px,100%);border-radius:20px;padding:22px;position:relative}
+.pro-auth-close{position:absolute;right:14px;top:10px;border:0;background:none;font-size:24px;cursor:pointer}
+.pro-tabs{display:flex;gap:8px;margin-bottom:16px}.pro-tabs button{flex:1;padding:11px;border:1px solid #ddd;background:#fafafa;border-radius:9px;font-weight:700;cursor:pointer}.pro-tabs button.active{background:#111;color:#fff}
+.pro-auth-box input{width:100%;box-sizing:border-box;padding:13px;margin:7px 0;border:1px solid #ddd;border-radius:9px}
+.pro-auth-submit{width:100%;padding:13px;border:0;border-radius:9px;background:#111;color:#fff;font-weight:800;cursor:pointer;margin-top:8px}
+#proAuthMsg{min-height:20px;font-size:13px;margin-top:10px}.pro-hidden{display:none!important}
+</style>
+<div id="proAccount">
+<button class="pro-account-btn" id="proAccountBtn">👤 Login / Register</button>
+<div class="pro-account-menu" id="proAccountMenu">
+<b id="proAccountName">My Account</b>
+<button id="proMyOrders">📦 My Orders</button>
+<button id="proWishlist">❤️ Saved Gifts</button>
+<button id="proAddress">📍 Saved Address</button>
+<button id="proLogout">🚪 Logout</button>
+</div>
+</div>
+<div id="proAuthModal">
+<div class="pro-auth-box">
+<button class="pro-auth-close" id="proAuthClose">×</button>
+<h2 id="proAuthTitle">Welcome</h2>
+<div class="pro-tabs"><button class="active" id="proLoginTab">Login</button><button id="proRegisterTab">Register</button></div>
+<div class="pro-hidden" id="proNameWrap"><input id="proName" placeholder="Full Name"/></div>
+<input id="proEmail" placeholder="Email address" type="email"/>
+<input id="proPassword" placeholder="Password (minimum 6 characters)" type="password"/>
+<button class="pro-auth-submit" id="proAuthSubmit">Login</button>
+<div id="proAuthMsg"></div>
+</div>
+</div>
+
+<!-- END PROFESSIONAL CUSTOMER ACCOUNT SYSTEM -->
+<!-- FINAL STABILITY PATCH 2026-09-03 -->
+<style>
+html{scroll-behavior:auto!important}#ghsBannerHost,#ghsBannerHost *{box-sizing:border-box}#ghsBannerHost .ghs-banner-track{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:stretch!important}#ghsBannerHost .ghs-banner-slide{flex:0 0 100%!important;width:100%!important;min-width:100%!important;display:block!important}.final-order-photo{width:82px;height:82px;object-fit:cover;border-radius:10px;margin:8px 0}.final-address-card{border:1px solid #e5e7eb;padding:14px;border-radius:12px;margin:8px 0}.final-link-btn{border:0;background:none;color:#4f46e5;font-weight:700;cursor:pointer;padding:8px 0;text-decoration:underline}.final-product-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}.final-product-actions button{padding:10px;border:0;border-radius:10px;font-weight:800;cursor:pointer}@media(max-width:650px){.final-product-actions{grid-template-columns:1fr 1fr}}
+</style>
+
+<!-- END FINAL STABILITY PATCH -->
+<!-- FINAL QA FIX PATCH 2026-09-03 -->
+<style>
+/* Keep every banner horizontal only */
+#ghsBannerHost{width:100%!important;overflow:hidden!important;display:block!important;clear:both!important}
+#ghsBannerHost .ghs-banner-slider{width:100%!important;overflow:hidden!important}
+#ghsBannerHost .ghs-banner-track{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;width:100%!important;transition:transform .65s ease!important;will-change:transform!important}
+#ghsBannerHost .ghs-banner-slide{display:block!important;position:relative!important;flex:0 0 100%!important;width:100%!important;min-width:100%!important;max-width:100%!important;height:auto!important;transform:none!important;animation:none!important}
+#ghsBannerHost .ghs-banner{position:relative!important;display:block!important;width:100%!important;height:auto!important;transform:none!important;animation:none!important}
+#ghsBannerHost img{display:block!important;width:100%!important;height:auto!important;object-fit:cover!important}
+/* exactly one View Details action per product */
+#productGrid .product .ghs-view-btn{display:none!important}
+/* reliable modal close buttons */
+#proAuthClose,.pro-auth-close,#loginModal .close,#productDetailsModal .close{position:relative!important;z-index:2147483647!important;pointer-events:auto!important;cursor:pointer!important}
+</style>
+
+<!-- END FINAL QA FIX PATCH -->
+<!-- FINAL 2026-09-03 STABILITY + UX PATCH -->
+<style>
+/* Search must never expose saved login email */
+#searchInput{appearance:none!important;-webkit-appearance:none!important}
+#searchInput::-webkit-credentials-auto-fill-button{visibility:hidden!important;display:none!important}
+/* prevent product flash / duplicate cards during Firebase refresh */
+#productGrid{transition:opacity .12s ease}
+/* one action row only */
+.product .last-product-actions{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important;margin-top:12px!important}
+.product .last-product-action{min-width:0!important;white-space:normal!important;line-height:1.15!important}
+/* profile card and header never cover buttons */
+.nav-actions,.profile-chip,.profile-menu,.profile-card{position:relative!important;z-index:80!important}
+.profile-menu,.profile-card{max-width:min(360px,calc(100vw - 24px))!important;overflow-wrap:anywhere!important}
+.modal .close,.panel-head .close,[data-close],.close{position:relative!important;z-index:9999!important;pointer-events:auto!important}
+/* Special categories: premium responsive grid */
+#specialGiftCategories .final-cats{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:14px!important;max-width:1200px!important;margin:20px auto!important}
+#specialGiftCategories .final-cat{cursor:pointer!important;min-height:88px!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;border:1px solid #e8dff0!important;border-radius:18px!important;padding:14px!important;background:linear-gradient(135deg,#fff,#faf6ff)!important;font-weight:800!important;box-shadow:0 8px 24px rgba(75,35,105,.07)!important}
+#specialGiftCategories .final-cat:hover{transform:translateY(-2px)!important}
+@media(max-width:900px){#specialGiftCategories .final-cats{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+@media(max-width:650px){#specialGiftCategories .final-cats{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}#specialGiftCategories .final-cat{min-height:78px!important;font-size:15px!important}.product .last-product-actions{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+/* banner must only move horizontally */
+#ghsBannerHost .ghs-banner-track{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;transform-style:flat!important}
+#ghsBannerHost .ghs-banner-slide,#ghsBannerHost .ghs-banner{animation:none!important;writing-mode:horizontal-tb!important}
+</style>
+
+<!-- END FINAL 2026-09-03 STABILITY + UX PATCH -->
+<!-- MERGED FINAL PROFILE + HELP + CATEGORY UI FIX -->
+<style>
+/* Keep account/profile clean on every screen */
+#proAccount{position:relative!important;z-index:9998!important;max-width:min(340px,calc(100vw - 24px))!important}
+#proAccountBtn{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pro-account-menu{z-index:10000!important;max-width:min(340px,calc(100vw - 24px))!important;right:0!important}
+.pro-account-menu b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.pro-account-menu button{display:block!important;min-height:44px!important;white-space:normal!important}
+.panel-head .close,.close,.pro-auth-close{position:relative!important;z-index:20000!important;pointer-events:auto!important;flex:0 0 auto!important}
+/* Premium special gift cards */
+#specialCategorySequence{padding:34px 14px!important;background:linear-gradient(180deg,#fff8fc,#ffffff)!important}
+#specialCategorySequence h2{font-size:clamp(22px,4vw,34px);margin:0 0 20px;color:#251126}
+.final-cats{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(145px,1fr))!important;gap:14px!important;max-width:1100px;margin:auto!important}
+.final-cat{min-height:116px!important;border-radius:20px!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;padding:16px!important;font-weight:800!important;cursor:pointer!important;box-shadow:0 10px 24px rgba(0,0,0,.10)!important;transition:transform .2s,box-shadow .2s!important;color:#fff!important}
+.final-cat:hover{transform:translateY(-4px);box-shadow:0 16px 30px rgba(0,0,0,.16)!important}
+.final-cat:nth-child(6n+1){background:linear-gradient(135deg,#ff7b89,#ffb199)!important}.final-cat:nth-child(6n+2){background:linear-gradient(135deg,#7656ff,#a38bff)!important}.final-cat:nth-child(6n+3){background:linear-gradient(135deg,#f39c12,#ffd166)!important}.final-cat:nth-child(6n+4){background:linear-gradient(135deg,#00a884,#54d6bb)!important}.final-cat:nth-child(6n+5){background:linear-gradient(135deg,#e84393,#ff9ec4)!important}.final-cat:nth-child(6n){background:linear-gradient(135deg,#2474ff,#68b7ff)!important}
+.final-cat::before{content:'🎁';display:block;font-size:28px;margin-right:8px}.final-cat:nth-child(1)::before{content:'🎂'}.final-cat:nth-child(2)::before{content:'💍'}.final-cat:nth-child(3)::before{content:'✨'}.final-cat:nth-child(4)::before{content:'💒'}.final-cat:nth-child(5)::before{content:'💑'}.final-cat:nth-child(6)::before{content:'❤️'}.final-cat:nth-child(7)::before{content:'👩'}.final-cat:nth-child(8)::before{content:'👨'}
+/* Help modal always clickable */
+#helpModal{z-index:15000!important}.help-fab{z-index:14000!important;cursor:pointer!important}
+@media(max-width:600px){.final-cats{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}.final-cat{min-height:96px!important;padding:12px!important;font-size:13px!important}.pro-account-menu{position:fixed!important;right:12px!important;top:64px!important}}
+</style>
+
+<!-- FINAL GHS CUSTOMER EXPERIENCE PATCH -->
+<style>
+/* Banner is physically forced to a horizontal left-to-right track on every screen */
+#ghsBannerHost{overflow:hidden;width:100%;position:relative}.ghs-banner-track-final{display:flex!important;flex-direction:row!important;align-items:stretch!important;width:max-content;animation:ghsLTR 24s linear infinite}.ghs-banner-final{display:block!important;flex:0 0 min(92vw,1100px)!important;width:min(92vw,1100px)!important;min-height:260px;margin:0 10px!important;position:relative;border-radius:20px;overflow:hidden;background:#eee}.ghs-banner-final img{width:100%;height:260px;object-fit:cover;display:block}.ghs-banner-final .bc{position:absolute;inset:0;padding:26px;display:flex;flex-direction:column;justify-content:center;color:#fff;background:linear-gradient(90deg,#000a,transparent)}@keyframes ghsLTR{from{transform:translateX(-55%)}to{transform:translateX(0)}}
+.account-menu{position:absolute;right:0;top:52px;width:210px;background:#fff;border:1px solid #eee8f4;border-radius:14px;padding:8px;box-shadow:0 15px 35px #0002;display:none;z-index:100}.account-menu.open{display:block}.account-menu button{display:block;width:100%;text-align:left;padding:11px;background:transparent;border-radius:9px}.account-menu button:hover{background:#f6f3f8}.profile-line{padding:12px 0;border-bottom:1px solid #eee}.special-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.final-cat{padding:13px!important;border:1px solid var(--border);border-radius:12px;background:#fff;text-align:center;cursor:pointer}.promo-live{display:none;cursor:pointer}.promo-live.on{display:block}.promo-live img{width:100%;height:180px;object-fit:cover;border-radius:18px;margin-bottom:12px}@media(min-width:701px){.special-grid{grid-template-columns:repeat(4,1fr)}}
+</style>
+
+<!-- FINAL STABILITY PATCH: tracking, announcement, logout, help -->
+
+
+<!-- GHS FINAL MASTER FIX 2026 -->
+
+<!-- CLEAN ANNOUNCEMENT / TAGLINE FIX -->
+
+<!-- FINAL COMPLETE CUSTOMER PATCH -->
+<style>
+.final-profile-modal,.final-custom-modal{position:fixed;inset:0;background:#0008;z-index:30000;display:none;align-items:center;justify-content:center;padding:16px}.final-profile-modal.open,.final-custom-modal.open{display:flex}.final-box{background:#fff;width:min(560px,100%);max-height:88vh;overflow:auto;border-radius:18px;padding:20px}.final-box input,.final-box textarea,.final-box select{width:100%;box-sizing:border-box;margin:7px 0;padding:12px;border:1px solid #ddd;border-radius:9px}.final-box button{padding:11px;border:0;border-radius:9px;font-weight:700;cursor:pointer;margin:5px 3px 0 0}.final-primary{background:#111;color:#fff}.final-close{float:right;background:#eee}.feature-card-click{cursor:pointer}.feature-card-click:active{transform:scale(.99)}
+</style>
+<div class="final-profile-modal" id="finalProfileModal"><div class="final-box"><button class="final-close" onclick="finalClose('finalProfileModal')">✕</button><h2>👤 My Profile</h2><input id="fpName" placeholder="Full Name"/><input id="fpEmail" placeholder="Email ID" readonly=""/><h3>📍 Saved Address</h3><input id="faMobile" placeholder="Mobile Number"/><input id="faAddress" placeholder="House / Flat / Area"/><input id="faCity" placeholder="City"/><input id="faState" placeholder="State"/><input id="faPincode" placeholder="PIN Code"/><button class="final-primary" id="finalSaveProfile">Save / Update Profile</button></div></div>
+<div class="final-custom-modal" id="finalCustomModal"><div class="final-box"><button class="final-close" onclick="finalClose('finalCustomModal')">✕</button><h2 id="finalCustomTitle">💌 Personalize Your Gift</h2><p>अपनी पसंद के अनुसार packing, special instructions और personal message लिखें।</p><input id="fcSize" placeholder="Size / Variant (अगर लागू हो)"/><input id="fcShoe" placeholder="Shoe Size / Number (अगर लागू हो)"/><textarea id="fcMessage" placeholder="Personal message / Gift note" rows="3"></textarea><textarea id="fcInstructions" placeholder="Custom packing, items या अन्य special requirements" rows="4"></textarea><p class="meta">Photo Frame के लिए photo upload की सुविधा product order form में लागू की जाएगी; इस build में URL/file storage integration उपलब्ध होने पर ही upload सक्रिय होगा.</p><button class="final-primary" onclick="finalClose('finalCustomModal')">Save Details</button></div></div>
+
+<!-- END FINAL COMPLETE CUSTOMER PATCH -->
+<script>
+// INDEX TESTING CLEAN: only the original primary Firebase/Product system is active.
+window.INDEX_TESTING_CLEAN=true;
+</script></body>
+</html>
+<style id="page-specific-support-style">
+#ghsHelpFloat,#ghsWhatsappFloat{position:fixed!important;left:18px!important;right:auto!important;z-index:2147483000!important;pointer-events:auto!important;cursor:pointer!important}
+#ghsHelpFloat{bottom:82px!important}
+#ghsWhatsappFloat{bottom:18px!important;background:#25D366!important;color:#fff!important;border:0!important;border-radius:999px!important;padding:14px 18px!important;font-weight:800!important;box-shadow:0 10px 30px rgba(0,0,0,.25)!important}
+</style>
+<button id="ghsWhatsappFloat" type="button">📱 WhatsApp</button>
+
+<!-- LAST PRODUCT VIEW AUTHORITY PATCH -->
+<style>
+/* Hide all legacy duplicate product action controls. Only .last-product-actions is allowed. */
+#productGrid .product .ghs-view-btn,
+#productGrid .product .final-product-actions:not(.last-product-actions),
+#productGrid .product > .ghs-view-btn,
+#productGrid .product .product-info > button:not(.last-product-action){display:none!important}
+#productGrid .product .last-product-actions{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px!important;margin-top:10px!important}
+#productGrid .product .last-product-actions button{display:block!important;min-width:0!important;padding:9px 5px!important;font-size:12px!important;line-height:1.2!important;white-space:normal!important}
+</style>
+
+<!-- END LAST PRODUCT VIEW AUTHORITY PATCH -->
+<!-- STABLE PRODUCT GRID + PREMIUM COLOR BUTTONS PATCH -->
+<style>
+/* Keep product cards permanently visible and stable */
+#productGrid{opacity:1!important;visibility:visible!important;display:grid!important;min-height:180px!important;transition:none!important}
+#productGrid .product{display:block!important;visibility:visible!important;opacity:1!important;content-visibility:visible!important;contain:none!important;overflow:hidden;border-radius:18px;background:#fff;border:1px solid rgba(91,33,182,.12);box-shadow:0 8px 26px rgba(35,20,65,.08)}
+#productGrid .product-info{padding:14px!important}
+#productGrid .product-img{display:block!important;min-height:190px;background:#faf8ff;overflow:hidden}
+#productGrid .product-img img{display:block!important;width:100%!important;height:230px!important;object-fit:cover!important;opacity:1!important;visibility:visible!important}
+/* Premium colourful action buttons */
+#productGrid .stable-product-actions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important;margin-top:13px!important}
+#productGrid .stable-product-actions button{display:flex!important;align-items:center!important;justify-content:center!important;min-height:46px!important;padding:10px 8px!important;border:0!important;border-radius:12px!important;font-size:13px!important;font-weight:800!important;line-height:1.15!important;cursor:pointer!important;box-shadow:0 7px 16px rgba(42,20,75,.14)!important;transition:transform .16s ease,filter .16s ease!important;white-space:normal!important;position:relative!important;z-index:5!important}
+#productGrid .stable-product-actions button:hover{transform:translateY(-2px)!important;filter:brightness(1.04)!important}
+#productGrid .stable-product-actions .stable-view{background:linear-gradient(135deg,#ede9fe,#c4b5fd)!important;color:#3b0764!important}
+#productGrid .stable-product-actions .stable-cart{background:linear-gradient(135deg,#dbeafe,#60a5fa)!important;color:#082f49!important}
+#productGrid .stable-product-actions .stable-buy{background:linear-gradient(135deg,#fce7f3,#ec4899)!important;color:#fff!important}
+#productGrid .stable-product-actions .stable-wa{background:linear-gradient(135deg,#dcfce7,#22c55e)!important;color:#064e3b!important}
+@media(max-width:650px){#productGrid .stable-product-actions{grid-template-columns:repeat(2,minmax(0,1fr))!important}#productGrid .stable-product-actions button{font-size:12px!important;min-height:44px!important}}
+</style>
+
+<!-- END STABLE PRODUCT GRID PATCH -->
+<!-- CART + SPECIAL CATEGORIES FINAL FIX -->
+<style>
+/* Clickable special categories */
+#specialCategorySequence .final-cat{cursor:pointer!important;user-select:none!important;transition:transform .18s ease,box-shadow .18s ease!important}
+#specialCategorySequence .final-cat:hover{transform:translateY(-3px)!important;box-shadow:0 12px 24px rgba(91,33,182,.16)!important}
+</style>
+
+<!-- END CART + SPECIAL CATEGORIES FINAL FIX -->
+<!-- PROFESSIONAL FINAL STABILITY PATCH -->
+<style id="professionalFinalPatch">
+/* ONE clean banner system: equal slides, no vertical stack, no empty bottom space */
+#ghsBannerHost{width:100%!important;max-width:none!important;overflow:hidden!important;margin:0!important;padding:0!important;min-height:0!important;height:auto!important;background:transparent!important}
+#ghsBannerHost .pf-track{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:stretch!important;width:100%!important;transform:translateX(0);transition:transform .65s ease!important;margin:0!important;padding:0!important}
+#ghsBannerHost .pf-slide{display:block!important;flex:0 0 100%!important;width:100%!important;max-width:none!important;min-width:100%!important;margin:0!important;padding:0!important;border-radius:0!important;overflow:hidden!important;position:relative!important;aspect-ratio:12/5!important;height:auto!important;min-height:0!important;background:#eee!important}
+#ghsBannerHost .pf-slide img{display:block!important;width:100%!important;height:100%!important;min-height:0!important;object-fit:cover!important;margin:0!important;padding:0!important}
+#ghsBannerHost .pf-caption{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:clamp(14px,4vw,48px);background:linear-gradient(90deg,rgba(0,0,0,.38),transparent 62%);color:#fff}
+#ghsBannerHost .pf-caption:empty{display:none!important}
+@media(max-width:700px){#ghsBannerHost .pf-slide{aspect-ratio:12/5!important;border-radius:0!important}}
+/* Never show the negative empty-state message */
+#productGrid .empty{min-height:0!important}
+</style>
+
+<!-- END PROFESSIONAL FINAL STABILITY PATCH -->
+<!-- FINAL RESPONSIVE BANNER FIX: LAST OVERRIDE -->
+<style id="finalResponsiveBannerFix">
+#ghsBannerHost{width:100%!important;max-width:none!important;height:auto!important;min-height:0!important;overflow:hidden!important;margin:0!important;padding:0!important;line-height:0!important}
+#ghsBannerHost .pf-track{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:stretch!important;width:100%!important;height:auto!important;margin:0!important;padding:0!important;transition:transform .65s ease!important}
+#ghsBannerHost .pf-slide{display:block!important;position:relative!important;flex:0 0 100%!important;width:100%!important;min-width:100%!important;max-width:100%!important;aspect-ratio:12 / 5!important;height:auto!important;min-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important;background:#eee!important;line-height:0!important}
+#ghsBannerHost .pf-slide img{display:block!important;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;object-fit:cover!important;margin:0!important;padding:0!important;border:0!important}
+#ghsBannerHost .pf-caption{line-height:1.25!important}
+@media(max-width:700px){#ghsBannerHost .pf-slide{aspect-ratio:12 / 5!important;width:100%!important;min-height:0!important;height:auto!important}}
+</style>
+
+<!-- END FINAL RESPONSIVE BANNER FIX -->
+<!-- ABSOLUTE FINAL PHONE + DESKTOP BANNER FIX -->
+<style id="absoluteFinalBannerFix">
+#ghsBannerHost{width:100%!important;height:auto!important;min-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important;background:transparent!important}
+#ghsBannerHost .final-banner-track{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:stretch!important;width:100%!important;margin:0!important;padding:0!important;transition:transform .65s ease!important;will-change:transform!important}
+#ghsBannerHost .final-banner-slide{position:relative!important;display:block!important;flex:0 0 100%!important;width:100%!important;min-width:100%!important;max-width:100%!important;aspect-ratio:12 / 5!important;height:auto!important;min-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important;background:transparent!important;line-height:normal!important}
+#ghsBannerHost .final-banner-slide>img{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;display:block!important;object-fit:cover!important;object-position:center!important;margin:0!important;padding:0!important;border:0!important;min-height:0!important;background:transparent!important}
+#ghsBannerHost .final-banner-caption{position:absolute!important;inset:0!important;box-sizing:border-box!important;display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:flex-start!important;padding:clamp(14px,4vw,48px)!important;color:#fff!important;background:linear-gradient(90deg,rgba(0,0,0,.40),rgba(0,0,0,.08) 62%,transparent)!important;overflow:hidden!important}
+#ghsBannerHost .final-banner-caption h2{margin:0 0 8px!important;padding:0!important;font-size:clamp(18px,3.4vw,42px)!important;line-height:1.08!important;color:#fff!important;max-width:72%!important;overflow-wrap:anywhere!important}
+#ghsBannerHost .final-banner-caption p{margin:0!important;padding:0!important;font-size:clamp(11px,1.8vw,20px)!important;line-height:1.28!important;color:#fff!important;max-width:72%!important;overflow-wrap:anywhere!important}
+@media(max-width:700px){
+ #ghsBannerHost .final-banner-slide{aspect-ratio:12 / 5!important;height:auto!important;min-height:0!important}
+ #ghsBannerHost .final-banner-caption{padding:14px!important;background:linear-gradient(90deg,rgba(0,0,0,.30),rgba(0,0,0,.02) 72%,transparent)!important}
+ #ghsBannerHost .final-banner-caption h2{font-size:clamp(16px,5vw,25px)!important;line-height:1.06!important;max-width:70%!important;margin:0 0 5px!important}
+ #ghsBannerHost .final-banner-caption p{font-size:clamp(10px,3.2vw,15px)!important;line-height:1.22!important;max-width:70%!important}
+}
+</style>
+
+<!-- END ABSOLUTE FINAL PHONE + DESKTOP BANNER FIX -->
