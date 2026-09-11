@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Gift Hamper Studio</title>
+<meta name="description" content="The Gift Hamper Studio - curated gifts for every occasion.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--primary:#7c3aed;--secondary:#ec4899;--dark:#171225;--muted:#6b6575;--bg:#faf8fc;--card:#fff;--border:#eee8f4}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--dark)}
+button,input,select{font:inherit}button{cursor:pointer;border:0}
+a{text-decoration:none;color:inherit}
+.topbar{background:#171225;color:#fff;text-align:center;padding:8px 12px;font-size:13px}
+header{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--border)}
+.nav{max-width:1200px;margin:auto;padding:14px 18px;display:flex;align-items:center;gap:18px}
+.logo{font-weight:900;font-size:21px;line-height:1.05;color:var(--primary);white-space:nowrap}
+.logo span{display:block;font-size:11px;letter-spacing:2px;color:#8b8495;margin-top:3px}
+.search{flex:1;display:flex;max-width:520px;background:#f6f3f8;border-radius:14px;padding:4px}
+.search input{width:100%;border:0;background:transparent;outline:0;padding:11px 13px}
+.search button{background:var(--primary);color:#fff;border-radius:10px;padding:0 15px}
+.nav-actions{display:flex;gap:8px}
+.iconbtn{background:#f6f3f8;border-radius:12px;padding:10px 12px;position:relative}
+.badge{position:absolute;right:-4px;top:-5px;background:#ef4444;color:#fff;font-size:10px;border-radius:99px;padding:2px 6px}
+.categories{max-width:1200px;margin:auto;padding:10px 18px;display:flex;gap:8px;overflow:auto;white-space:nowrap}
+.chip{background:#f7f2fb;border:1px solid #eee7f5;padding:8px 13px;border-radius:999px;font-size:13px}
+.chip:hover{background:#eee5fb}
+main{max-width:1200px;margin:auto;padding:18px}
+.hero{display:grid;grid-template-columns:1.35fr .65fr;gap:16px;margin-bottom:26px}
+.hero-main{min-height:330px;border-radius:24px;padding:38px;display:flex;align-items:center;background:linear-gradient(135deg,#ede5ff,#ffe8f3);overflow:hidden}
+.hero h1{font-size:clamp(34px,5vw,62px);line-height:.98;margin:10px 0 14px}
+.hero p{color:#625b6c;max-width:520px;line-height:1.6}
+.cta{margin-top:20px;background:var(--primary);color:#fff;padding:13px 19px;border-radius:12px;font-weight:700}
+.hero-side{display:grid;gap:16px}
+.promo{border-radius:22px;padding:25px;background:#fff;border:1px solid var(--border)}
+.promo:first-child{background:#fff0f7}
+.promo h3{font-size:22px;margin:7px 0}
+.section{margin:30px 0}
+.section-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:13px}
+.section-head h2{font-size:24px}.section-head small{color:var(--muted)}
+.hscroll{display:flex;gap:14px;overflow-x:auto;padding-bottom:7px;scrollbar-width:thin}
+.cat-card{min-width:155px;background:#fff;border:1px solid var(--border);border-radius:18px;padding:18px;text-align:center}
+.cat-icon{height:82px;border-radius:15px;background:linear-gradient(135deg,#f1e9ff,#ffeaf4);display:grid;place-items:center;font-size:40px;margin-bottom:12px}
+.cat-card b{font-size:14px}
+.products{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
+.product{background:#fff;border:1px solid var(--border);border-radius:18px;overflow:hidden;min-width:230px}
+.product-img{height:215px;background:#f5f2f7;position:relative;display:grid;place-items:center;overflow:hidden}
+.product-img img{width:100%;height:100%;object-fit:cover}
+.placeholder{font-size:52px}
+.tag{position:absolute;left:10px;top:10px;background:#171225;color:#fff;padding:5px 8px;border-radius:8px;font-size:11px}
+.wish{position:absolute;right:10px;top:10px;background:#fff;border-radius:50%;width:35px;height:35px;font-size:18px}
+.product-info{padding:14px}
+.product-info h3{font-size:15px;margin-bottom:7px}
+.meta{font-size:12px;color:var(--muted);min-height:17px}
+.price{margin-top:10px;display:flex;align-items:center;gap:8px}
+.price strong{font-size:18px}.old{text-decoration:line-through;color:#999;font-size:13px}
+.discount{font-size:11px;color:#15803d;background:#dcfce7;padding:4px 6px;border-radius:6px}
+.buy{width:100%;margin-top:11px;background:#f0e9ff;color:#5b21b6;padding:10px;border-radius:10px;font-weight:700}
+.buy:hover{background:var(--primary);color:#fff}
+.empty{text-align:center;color:var(--muted);padding:35px;width:100%}
+footer{margin-top:40px;background:#171225;color:#eee;padding:35px 18px}
+.footer-inner{max-width:1200px;margin:auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px}
+.footer-inner p{color:#bbb3c3;line-height:1.7;margin-top:8px}
+.drawer{position:fixed;inset:0;background:#0006;z-index:50;display:none}
+.drawer.open{display:block}
+.panel{position:absolute;right:0;top:0;height:100%;width:min(430px,100%);background:#fff;padding:20px;overflow:auto}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.close{background:#f3f0f5;border-radius:10px;padding:8px 11px}
+.cart-row{display:flex;gap:10px;border-bottom:1px solid var(--border);padding:13px 0}
+.cart-row img{width:65px;height:65px;object-fit:cover;border-radius:10px;background:#f4f1f6}
+.cart-row .grow{flex:1}.qty{display:flex;gap:7px;align-items:center;margin-top:7px}
+.qty button{background:#eee8f3;width:25px;height:25px;border-radius:7px}
+.checkout{width:100%;background:var(--primary);color:#fff;padding:13px;border-radius:11px;margin-top:14px}
+.modal{position:fixed;inset:0;background:#0007;z-index:60;display:none;place-items:center;padding:18px}
+.modal.open{display:grid}
+.modal-box{width:min(520px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:20px;padding:22px}
+.form{display:grid;gap:10px}.form input,.form select,.form textarea{width:100%;border:1px solid #ddd4e5;border-radius:10px;padding:11px;outline:0}.form textarea{min-height:80px}
+.tabs{display:flex;gap:8px;margin:12px 0}.tab{padding:8px 12px;border-radius:9px;background:#f2edf6}.tab.active{background:var(--primary);color:#fff}
+.order{border:1px solid var(--border);border-radius:14px;padding:13px;margin:10px 0}.status{display:inline-block;margin-top:7px;background:#ede9fe;color:#5b21b6;padding:5px 8px;border-radius:8px;font-size:12px}
+@media(max-width:900px){.products{grid-template-columns:repeat(3,1fr)}.hero{grid-template-columns:1fr}.hero-side{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){.nav{flex-wrap:wrap}.logo{flex:1}.search{order:3;max-width:none;flex-basis:100%}.products{grid-template-columns:repeat(2,1fr)}.product-img{height:180px}.hero-main{padding:27px;min-height:290px}.footer-inner{grid-template-columns:1fr}.nav-actions{gap:4px}.iconbtn{padding:9px}}
+.buy-now{margin-top:8px;background:#111827!important}.track-result img{max-width:120px;border-radius:10px}.help-fab{position:fixed;right:18px;bottom:18px;z-index:70}.footer-extra{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:28px}.footer-extra a{display:block;margin:7px 0}.social-links{display:flex;flex-wrap:wrap;gap:10px}.qrbox{width:160px;height:160px}.topbar{overflow:hidden;white-space:nowrap}.topbar span{display:inline-block;animation:marquee 18s linear infinite}@keyframes marquee{from{transform:translateX(100%)}to{transform:translateX(-100%)}}@media(max-width:700px){.footer-extra{grid-template-columns:1fr 1fr}}
+</style>
+
+<style>
+.announcement-ticker{overflow:hidden;white-space:nowrap}.announcement-ticker span{display:inline-block;padding-left:100%;animation:ticker 18s linear infinite}@keyframes ticker{to{transform:translateX(-100%)}}.social-links{display:flex;gap:12px;flex-wrap:wrap}.social-links a{font-weight:800;text-decoration:none;padding:10px 14px;border-radius:12px;background:#f3eef8}.help-fab{position:fixed;right:18px;bottom:18px;z-index:80;background:var(--primary);color:#fff;padding:13px 18px;border-radius:999px;box-shadow:0 10px 30px #0003}.buy-now{width:100%;margin-top:8px;background:#f59e0b;color:#fff;padding:11px;border-radius:10px;font-weight:800}.footer-extra{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:22px;padding:26px 0}.footer-extra h3{margin:0 0 10px}.footer-extra a{display:block;margin:8px 0}.qrbox{max-width:150px;background:#fff;padding:8px;border-radius:12px}.track-card{max-width:760px;margin:20px auto;padding:18px;border:1px solid var(--border);border-radius:18px;background:#fff}.track-result img{width:90px;height:90px;object-fit:cover;border-radius:12px}.hidden-email{display:none!important}</style></head>
+<body>
+<div class="topbar announcement-ticker" id="announcement"><span>🎁 Welcome to The Gift Hamper Studio — Beautiful gifts for every moment</span></div>
+<header>
+  <div class="nav">
+    <a class="logo" href="#">THE GIFT HAMPER<span>STUDIO</span></a>
+    <div class="search"><input id="searchInput" placeholder="Search gifts, hampers, occasions..."><button onclick="renderProducts()">Search</button></div>
+    <div class="nav-actions">
+      <button class="iconbtn" onclick="openWishlist()">♡<span class="badge" id="wishCount">0</span></button>
+      <button class="iconbtn" onclick="openOrders()">📦</button>
+      <button class="iconbtn" onclick="openCart()">🛒<span class="badge" id="cartCount">0</span></button>
+      <button class="iconbtn" onclick="openLogin()">👤</button>
+    </div>
+  </div>
+  <div class="categories" id="chips"></div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-main">
+      <div>
+        <div class="chip" style="display:inline-block">Curated with love ✨</div>
+        <h1>Make every<br>moment giftable.</h1>
+        <p>Thoughtfully curated hampers and gifts for birthdays, anniversaries, weddings, couples, festivals and all the little surprises.</p>
+        <button class="cta" onclick="document.getElementById('productsSection').scrollIntoView({behavior:'smooth'})">Shop Gifts →</button>
+      </div>
+    </div>
+    <div class="hero-side">
+      <div class="promo"><small>💝 For someone special</small><h3>Personalized Gifts</h3><p>Make it uniquely theirs.</p></div>
+      <div class="promo"><small>🚚 Easy gifting</small><h3>Gift Hampers</h3><p>Ready-to-gift collections for every occasion.</p></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><small>SHOP BY OCCASION</small><h2>Popular Categories</h2></div><small>Swipe →</small></div>
+    <div class="hscroll" id="catList"></div>
+  </section>
+
+  <section class="section" id="productsSection">
+    <div class="section-head"><div><small>HANDPICKED FOR YOU</small><h2>Featured Gifts</h2></div><small id="productCount"></small></div>
+    <div class="products" id="productGrid"></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><div><small>GIFTING MADE EASY</small><h2>Why shop with us?</h2></div></div>
+    <div class="hscroll">
+      <div class="cat-card"><div class="cat-icon">🎀</div><b>Beautifully Packed</b><p class="meta">Gift-ready presentation</p></div>
+      <div class="cat-card"><div class="cat-icon">💌</div><b>Personal Message</b><p class="meta">Add a special note</p></div>
+      <div class="cat-card"><div class="cat-icon">🚚</div><b>Reliable Delivery</b><p class="meta">Track your order</p></div>
+      <div class="cat-card"><div class="cat-icon">💜</div><b>Made with Love</b><p class="meta">Curated gifting</p></div>
+    </div>
+  </section>
+</main>
+
+<section id="specialCategorySequence" style="padding:28px 16px;max-width:1200px;margin:auto">
+<h2 style="text-align:center">🎁 Special Gift Categories</h2>
+<p style="text-align:center">Find the perfect gift for every special moment.</p>
+<div class="final-cats"><div class="final-cat" data-category="Happy Birthday Gifts">Happy Birthday Gifts</div><div class="final-cat" data-category="Anniversary Gifts">Anniversary Gifts</div><div class="final-cat" data-category="Surprise Gifts">Surprise Gifts</div><div class="final-cat" data-category="Wedding Gifts">Wedding Gifts</div><div class="final-cat" data-category="Couple Gifts">Couple Gifts</div><div class="final-cat" data-category="Love & Lovers Gifts">Love & Lovers Gifts</div><div class="final-cat" data-category="Gift for Her">Gift for Her</div><div class="final-cat" data-category="Gift for Him">Gift for Him</div><div class="final-cat" data-category="Custom Gift Hampers">Custom Gift Hampers</div><div class="final-cat" data-category="Festival & Special Gifts">Festival & Special Gifts</div><div class="final-cat" data-category="Baby & Kids Gifts">Baby & Kids Gifts</div><div class="final-cat" data-category="Corporate Gifts">Corporate Gifts</div></div></section><footer>
+  <div class="footer-inner">
+    <div><div class="logo" style="color:#fff">THE GIFT HAMPER STUDIO<span style="color:#aaa">MAKE MOMENTS MEMORABLE</span></div><p>Your destination for thoughtful gifts, curated hampers and memorable surprises.</p></div>
+    <div><b>Quick Links</b><p>Categories<br>Orders<br>Wishlist<br>Contact Us</p></div>
+    <div><b>Need Help?</b><p>WhatsApp: Contact us<br>Email: hello@thegifthamperstudio.com</p></div>
+  </div>
+</footer>
+
+<div class="drawer" id="drawer" onclick="if(event.target===this)closeDrawer()">
+  <div class="panel">
+    <div class="panel-head"><h2 id="panelTitle">Cart</h2><button class="close" onclick="closeDrawer()">✕</button></div>
+    <div id="panelContent"></div>
+  </div>
+</div>
+
+<div class="modal" id="loginModal">
+  <div class="modal-box">
+    <div class="panel-head"><h2>Welcome 👋</h2><button class="close" onclick="closeLogin()">✕</button></div>
+    <div class="tabs"><button class="tab active" id="emailTab" onclick="showLogin('email')">Email</button><button class="tab" id="phoneTab" onclick="showLogin('phone')">Phone OTP</button></div>
+    <div class="form" id="emailForm">
+      <input id="email" type="email" placeholder="Email address">
+      <input id="password" type="password" placeholder="Password">
+      <button class="cta" onclick="emailLogin()">Login / Sign up</button>
+      <button class="buy" onclick="googleLogin()">Continue with Google</button>
+    </div>
+    <div class="form" id="phoneForm" style="display:none">
+      <input id="phone" placeholder="+91XXXXXXXXXX">
+      <div id="recaptcha-container"></div>
+      <button class="cta" onclick="sendOTP()">Send OTP</button>
+      <input id="otp" placeholder="Enter OTP">
+      <button class="buy" onclick="verifyOTP()">Verify OTP</button>
+    </div>
+    <p id="loginMsg" class="meta" style="margin-top:10px"></p>
+  </div>
+</div>
+
+<div class="modal" id="checkoutModal">
+  <div class="modal-box">
+    <div class="panel-head"><h2>Checkout</h2><button class="close" onclick="closeCheckout()">✕</button></div>
+    <div id="checkoutSummary"></div>
+    <div class="form">
+      <input id="customerName" placeholder="Full name">
+      <input id="customerMobile" placeholder="Mobile number">
+      <input id="customerEmail" placeholder="Email">
+      <textarea id="address" placeholder="Full delivery address"></textarea>
+      <input id="city" placeholder="City">
+      <input id="pincode" placeholder="PIN code">
+      <select id="paymentMethod">
+        <option value="COD">Cash on Delivery</option>
+        <option value="UPI">UPI</option>
+        <option value="Google Pay">Google Pay</option>
+        <option value="PhonePe">PhonePe</option>
+        <option value="Paytm">Paytm</option>
+        <option value="Card">Debit / Credit Card</option>
+        <option value="Net Banking">Net Banking</option>
+        <option value="Bank Transfer">Bank Transfer</option>
+      </select>
+      <input id="coupon" placeholder="Coupon / Voucher code (e.g. GIFT99)">
+      <button class="buy" onclick="applyCoupon()">Apply Coupon</button>
+      <div id="couponMsg" class="meta"></div>
+      <button class="checkout" onclick="placeOrder()">Place Order</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,GoogleAuthProvider,signInWithPopup,RecaptchaVerifier,signInWithPhoneNumber,signOut} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import {getFirestore,collection,addDoc,getDocs,doc,getDoc,setDoc,query,where,orderBy,limit} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+const firebaseConfig={
+  apiKey:"AIzaSyCfILW5a7H4B8cQfVnJwh_Dcvn04FxAwJs",
+  authDomain:"the-gift-hamper-studio.firebaseapp.com",
+  projectId:"the-gift-hamper-studio",
+  storageBucket:"the-gift-hamper-studio.firebasestorage.app",
+  messagingSenderId:"1002125530065",
+  appId:"1:1002125530065:web:dea65445fd5631c7c0c6f0"
+};
+
+let app,auth,db;
+const firebaseReady=!Object.values(firebaseConfig).some(v=>String(v).includes("PASTE_"));
+if(firebaseReady){
+  app=initializeApp(firebaseConfig); auth=getAuth(app); db=getFirestore(app);
+  onAuthStateChanged(auth,user=>{window.currentUser=user;});
+}
+
+const categories=[
+ ["🎂","Happy Birthday"],["💍","Anniversary"],["🎁","Surprise Gift"],["💒","Wedding"],
+ ["💑","Couple Gift"],["❤️","Lovers Gift"],["👩","Gift for Her"],["👨","Gift for Him"],
+ ["✨","Custom Hampers"],["🎉","Festival Specials"],["🧸","Baby & Kids"],["🏢","Corporate Gifts"]
+];
+let products=[];
+let cart=JSON.parse(localStorage.getItem("ghs_cart")||"[]");
+let wishlist=JSON.parse(localStorage.getItem("ghs_wishlist")||"[]");
+let activeCoupon=null;
+
+function money(n){return "₹"+Number(n||0).toLocaleString("en-IN")}
+function saveLocal(){localStorage.setItem("ghs_cart",JSON.stringify(cart));localStorage.setItem("ghs_wishlist",JSON.stringify(wishlist));updateBadges()}
+function updateBadges(){document.getElementById("cartCount").textContent=cart.reduce((a,x)=>a+x.qty,0);document.getElementById("wishCount").textContent=wishlist.length}
+function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+
+function renderCategories(){
+ document.getElementById("catList").innerHTML=categories.map(c=>`<button class="cat-card" onclick="filterCategory('${c[1].replaceAll("'","\\'")}')"><div class="cat-icon">${c[0]}</div><b>${c[1]}</b></button>`).join("");
+ document.getElementById("chips").innerHTML=categories.map(c=>`<button class="chip" onclick="filterCategory('${c[1].replaceAll("'","\\'")}')">${c[0]} ${c[1]}</button>`).join("");
+}
+window.filterCategory=(cat)=>{document.getElementById("searchInput").value=cat;renderProducts()}
+
+function productCard(p){
+ const liked=wishlist.includes(p.id);
+ return `<article class="product">
+ <div class="product-img">${p.image?`<img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" onerror="this.style.display='none'">`:`<div class="placeholder">🎁</div>`}
+ ${p.offerActive?`<span class="tag">${p.discount||0}% OFF</span>`:""}<button class="wish" onclick="toggleWish('${p.id}')">${liked?"♥":"♡"}</button></div>
+ <div class="product-info"><h3>${escapeHtml(p.name)}</h3><div class="meta">${escapeHtml(p.mainCategory||"Gift")} · ${escapeHtml(p.size||"Standard")}</div>
+ <div class="price"><strong>${money(p.sellingPrice)}</strong>${p.originalPrice?`<span class="old">${money(p.originalPrice)}</span>`:""}${p.discount?`<span class="discount">${p.discount}%</span>`:""}</div>
+ <button class="buy" onclick="addToCart('${p.id}')">Add to Cart</button><button class="buy buy-now" onclick="buyNow('${p.id}')">Buy Now</button></div></article>`;
+}
+function renderProducts(){
+ const q=document.getElementById("searchInput").value.trim().toLowerCase();
+ let list=products.filter(p=>!q||`${p.name} ${p.mainCategory} ${p.subCategory||""} ${p.material||""}`.toLowerCase().includes(q));
+ document.getElementById("productCount").textContent=`${list.length} gifts`;
+ document.getElementById("productGrid").innerHTML=list.length?list.map(productCard).join(""):`<div class="empty">No gifts found. Try another search.</div>`;
+}
+window.toggleWish=(id)=>{wishlist=wishlist.includes(id)?wishlist.filter(x=>x!==id):[...wishlist,id];saveLocal();renderProducts()}
+window.addToCart=(id)=>{
+ const p=products.find(x=>x.id===id);if(!p)return;
+ const row=cart.find(x=>x.id===id); if(row)row.qty++;else cart.push({id,qty:1});
+ saveLocal();openCart();
+}
+window.buyNow=(id)=>{cart=[{id,qty:1}];saveLocal();openCheckout();};
+window.openCart=()=>{
+ document.getElementById("panelTitle").textContent="Your Cart";
+ const rows=cart.map(x=>{const p=products.find(y=>y.id===x.id);return p?`<div class="cart-row"><div class="grow"><b>${escapeHtml(p.name)}</b><div class="meta">${money(p.sellingPrice)} each</div><div class="qty"><button onclick="changeQty('${p.id}',-1)">−</button><b>${x.qty}</b><button onclick="changeQty('${p.id}',1)">+</button><button onclick="removeCart('${p.id}')" style="margin-left:7px">🗑</button></div></div><b>${money(p.sellingPrice*x.qty)}</b></div>`:""}).join("");
+ const total=cart.reduce((s,x)=>{const p=products.find(y=>y.id===x.id);return s+(p?p.sellingPrice*x.qty:0)},0);
+ document.getElementById("panelContent").innerHTML=rows||`<div class="empty">Your cart is empty 🎁</div>`;
+ if(cart.length)document.getElementById("panelContent").innerHTML+=`<div style="padding-top:18px"><div style="display:flex;justify-content:space-between"><b>Subtotal</b><b>${money(total)}</b></div><button class="checkout" onclick="openCheckout()">Proceed to Checkout</button></div>`;
+ document.getElementById("drawer").classList.add("open");
+}
+window.changeQty=(id,n)=>{const x=cart.find(a=>a.id===id);if(!x)return;x.qty+=n;if(x.qty<=0)cart=cart.filter(a=>a.id!==id);saveLocal();openCart()}
+window.removeCart=(id)=>{cart=cart.filter(x=>x.id!==id);saveLocal();openCart()}
+window.openWishlist=()=>{document.getElementById("panelTitle").textContent="Saved Gifts";const list=products.filter(p=>wishlist.includes(p.id));document.getElementById("panelContent").innerHTML=list.length?list.map(productCard).join(""):`<div class="empty">No saved gifts yet ♡</div>`;document.getElementById("drawer").classList.add("open")}
+window.closeDrawer=()=>document.getElementById("drawer").classList.remove("open");
+
+window.openLogin=()=>document.getElementById("loginModal").classList.add("open");
+window.closeLogin=()=>document.getElementById("loginModal").classList.remove("open");
+window.showLogin=(type)=>{document.getElementById("emailForm").style.display=type==="email"?"grid":"none";document.getElementById("phoneForm").style.display=type==="phone"?"grid":"none";document.getElementById("emailTab").classList.toggle("active",type==="email");document.getElementById("phoneTab").classList.toggle("active",type==="phone")}
+
+window.emailLogin=async()=>{
+ if(!firebaseReady)return msg("Add your Firebase config first.");
+ const e=document.getElementById("email").value.trim(),p=document.getElementById("password").value;
+ if(!e||!p)return msg("Please enter your email and password.");
+ try{
+   const result=await signInWithEmailAndPassword(auth,e,p);
+   window.currentUser=result.user;
+   msg("Login successful.");
+   closeLogin();
+ }catch(err){
+   msg(err.code==="auth/user-not-found"?"Account not found. Please register first.":err.message);
+ }
+}
+window.googleLogin=async()=>{
+ if(!firebaseReady)return msg("Add your Firebase config first.");
+ try{await signInWithPopup(auth,new GoogleAuthProvider());msg("Login successful.");closeLogin()}catch(e){msg(e.message)}
+}
+let confirmationResult=null;
+window.sendOTP=async()=>{
+ if(!firebaseReady)return msg("Add your Firebase config first.");
+ try{if(!window.recaptchaVerifier)window.recaptchaVerifier=new RecaptchaVerifier(auth,"recaptcha-container",{});confirmationResult=await signInWithPhoneNumber(auth,document.getElementById("phone").value,window.recaptchaVerifier);msg("OTP sent.")}catch(e){msg(e.message)}
+}
+window.verifyOTP=async()=>{try{if(!confirmationResult)return msg("Send OTP first.");await confirmationResult.confirm(document.getElementById("otp").value);msg("Phone verified.");closeLogin()}catch(e){msg(e.message)}}
+function msg(t){document.getElementById("loginMsg").textContent=t}
+
+window.openCheckout=()=>{
+ closeDrawer();
+ if(!cart.length)return;
+ document.getElementById("checkoutSummary").innerHTML=`<div class="order"><b>${cart.reduce((a,x)=>a+x.qty,0)} item(s)</b><div class="meta">Subtotal: ${money(cart.reduce((s,x)=>{const p=products.find(y=>y.id===x.id);return s+(p?p.sellingPrice*x.qty:0)},0))}</div></div>`;
+ if(window.currentUser){document.getElementById("customerEmail").value=window.currentUser.email||"";document.getElementById("customerName").value=window.currentUser.displayName||""}
+ document.getElementById("checkoutModal").classList.add("open");
+}
+window.closeCheckout=()=>document.getElementById("checkoutModal").classList.remove("open");
+window.applyCoupon=async()=>{
+ const code=document.getElementById("coupon").value.trim().toUpperCase();
+ if(!code)return;
+ if(firebaseReady){try{const snap=await getDocs(query(collection(db,"coupons"),where("code","==",code),limit(1)));if(!snap.empty){const c=snap.docs[0].data();if(c.active!==false){activeCoupon=c;document.getElementById("couponMsg").textContent="Coupon applied.";return}}}catch(e){}}
+ if(code==="GIFT99"){activeCoupon={code,discountType:"fixed",discountValue:99};document.getElementById("couponMsg").textContent="₹99 coupon applied."}
+ else document.getElementById("couponMsg").textContent="Coupon not found.";
+}
+window.placeOrder=async()=>{
+ if(!cart.length)return;
+ const name=document.getElementById("customerName").value.trim(),mobile=document.getElementById("customerMobile").value.trim(),email=document.getElementById("customerEmail").value.trim(),address=document.getElementById("address").value.trim();
+ if(!name||!mobile||!address)return alert("Please fill name, mobile and address.");
+ const subtotal=cart.reduce((s,x)=>{const p=products.find(y=>y.id===x.id);return s+(p?p.sellingPrice*x.qty:0)},0);
+ let discount=0;if(activeCoupon){discount=activeCoupon.discountType==="percentage"?subtotal*Number(activeCoupon.discountValue||0)/100:Number(activeCoupon.discountValue||0);if(activeCoupon.maxDiscount)discount=Math.min(discount,Number(activeCoupon.maxDiscount))}
+ const total=Math.max(0,subtotal-discount);
+ const order={orderId:"GHS-"+Date.now(),customerName:name,customerMobile:mobile,customerEmail:email,address,city:document.getElementById("city").value,pincode:document.getElementById("pincode").value,products:cart.map(x=>{const p=products.find(y=>y.id===x.id);return {productId:x.id,name:p?.name,quantity:x.qty,price:p?.sellingPrice,image:(p?.image||p?.imageUrl||p?.pImage||(Array.isArray(p?.images)?p.images[0]:'' )||'')}}),subtotal,discount,total,paymentMethod:document.getElementById("paymentMethod").value,paymentStatus:"Pending",orderStatus:"Order Placed",orderDate:new Date().toISOString(),expectedDeliveryDate:"",trackingId:"",trackingUrl:"",adminNote:""};
+ try{if(firebaseReady)await addDoc(collection(db,"orders"),{...order,userId:window.currentUser?.uid||null});localStorage.setItem("last_order",JSON.stringify(order));cart=[];activeCoupon=null;saveLocal();closeCheckout();alert("Order placed successfully! Order ID: "+order.orderId);openOrders()}catch(e){alert("Order save failed: "+e.message)}
+}
+window.openOrders=async()=>{
+ document.getElementById("panelTitle").textContent="My Orders";let orders=[];
+ const local=localStorage.getItem("last_order");if(local)orders.push(JSON.parse(local));
+ if(firebaseReady&&window.currentUser){try{const snap=await getDocs(query(collection(db,"orders"),where("userId","==",window.currentUser.uid),limit(20)));snap.forEach(d=>orders.push(d.data()))}catch(e){}}
+ const seen=new Set();orders=orders.filter(o=>o.orderId&&!seen.has(o.orderId)&&(seen.add(o.orderId)));
+ document.getElementById("panelContent").innerHTML=orders.length?orders.map(o=>`<div class="order"><b>${escapeHtml(o.orderId)}</b><div class="meta">${new Date(o.orderDate).toLocaleString("en-IN")}</div><div style="margin-top:7px">${money(o.total)}</div><span class="status">${escapeHtml(o.orderStatus||"Order Placed")}</span>${o.expectedDeliveryDate?`<div class="meta" style="margin-top:8px">Delivery: ${escapeHtml(o.expectedDeliveryDate)}</div>`:""}${o.trackingId?`<div class="meta">Tracking: ${escapeHtml(o.trackingId)}</div>`:""}</div>`).join(""):`<div class="empty">No orders yet 📦</div>`;
+ document.getElementById("drawer").classList.add("open");
+}
+
+async function loadSiteSettings(){
+ if(!firebaseReady)return;
+ try{const s=await getDoc(doc(db,"settings","site"));if(s.exists()){const x=s.data();if(x.announcement)document.getElementById("announcement").textContent=x.announcement;document.title=x.storeName||document.title}}catch(e){}
+}
+async function loadProducts(){
+ if(!firebaseReady)return;
+ try{
+   const snap=await getDocs(collection(db,"products"));
+   products=snap.docs.map(d=>({id:d.id,...d.data()}));
+   renderProducts();
+ }catch(e){
+   console.warn(e);
+   products=[];
+   renderProducts();
+ }
+}
+renderCategories();renderProducts();updateBadges();loadSiteSettings();loadProducts();
+</script>
+
+
+<style id="ghs-clean-system-css">
+.ghs-banner-host{width:100%;overflow:hidden;margin:0 0 22px}
+.ghs-banner-track{display:flex;flex-wrap:nowrap;transition:transform .55s ease}
+.ghs-banner-slide{flex:0 0 100%;min-width:100%;position:relative;aspect-ratio:12/5;overflow:hidden;border-radius:20px}
+.ghs-banner-slide img{width:100%;height:100%;object-fit:cover;display:block}
+.ghs-banner-caption{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:clamp(16px,4vw,44px);color:#fff;background:linear-gradient(90deg,#0009,transparent 72%)}
+.ghs-banner-caption h2{font-size:clamp(20px,4vw,42px);margin:0 0 7px}.ghs-banner-caption p{font-size:clamp(12px,2vw,19px);max-width:70%}
+.ghs-dots{text-align:center;padding:9px}.ghs-dots button{width:9px;height:9px;border-radius:50%;background:#bbb;margin:3px;padding:0}.ghs-dots button.active{background:#7c3aed}
+.ghs-detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:14px 0}
+.ghs-detail-item{background:#f7f5fa;padding:11px;border-radius:10px}.ghs-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.ghs-gallery img{width:100%;height:210px;object-fit:cover;border-radius:12px;cursor:zoom-in}
+.ghs-action-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:14px}.ghs-action-grid button{padding:11px;border:0;border-radius:10px;font-weight:800}
+.ghs-view{background:#e0e7ff;color:#3730a3}.ghs-add{background:#f0e9ff;color:#5b21b6}.ghs-buy{background:#111827;color:#fff}.ghs-wa{background:#16a34a;color:#fff}
+.ghs-profile-row{padding:12px 0;border-bottom:1px solid #eee}.ghs-support-float{position:fixed;left:14px;bottom:18px;z-index:9999;border:0;border-radius:999px;padding:13px 16px;color:#fff;font-weight:800;box-shadow:0 8px 24px #0003}.ghs-support-help{bottom:70px;background:#7c3aed}.ghs-support-wa{background:#16a34a}
+.ghs-personal-card{padding:14px;border:1px solid #eadff5;border-radius:14px;background:#faf7ff;margin:10px 0}.ghs-personal-card input,.ghs-personal-card textarea{margin-top:7px}
+.ghs-msg{font-size:13px;margin:7px 0;font-weight:700}.ghs-address-actions{display:flex;gap:8px;flex-wrap:wrap}.ghs-help-answer{display:none;padding:13px;border-radius:11px;background:#fee2e2;border:1px solid #fca5a5;color:#991b1b;font-weight:700;margin-top:10px;line-height:1.5}
+@media(max-width:650px){.ghs-action-grid{grid-template-columns:1fr}.ghs-banner-slide{aspect-ratio:12/5}.ghs-banner-caption p{max-width:75%}}
+</style>
+
+<section id="ghsTrackSection" class="track-card">
+  <h2>📦 Track Your Order</h2>
+  <p>Order ID, Tracking ID या Mobile Number डालकर order status देखें।</p>
+  <div class="row"><input id="ghsTrackQuery" placeholder="Order ID / Tracking ID / Mobile Number"><button class="checkout" style="width:auto" id="ghsTrackBtn">View Order</button></div>
+  <div id="ghsTrackResult"></div>
+</section>
+
+<div class="modal" id="ghsProductModal"><div class="modal-box">
+  <div class="panel-head"><h2>Product Details</h2><button class="close" id="ghsProductClose">✕</button></div>
+  <div id="ghsProductBody"></div>
+</div></div>
+
+<div class="modal" id="ghsHelpModal"><div class="modal-box">
+  <div class="panel-head"><h2>Help Center</h2><button class="close" id="ghsHelpClose">✕</button></div>
+  <p class="meta">किसी सवाल पर क्लिक करें। Admin द्वारा saved answer यहीं दिखाई देगा।</p>
+  <div class="form" id="ghsHelpButtons"></div><div id="ghsHelpAnswer" class="ghs-help-answer"></div>
+</div></div>
+
+<div class="modal" id="ghsPaymentModal"><div class="modal-box">
+  <div class="panel-head"><h2>💳 Payment</h2><button class="close" id="ghsPaymentClose">✕</button></div>
+  <p id="ghsPaymentSummary" class="meta"></p>
+  <div class="form">
+    <select id="ghsPaymentMethod"></select>
+    <button class="checkout" id="ghsConfirmOrder">Confirm Order</button>
+    <button class="buy" id="ghsPaymentWhatsApp" style="display:none">💬 Payment WhatsApp</button>
+    <div id="ghsPaymentMsg" class="ghs-msg"></div>
+  </div>
+</div></div>
+
+<div class="modal" id="ghsProfileModal"><div class="modal-box">
+  <div class="panel-head"><h2>👤 My Profile</h2><button class="close" id="ghsProfileClose">✕</button></div>
+  <div class="form">
+    <input id="ghsProfileName" placeholder="Full Name">
+    <input id="ghsProfileEmail" readonly placeholder="Registered Email">
+    <input id="ghsProfileMobile" placeholder="Mobile Number">
+    <h3>📍 Saved Address</h3>
+    <textarea id="ghsProfileAddress" placeholder="House / Flat / Area / Full Address"></textarea>
+    <input id="ghsProfileCity" placeholder="City">
+    <input id="ghsProfileState" placeholder="State">
+    <input id="ghsProfilePin" placeholder="PIN Code">
+    <button class="checkout" id="ghsSaveProfile">Save / Update Profile & Address</button>
+    <button class="buy" id="ghsLogout">🚪 Logout</button>
+    <div id="ghsProfileMsg" class="ghs-msg"></div>
+  </div>
+</div></div>
+
+<div class="modal" id="ghsCustomModal"><div class="modal-box">
+  <div class="panel-head"><h2>🎁 Personalize Your Gift</h2><button class="close" id="ghsCustomClose">✕</button></div>
+  <div class="form">
+    <input id="ghsCustomSize" placeholder="Size / Variant">
+    <input id="ghsCustomShoe" placeholder="Shoe Size / Number">
+    <textarea id="ghsCustomMessage" placeholder="Personal message / Gift note"></textarea>
+    <textarea id="ghsCustomInstructions" placeholder="Custom packing, items या special requirements"></textarea>
+    <button class="checkout" id="ghsCustomSave">Save Details</button>
+  </div>
+</div></div>
+
+<button class="ghs-support-float ghs-support-help" id="ghsHelpFloat">💬 Help Center</button>
+<button class="ghs-support-float ghs-support-wa" id="ghsWaFloat">🟢 WhatsApp</button>
+
+<script type="module" id="ghs-clean-master">
+import {getApps,getApp,initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {getAuth,onAuthStateChanged,signOut,signInWithEmailAndPassword,createUserWithEmailAndPassword,GoogleAuthProvider,signInWithPopup,sendPasswordResetEmail,updateProfile,setPersistence,browserLocalPersistence} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import {getFirestore,collection,getDocs,getDoc,doc,setDoc,addDoc,query,where,limit,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+const CFG={apiKey:"AIzaSyCfILW5a7H4B8cQfVnJwh_Dcvn04FxAwJs",authDomain:"the-gift-hamper-studio.firebaseapp.com",projectId:"the-gift-hamper-studio",storageBucket:"the-gift-hamper-studio.firebasestorage.app",messagingSenderId:"1002125530065",appId:"1:1002125530065:web:dea65445fd5631c7c0c6f0"};
+const APP=getApps().length?getApp():initializeApp(CFG),AUTH=getAuth(APP),DB=getFirestore(APP);
+const $=id=>document.getElementById(id), esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const money=n=>"₹"+Number(n||0).toLocaleString("en-IN");
+let USER=AUTH.currentUser, PRODUCTS=[], SITE={}, ACTIVE_COUPON=null, PENDING_ORDER=null, bannersTimer=null;
+
+window.GHS={products:PRODUCTS,site:SITE};
+
+function imageOf(p){return (Array.isArray(p.images)&&p.images.find(Boolean))||p.image||p.imageUrl||p.imageURL||p.pImage||""}
+function priceOf(p){return Number(p.sellingPrice??p.salePrice??p.price??0)}
+function logged(){return !!USER}
+function requireLogin(){if(logged())return true; if(typeof window.openProfessionalLogin==="function")window.openProfessionalLogin(); else if($("loginModal"))$("loginModal").classList.add("open"); alert("Please login first to continue."); return false}
+
+async function syncCustomer(extra={}){
+  if(!USER)return;
+  const ref=doc(DB,"customers",USER.uid), old=await getDoc(ref).catch(()=>null), prev=old?.exists()?old.data():{};
+  await setDoc(ref,{customerId:USER.uid,fullName:USER.displayName||prev.fullName||"",email:USER.email||prev.email||"",loginMethod:USER.providerData?.[0]?.providerId||"email",updatedAt:serverTimestamp(),...extra},{merge:true}).catch(()=>{});
+}
+onAuthStateChanged(AUTH,u=>{USER=u||null;window.currentUser=USER; if(USER)syncCustomer();});
+setPersistence(AUTH,browserLocalPersistence).catch(()=>{});
+
+async function loadProductsClean(){
+  try{const s=await getDocs(collection(DB,"products"));PRODUCTS=s.docs.map(d=>({id:d.id,...d.data()}));window.GHS.products=PRODUCTS;window.FINAL_PRODUCTS=PRODUCTS;window.FP=PRODUCTS;window.products=PRODUCTS;renderProductsClean();}catch(e){console.warn("Products",e)}
+}
+function matches(p,q){if(!q)return true;const hay=[p.name,p.productName,p.mainCategory,p.category,p.subCategory,p.item,p.itemType,p.material,p.content,p.sku,p.description].filter(Boolean).join(" ").toLowerCase();return hay.includes(q)}
+function card(p){
+ const wish=JSON.parse(localStorage.getItem("ghs_wishlist")||"[]").includes(p.id), img=imageOf(p), price=priceOf(p), old=p.originalPrice??p.mrp;
+ return `<article class="product" data-product-id="${esc(p.id)}"><div class="product-img">${img?`<img src="${esc(img)}" alt="${esc(p.name||"Gift")}">`:'<div class="placeholder">🎁</div>'}<button class="wish" data-act="wish" data-id="${esc(p.id)}">${wish?"♥":"♡"}</button>${p.offerActive||p.discount?`<span class="tag">${esc(p.discount||0)}% OFF</span>`:""}</div><div class="product-info"><h3>${esc(p.name||p.productName||"Gift")}</h3><div class="meta">${esc(p.mainCategory||p.category||"Gift")} · ${esc(p.size||p.variant||"Standard")}</div><div class="price"><strong>${money(price)}</strong>${old?`<span class="old">${money(old)}</span>`:""}${p.discount?`<span class="discount">${esc(p.discount)}%</span>`:""}</div><div class="ghs-action-grid"><button class="ghs-view" data-act="view" data-id="${esc(p.id)}">👁️ View Details</button><button class="ghs-add" data-act="cart" data-id="${esc(p.id)}">🛒 Add to Cart</button><button class="ghs-buy" data-act="buy" data-id="${esc(p.id)}">⚡ Buy Now</button><button class="ghs-wa" data-act="wa" data-id="${esc(p.id)}">💬 WhatsApp Inquiry</button></div></div></article>`;
+}
+function renderProductsClean(){
+ const q=($("searchInput")?.value||"").trim().toLowerCase(), list=PRODUCTS.filter(p=>matches(p,q));
+ if($("productCount"))$("productCount").textContent=list.length+" gifts";
+ if($("productGrid"))$("productGrid").innerHTML=list.length?list.map(card).join(""):`<div class="empty">No gifts found. Try another search.</div>`;
+}
+window.renderProducts=renderProductsClean;window.drawProducts=renderProductsClean;
+
+function getCart(){try{return JSON.parse(localStorage.getItem("ghs_cart")||"[]")}catch{return []}}
+function setCart(c){localStorage.setItem("ghs_cart",JSON.stringify(c));$("cartCount")&&($("cartCount").textContent=c.reduce((s,x)=>s+Number(x.qty||0),0))}
+function cartAdd(id){if(!requireLogin())return;const p=PRODUCTS.find(x=>x.id===id);if(!p)return;let c=getCart(),x=c.find(a=>a.id===id);if(x)x.qty++;else c.push({id,qty:1});setCart(c);openCartClean()}
+function cartChange(id,n){let c=getCart(),x=c.find(a=>a.id===id);if(!x)return;x.qty+=n;if(x.qty<=0)c=c.filter(a=>a.id!==id);setCart(c);openCartClean()}
+function cartRemove(id){setCart(getCart().filter(x=>x.id!==id));openCartClean()}
+window.addToCart=cartAdd;window.changeQty=cartChange;window.removeCart=cartRemove;
+
+function openCartClean(){
+ const c=getCart(); if($("panelTitle"))$("panelTitle").textContent="Your Cart";
+ const rows=c.map(x=>{const p=PRODUCTS.find(y=>y.id===x.id);return p?`<div class="cart-row"><div class="grow"><b>${esc(p.name)}</b><div class="meta">${money(priceOf(p))} each</div><div class="qty"><button data-act="minus" data-id="${esc(p.id)}">−</button><b>${x.qty}</b><button data-act="plus" data-id="${esc(p.id)}">+</button><button data-act="remove" data-id="${esc(p.id)}">🗑</button></div></div><b>${money(priceOf(p)*x.qty)}</b></div>`:""}).join("");
+ const sub=c.reduce((s,x)=>s+priceOf(PRODUCTS.find(p=>p.id===x.id)||{})*Number(x.qty||0),0);
+ if($("panelContent"))$("panelContent").innerHTML=rows||`<div class="empty">Your cart is empty 🎁</div>`;
+ if(c.length)$("panelContent").insertAdjacentHTML("beforeend",`<div style="padding-top:15px"><div style="display:flex;justify-content:space-between"><b>Subtotal</b><b>${money(sub)}</b></div><button class="checkout" id="ghsProceed">Proceed to Checkout</button></div>`);
+ $("drawer")?.classList.add("open");
+ $("ghsProceed")?.addEventListener("click",openCheckoutClean);
+}
+window.openCart=openCartClean;
+
+async function openWishlistClean(){
+ const ids=JSON.parse(localStorage.getItem("ghs_wishlist")||"[]"), list=PRODUCTS.filter(p=>ids.includes(p.id));
+ if($("panelTitle"))$("panelTitle").textContent="Saved Gifts";
+ if($("panelContent"))$("panelContent").innerHTML=list.length?list.map(card).join(""):`<div class="empty">No saved gifts yet ♡</div>`;
+ $("drawer")?.classList.add("open");
+}
+window.openWishlist=openWishlistClean;
+
+function toggleWish(id){if(!requireLogin())return;let a=JSON.parse(localStorage.getItem("ghs_wishlist")||"[]");a=a.includes(id)?a.filter(x=>x!==id):[...a,id];localStorage.setItem("ghs_wishlist",JSON.stringify(a));$("wishCount")&&($("wishCount").textContent=a.length);renderProductsClean()}
+window.toggleWish=toggleWish;
+
+function openProduct(id){if(!requireLogin())return;const p=PRODUCTS.find(x=>x.id===id);if(!p)return;const imgs=[...(Array.isArray(p.images)?p.images:[]),p.image,p.imageUrl,p.pImage].filter(Boolean).filter((x,i,a)=>a.indexOf(x)===i);const fields=[["Sale Price",priceOf(p)?money(priceOf(p)):null],["Original Price",p.originalPrice??p.mrp],["Discount",p.discount],["Main Category",p.mainCategory??p.category],["Item / Sub Category",p.subCategory??p.item??p.itemType],["Material",p.material??p.metal],["Purity",p.purity],["Content",p.content],["Quantity",p.quantity],["Size / Variant",p.size??p.variant],["Stock",p.stock??p.availableStock],["SKU",p.sku??p.SKU]].filter(x=>x[1]!==undefined&&x[1]!==null&&String(x[1]).trim()!=="");$("ghsProductBody").innerHTML=`${imgs.length?`<div class="ghs-gallery">${imgs.map(x=>`<img src="${esc(x)}" alt="Product image">`).join("")}</div>`:""}<h2>${esc(p.name||p.productName||"Product")}</h2><div class="ghs-detail-grid">${fields.map(x=>`<div class="ghs-detail-item"><b>${esc(x[0])}</b><br>${esc(x[1])}</div>`).join("")}</div>${p.description||p.productDescription?`<div class="order"><h3>Description</h3><p>${esc(p.description||p.productDescription)}</p></div>`:""}<div class="ghs-action-grid"><button class="ghs-add" id="detailAdd">🛒 Add to Cart</button><button class="ghs-buy" id="detailBuy">⚡ Buy Now</button><button class="ghs-wa" id="detailWA">💬 WhatsApp Inquiry</button></div>`;$("ghsProductModal").classList.add("open");$("detailAdd").onclick=()=>cartAdd(id);$("detailBuy").onclick=()=>buyNowClean(id);$("detailWA").onclick=()=>whatsappClean(id)}
+window.showProductDetails=openProduct;
+
+function buyNowClean(id){if(!requireLogin())return;setCart([{id,qty:1}]);openCheckoutClean()}
+window.buyNow=buyNowClean;
+
+function whatsappClean(id){if(!requireLogin())return;const p=PRODUCTS.find(x=>x.id===id);const n=String(SITE.sWhatsapp||SITE.supportWhatsapp||"").replace(/\D/g,"");if(!n)return alert("WhatsApp number is not set in Admin Settings.");const msg=`Hello, I want to know more about ${p?.name||"this product"}\nPrice: ₹${priceOf(p)}`;open("https://wa.me/"+n+"?text="+encodeURIComponent(msg),"_blank")}
+window.productInquiry=whatsappClean;
+
+function subtotal(){return getCart().reduce((s,x)=>s+priceOf(PRODUCTS.find(p=>p.id===x.id)||{})*Number(x.qty||0),0)}
+function couponDiscount(sub){if(!ACTIVE_COUPON)return 0;let d=ACTIVE_COUPON.discountType==="percentage"?sub*Number(ACTIVE_COUPON.discountValue||ACTIVE_COUPON.value||0)/100:Number(ACTIVE_COUPON.discountValue??ACTIVE_COUPON.value??0);if(ACTIVE_COUPON.maxDiscount)d=Math.min(d,Number(ACTIVE_COUPON.maxDiscount));return Math.min(sub,Math.max(0,d))}
+async function applyCouponClean(){
+ const code=($("coupon")?.value||"").trim().toUpperCase();if(!code)return;
+ let c=null;try{const s=await getDocs(query(collection(DB,"coupons"),where("code","==",code),limit(1)));if(!s.empty)c=s.docs[0].data()}catch{}
+ if(!c&&code==="GIFT99")c={code,discountType:"fixed",discountValue:99,active:true};
+ if(!c||c.active===false){ACTIVE_COUPON=null;if($("couponMsg"))$("couponMsg").textContent="Coupon not found.";return}
+ const sub=subtotal();if(c.minOrder&&sub<Number(c.minOrder)){ACTIVE_COUPON=null;$("couponMsg").textContent=`Minimum order ₹${Number(c.minOrder).toLocaleString("en-IN")} required.`;return}
+ ACTIVE_COUPON=c;$("couponMsg").textContent=`Coupon applied. Discount: ${money(couponDiscount(sub))}`;
+}
+window.applyCoupon=applyCouponClean;
+
+async function openCheckoutClean(){
+ ensureCheckoutUI();
+ if(!requireLogin())return;const c=getCart();if(!c.length)return;
+ const sub=subtotal(),dis=couponDiscount(sub);
+ if($("checkoutSummary"))$("checkoutSummary").innerHTML=`<div class="order"><b>${c.reduce((s,x)=>s+Number(x.qty||0),0)} item(s)</b><div class="meta">Subtotal: ${money(sub)} · Discount: ${money(dis)} · Total: ${money(Math.max(0,sub-dis))}</div></div>`;
+ const d=await getDoc(doc(DB,"customers",USER.uid)).catch(()=>null),a=d?.exists()?d.data().savedAddress||{}:{};
+ if($("customerName"))$("customerName").value=USER.displayName||d?.data()?.fullName||"";
+ if($("customerEmail"))$("customerEmail").value=USER.email||"";
+ if($("customerMobile"))$("customerMobile").value=a.mobile||d?.data()?.mobile||"";
+ if($("address"))$("address").value=a.address||"";
+ if($("city"))$("city").value=a.city||"";
+ if($("pincode"))$("pincode").value=a.pincode||"";
+ let pc=$("ghsPaymentMethod");if(pc)await loadPaymentMethods();
+ $("checkoutModal")?.classList.add("open");
+}
+window.openCheckout=openCheckoutClean;
+
+async function loadPaymentMethods(){
+ const s=SITE;let e=$("ghsPaymentMethod");if(!e)return;e.innerHTML='<option value="">Select Payment Method *</option>';if(String(s.sCOD??"true")==="true")e.insertAdjacentHTML("beforeend",'<option value="COD">Cash on Delivery</option>');["UPI","Google Pay","PhonePe","Paytm","Card","Net Banking","Bank Transfer"].forEach(x=>e.insertAdjacentHTML("beforeend",`<option value="${x}">${x}</option>`));
+}
+function ensureCheckoutUI(){
+ const box=$('checkoutModal')?.querySelector('.form'); if(!box||$('ghsPersonalizationCard'))return;
+ const card=document.createElement('div'); card.id='ghsPersonalizationCard'; card.className='ghs-personal-card'; card.innerHTML='<b>🎁 Personalize Your Gift</b><input id="ghsCustomSize" placeholder="Size / Variant (अगर लागू हो)"><input id="ghsCustomShoe" placeholder="Shoe Size / Number (अगर लागू हो)"><textarea id="ghsCustomMessage" placeholder="Personal message / Gift note"></textarea><textarea id="ghsCustomInstructions" placeholder="Custom packing, items या special requirements"></textarea>';
+ const coupon=$('coupon'); if(coupon) box.insertBefore(card,coupon); else box.appendChild(card);
+ const oldBtn=[...box.querySelectorAll('button')].find(b=>/place order/i.test(b.textContent)); if(oldBtn){oldBtn.textContent='Continue to Payment →';oldBtn.removeAttribute('onclick');oldBtn.id='ghsContinuePayment';oldBtn.onclick=beginPayment;}
+ const oldPay=$('paymentMethod'); if(oldPay)oldPay.style.display='none';
+}
+async function beginPayment(){
+ if(!requireLogin())return;
+ const name=$("customerName").value.trim(),mobile=$("customerMobile").value.trim(),email=$("customerEmail").value.trim(),address=$("address").value.trim();
+ if(!name||!mobile||!email||!address)return alert("Please fill Name, Mobile, Email and Address.");
+ const method=$("paymentMethod").value;
+ if(!method)return alert("Please select a payment method.");
+ const c=getCart(),sub=subtotal(),dis=couponDiscount(sub),total=Math.max(0,sub-dis);
+ const personalization={size:$("ghsCustomSize")?.value?.trim()||"",shoeSize:$("ghsCustomShoe")?.value?.trim()||"",message:$("ghsCustomMessage")?.value?.trim()||"",instructions:$("ghsCustomInstructions")?.value?.trim()||""};
+ PENDING_ORDER={orderId:"GHS-"+Date.now(),customerName:name,customerMobile:mobile,customerEmail:email,address,city:$("city").value.trim(),pincode:$("pincode").value.trim(),products:c.map(x=>{const p=PRODUCTS.find(y=>y.id===x.id);return {productId:x.id,name:p?.name||"",quantity:x.qty,price:priceOf(p),image:imageOf(p)}}),subtotal:sub,discount:dis,total,paymentMethod:method,paymentStatus:"Pending",orderStatus:"New Order",personalization,createdAt:new Date().toISOString()};
+ $("checkoutModal").classList.remove("open");$("ghsPaymentSummary").textContent=`Order total: ${money(total)} · Payment: ${method}`;$("ghsPaymentModal").classList.add("open");$("ghsPaymentWhatsApp").style.display=SITE.paymentWhatsappEnabled===false||!SITE.paymentWhatsappNumber?"none":"block";
+}
+window.continueToPayment=beginPayment;window.placeOrder=beginPayment;
+
+async function confirmOrder(){
+ if(!PENDING_ORDER)return;
+ const o={...PENDING_ORDER,userId:USER.uid,customerId:USER.uid,createdAt:serverTimestamp()};
+ try{await addDoc(collection(DB,"orders"),o);await syncCustomer({mobile:PENDING_ORDER.customerMobile,lastOrderId:PENDING_ORDER.orderId});localStorage.setItem("last_order",JSON.stringify(PENDING_ORDER));setCart([]);ACTIVE_COUPON=null;$("ghsPaymentModal").classList.remove("open");alert("Order placed successfully! Order ID: "+PENDING_ORDER.orderId);PENDING_ORDER=null;openOrdersClean();}catch(e){alert("Order save failed: "+e.message)}
+}
+async function paymentWhatsApp(){const n=String(SITE.paymentWhatsappNumber||SITE.sWhatsapp||"").replace(/\D/g,"");if(!n)return alert("Payment WhatsApp number is not set.");const o=PENDING_ORDER;if(!o)return;const msg=(SITE.paymentWhatsappMessage||`Hello, I want to make payment for Order #${o.orderId}. Total Amount: ${money(o.total)}.`).replace("{ORDER_ID}",o.orderId).replace("{AMOUNT}",money(o.total));open("https://wa.me/"+n+"?text="+encodeURIComponent(msg),"_blank")}
+$("ghsConfirmOrder").onclick=confirmOrder;$("ghsPaymentWhatsApp").onclick=paymentWhatsApp;
+
+function details(o){return `<div class="order"><h3>${esc(o.orderId||o.id||"Order")}</h3>${(o.products||o.items||[]).map(p=>`<div class="cart-row">${p.image?`<img src="${esc(p.image)}">`:''}<div class="grow"><b>${esc(p.name||p.productName||"Product")}</b><div class="meta">Qty: ${Number(p.quantity||p.qty||1)} · ${money(p.price)}</div></div></div>`).join("")}<p><b>Payment:</b> ${esc(o.paymentMethod||"N/A")} — ${esc(o.paymentStatus||"Pending")}</p><p><b>Total:</b> ${money(o.total)}</p><p><b>Status:</b> ${esc(o.orderStatus||o.status||"New Order")}</p><p><b>Delivery:</b> ${esc(o.expectedDeliveryDate||"To be updated")}</p><p><b>Tracking ID:</b> ${esc(o.trackingId||"To be updated")}</p><p><b>Delivery Partner:</b> ${esc(o.deliveryPartner||"To be updated")}</p>${o.personalization?`<div class="ghs-detail-grid"><div class="ghs-detail-item"><b>Size / Variant</b><br>${esc(o.personalization.size)}</div><div class="ghs-detail-item"><b>Shoe Size</b><br>${esc(o.personalization.shoeSize)}</div><div class="ghs-detail-item"><b>Gift Note</b><br>${esc(o.personalization.message)}</div><div class="ghs-detail-item"><b>Special Requirements</b><br>${esc(o.personalization.instructions)}</div></div>`:""}${o.trackingUrl?`<p><a target="_blank" rel="noopener" href="${esc(o.trackingUrl)}">Track Parcel →</a></p>`:""}${o.returnStatus?`<p><b>Return:</b> ${esc(o.returnStatus)} · Refund: ${money(o.refundAmount||0)}</p>`:""}</div>`}
+async function openOrdersClean(){
+ if(!requireLogin())return;let a=[];const local=localStorage.getItem("last_order");if(local)try{a.push(JSON.parse(local))}catch{}
+ try{const s=await getDocs(query(collection(DB,"orders"),where("userId","==",USER.uid),limit(50)));s.forEach(d=>a.push({id:d.id,...d.data()}))}catch{}
+ const seen=new Set();a=a.filter(o=>{const k=o.orderId||o.id;if(!k||seen.has(k))return false;seen.add(k);return true});
+ $("panelTitle").textContent="My Orders";$("panelContent").innerHTML=a.length?a.map(o=>`<div class="order"><b>${esc(o.orderId||o.id)}</b><div class="meta">${o.createdAt?.toDate?o.createdAt.toDate().toLocaleString("en-IN"):o.createdAt?new Date(o.createdAt).toLocaleString("en-IN"):""}</div><div>${money(o.total)}</div><span class="status">${esc(o.orderStatus||o.status||"New Order")}</span><button class="checkout" data-order-view="${esc(o.orderId||o.id)}">View Details</button></div>`).join(""):`<div class="empty">No orders yet 📦</div>`;$("drawer").classList.add("open");window.__GHSOrders=a;
+}
+window.openOrders=openOrdersClean;
+
+async function track(){
+ const q=($("ghsTrackQuery").value||"").trim(),out=$("ghsTrackResult");if(!q)return;out.textContent="Searching...";
+ try{const s=await getDocs(collection(DB,"orders")),digits=q.replace(/\D/g,"");const o=s.docs.map(d=>({id:d.id,...d.data()})).find(x=>[x.id,x.orderId,x.trackingId].some(v=>String(v||"").toLowerCase()===q.toLowerCase())||String(x.customerMobile||x.mobile||"").replace(/\D/g,"")===digits);out.innerHTML=o?details(o):"Order not found. Please check Order ID, Tracking ID or Mobile Number."}catch(e){out.textContent="Unable to load tracking details."}
+}
+$("ghsTrackBtn").onclick=track;
+
+async function loadSite(){
+ try{const d=await getDoc(doc(DB,"settings","site"));SITE=d.exists()?d.data():{};window.GHS.site=SITE;window.__site=SITE;
+  const announcement=SITE.sAnnouncement||SITE.announcement||"";if(announcement&&$("announcement")){const s=$("announcement").querySelector("span");if(s)s.textContent=announcement;else $("announcement").textContent=announcement}
+  document.title=SITE.sStoreName||SITE.storeName||document.title;
+  const footerStore=$("footerStore"),footerDescription=$("footerDescription"),email=$("shopEmail"),contact=$("shopContact"),wa=$("shopWhatsapp"),ret=$("returnPolicyText");
+  if(footerStore)footerStore.textContent=SITE.sStoreName||"The Gift Hamper Studio";if(footerDescription)footerDescription.textContent=SITE.sDescription||SITE.sTagline||footerDescription.textContent;if(email)email.textContent=SITE.sEmail||"";if(contact)contact.textContent=SITE.sContact||"";if(wa)wa.textContent=SITE.sWhatsapp||"";
+  if(ret)ret.textContent=SITE.sReturnPolicy||"Return policy will be updated by admin.";
+  const social=[["Instagram","📸",SITE.sInstagram,SITE.sInstagramEnabled],["Facebook","ⓕ",SITE.sFacebook,SITE.sFacebookEnabled],["YouTube","▶️",SITE.sYoutube,SITE.sYoutubeEnabled],["Telegram","✈️",SITE.sTelegram,SITE.sTelegramEnabled],["Twitter/X","𝕏",SITE.sTwitter,SITE.sTwitterEnabled]];
+  if($("socialLinks"))$("socialLinks").innerHTML=social.filter(x=>x[2]&&x[3]!=="false").map(x=>`<a target="_blank" rel="noopener" href="${esc(x[2])}">${x[1]} ${x[0]}</a>`).join("");
+  const support=document.querySelector("footer .footer-inner");if(support){let box=support.querySelector(".ghs-support-box");if(!box){box=document.createElement("div");box.className="ghs-support-box";support.appendChild(box)}box.innerHTML=`<b>Need Help?</b><p>${SITE.supportWhatsappEnabled!==false&&SITE.supportWhatsapp?`<a target="_blank" href="https://wa.me/${String(SITE.supportWhatsapp).replace(/\D/g,"")}">${esc(SITE.supportWelcome||"WhatsApp Support")}</a><br>`:""}${SITE.supportEmailEnabled!==false&&SITE.supportEmail?`<a href="mailto:${esc(SITE.supportEmail)}">${esc(SITE.supportEmail)}</a><br>`:""}${esc(SITE.supportHours||"")}</p>`}
+  const help=SITE.helpAnswers||{};window.GHS.help=help;
+  if($("ghsPaymentMethod"))loadPaymentMethods();
+ }catch(e){console.warn("Site settings",e)}
+}
+async function renderBanners(){
+ const host=$("ghsBannerHost")||(()=>{const x=document.createElement("div");x.id="ghsBannerHost";x.className="ghs-banner-host";document.querySelector("main")?.prepend(x);return x})();
+ try{const s=await getDocs(collection(DB,"banners"));const a=s.docs.map(d=>d.data()).filter(x=>x.active!==false&&x.image).sort((x,y)=>(Number(x.slot)||0)-(Number(y.slot)||0));clearInterval(bannersTimer);if(!a.length){host.innerHTML="";return}host.innerHTML=`<div class="ghs-banner-track">${a.map(b=>`<a class="ghs-banner-slide" ${b.link?`href="${esc(b.link)}" target="_blank" rel="noopener"`:""}><img src="${esc(b.image)}" alt="${esc(b.title||"Banner")}">${b.title||b.subtitle?`<div class="ghs-banner-caption"><h2>${esc(b.title||"")}</h2><p>${esc(b.subtitle||"")}</p></div>`:""}</a>`).join("")}</div><div class="ghs-dots">${a.map((_,i)=>`<button data-banner-index="${i}" class="${i===0?"active":""}"></button>`).join("")}</div>`;const tr=host.querySelector(".ghs-banner-track"),dots=[...host.querySelectorAll("[data-banner-index]")];let i=0;const go=n=>{i=(n+a.length)%a.length;tr.style.transform=`translateX(-${i*100}%)`;dots.forEach((d,j)=>d.classList.toggle("active",i===j))};dots.forEach(d=>d.onclick=()=>go(Number(d.dataset.bannerIndex)));if(a.length>1)bannersTimer=setInterval(()=>go(i+1),4500)}catch(e){console.warn("Banners",e)}
+}
+
+function profileOpen(){
+ if(!requireLogin())return;const u=USER;$("ghsProfileName").value=u.displayName||"";$("ghsProfileEmail").value=u.email||"";
+ getDoc(doc(DB,"customers",u.uid)).then(d=>{const x=d.exists()?d.data():{},a=x.savedAddress||{};$("ghsProfileMobile").value=a.mobile||x.mobile||"";$("ghsProfileAddress").value=a.address||"";$("ghsProfileCity").value=a.city||"";$("ghsProfileState").value=a.state||"";$("ghsProfilePin").value=a.pincode||""});$("ghsProfileModal").classList.add("open");
+}
+async function saveProfile(){
+ const name=$("ghsProfileName").value.trim();if(!name)return alert("Please enter your full name.");
+ try{await updateProfile(USER,{displayName:name});await setDoc(doc(DB,"customers",USER.uid),{customerId:USER.uid,fullName:name,email:USER.email||"",mobile:$("ghsProfileMobile").value.trim(),savedAddress:{mobile:$("ghsProfileMobile").value.trim(),address:$("ghsProfileAddress").value.trim(),city:$("ghsProfileCity").value.trim(),state:$("ghsProfileState").value.trim(),pincode:$("ghsProfilePin").value.trim()},updatedAt:serverTimestamp()},{merge:true});alert("Profile and saved address updated successfully.");$("ghsProfileModal").classList.remove("open")}catch(e){alert("Unable to save profile: "+e.message)}
+}
+
+function setupAccount(){
+ const btn=[...document.querySelectorAll(".iconbtn")].find(x=>x.textContent.includes("👤"));if(!btn)return;
+ btn.onclick=profileOpen;
+}
+async function helpOpen(){await loadSite();$("ghsHelpButtons").innerHTML="";const labels={delivery:"📦 Delivery कब होगी?",international:"🌍 International Shipping",payment:"💳 Payment कैसे करें?",return:"↩️ Return कैसे करें?",order:"📍 मेरा Order कहाँ है?",product:"🎁 Product के बारे में पूछना है",support:"💬 Customer Support"};Object.entries(labels).forEach(([k,v])=>{const b=document.createElement("button");b.textContent=v;b.className="buy";b.onclick=()=>{$("ghsHelpAnswer").textContent=SITE.helpAnswers?.[k]||defaultHelp(k);$("ghsHelpAnswer").style.display="block";if(k==="support")supportWA()};$("ghsHelpButtons").appendChild(b)});$("ghsHelpModal").classList.add("open")}
+function defaultHelp(k){return {delivery:"Delivery time location aur product ke hisaab se vary kar sakta hai. My Orders me status check karein.",international:"International shipping destination ke according confirm hoti hai.",payment:"Checkout par available payment methods select karein.",return:"Return ke liye Order ID ke saath support se contact karein.",order:"My Orders ya Track Your Order me status check karein.",product:"View Details ya WhatsApp Inquiry se product ke baare me pooch sakte hain.",support:"Customer support se contact karein."}[k]||"Please contact support."}
+function supportWA(){const n=String(SITE.supportWhatsapp||SITE.sWhatsapp||"").replace(/\D/g,"");if(n)open("https://wa.me/"+n,"_blank");else alert("Support WhatsApp number is not set in Admin Settings.")}
+function customOpen(){if(!requireLogin())return;$("ghsCustomModal").classList.add("open")}
+$("ghsSaveProfile").onclick=saveProfile;$("ghsLogout").onclick=async()=>{await signOut(AUTH);$("ghsProfileModal").classList.remove("open")};$("ghsHelpFloat").onclick=helpOpen;$("ghsWaFloat").onclick=supportWA;$("ghsCustomSave").onclick=()=>{$("ghsCustomModal").classList.remove("open");alert("Personalization details saved for this session. They will be included in your next order.")};
+$("ghsCustomClose").onclick=()=>$("ghsCustomModal").classList.remove("open");$("ghsProfileClose").onclick=()=>$("ghsProfileModal").classList.remove("open");$("ghsHelpClose").onclick=()=>$("ghsHelpModal").classList.remove("open");$("ghsPaymentClose").onclick=()=>$("ghsPaymentModal").classList.remove("open");$("ghsProductClose").onclick=()=>$("ghsProductModal").classList.remove("open");
+
+document.addEventListener("click",e=>{
+ const b=e.target.closest("[data-act]");if(!b)return;const id=b.dataset.id,act=b.dataset.act;
+ if(act==="wish")toggleWish(id);else if(act==="cart")cartAdd(id);else if(act==="buy")buyNowClean(id);else if(act==="wa")whatsappClean(id);else if(act==="view")openProduct(id);else if(act==="plus")cartChange(id,1);else if(act==="minus")cartChange(id,-1);else if(act==="remove")cartRemove(id);
+});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-order-view]");if(b){const o=(window.__GHSOrders||[]).find(x=>(x.orderId||x.id)===b.dataset.orderView);if(o)$("panelContent").innerHTML=`<button class="buy" onclick="openOrders()">← Back</button>`+details(o)}});
+document.addEventListener("input",e=>{if(e.target.id==="searchInput")renderProductsClean()});
+$("searchInput")?.addEventListener("keydown",e=>{if(e.key==="Enter")renderProductsClean()});
+
+window.addEventListener("load",async()=>{ensureCheckoutUI();const ids=JSON.parse(localStorage.getItem("ghs_wishlist")||"[]");$("wishCount")&&($("wishCount").textContent=ids.length);setCart(getCart());setupAccount();await loadSite();await loadProductsClean();await renderBanners();});
+</script>
+
+</body>
+</html>
